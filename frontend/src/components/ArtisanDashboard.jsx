@@ -4,12 +4,16 @@ import { api } from '../services/api';
 import { MOCK_ARTISANS } from '../data/mockData';
 import GuidedListingForm from './GuidedListingForm';
 import ArtisanOrdersList from './ArtisanOrdersList';
-import { PlusCircle, Package, Layers, Sparkles, Volume2, UserCheck, CheckCircle2, TrendingUp, IndianRupee, Store, RefreshCw, Trash2, AlertTriangle } from 'lucide-react';
+import { PlusCircle, Package, Layers, Sparkles, Volume2, UserCheck, CheckCircle2, TrendingUp, IndianRupee, Store, RefreshCw, Trash2, AlertTriangle, LogIn, LogOut, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export default function ArtisanDashboard() {
   const {
     activeArtisan,
     setActiveArtisan,
+    isArtisanLoggedIn,
+    openArtisanLogin,
+    logoutArtisan,
+    switchArtisan,
     setViewMode,
     formatINR,
     showToast,
@@ -22,6 +26,7 @@ export default function ArtisanDashboard() {
   const [deletingId, setDeletingId] = useState(null);
 
   const fetchDashboard = async () => {
+    if (!activeArtisan?.id) return;
     setLoading(true);
     try {
       const data = await api.getArtisanDashboard(activeArtisan.id);
@@ -50,8 +55,10 @@ export default function ArtisanDashboard() {
   };
 
   useEffect(() => {
-    fetchDashboard();
-  }, [activeArtisan.id]);
+    if (activeArtisan?.id) {
+      fetchDashboard();
+    }
+  }, [activeArtisan?.id]);
 
   const speakGuidance = (text) => {
     if ('speechSynthesis' in window) {
@@ -62,6 +69,59 @@ export default function ArtisanDashboard() {
       window.speechSynthesis.speak(u);
     }
   };
+
+  // If no artisan is logged in, show access gateway with Login CTA
+  if (!activeArtisan) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center animate-fadeIn space-y-6">
+        <div className="bg-white rounded-3xl p-8 sm:p-14 border border-cream-300 shadow-xl space-y-6">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-terracotta-100 text-terracotta-600 rounded-3xl flex items-center justify-center mx-auto text-4xl sm:text-5xl shadow-inner border border-terracotta-200">
+            🪡
+          </div>
+
+          <div className="space-y-3 max-w-xl mx-auto">
+            <span className="text-xs uppercase font-bold text-terracotta-700 bg-terracotta-100 px-3.5 py-1 rounded-full border border-terracotta-200 inline-block">
+              ಕರ್ನಾಟಕ ಕಲಾಕಾರರ ಪೋರ್ಟಲ್ • Karnataka Artisan Gateway
+            </span>
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-indigo-950">
+              Artisan Login Required
+            </h2>
+            <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
+              Direct access for Karnataka handloom weavers and Beedu artisans. Please log in with your registered mobile phone number or choose our 1-click master artisan demo to manage listings, view incoming orders, and track your fair payments.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+            <button
+              onClick={openArtisanLogin}
+              className="w-full sm:w-auto px-8 py-4 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-2xl shadow-lg shadow-terracotta-600/30 flex items-center justify-center gap-2 transition-all active:scale-95 touch-target"
+            >
+              <LogIn className="w-5 h-5 text-amber-200" />
+              <span>ಕಲಾಕಾರರ ಲಾಗಿನ್ • Artisan Login / Register</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode('buyer')}
+              className="w-full sm:w-auto px-6 py-4 bg-cream-200 hover:bg-cream-300 text-stone-700 font-bold rounded-2xl transition-all"
+            >
+              Return to Storefront
+            </button>
+          </div>
+
+          <div className="pt-6 border-t border-cream-200 flex flex-wrap items-center justify-center gap-6 text-xs text-stone-500 font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              88%+ Fair Artisan Share
+            </span>
+            <span>•</span>
+            <span>Zero Middlemen Markups</span>
+            <span>•</span>
+            <span>GI Certified Heritage</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
@@ -76,12 +136,16 @@ export default function ArtisanDashboard() {
             className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-3 border-amber-300 shadow-md shrink-0"
           />
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs bg-amber-400 text-stone-950 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                 {activeArtisan.craftSpecialty} Master Artisan
               </span>
               <span className="text-xs text-amber-200">
                 {activeArtisan.village}
+              </span>
+              <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                Verified Active
               </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -93,35 +157,34 @@ export default function ArtisanDashboard() {
           </div>
         </div>
 
-        {/* Switch Artisan Selector & Voice Help */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-terracotta-900/60 p-3 rounded-2xl border border-terracotta-400/40">
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-amber-300 mb-1">
-              Switch Artisan Demo Profile:
-            </label>
-            <select
-              value={activeArtisan.id}
-              onChange={(e) => {
-                const found = MOCK_ARTISANS.find(a => a.id === e.target.value);
-                if (found) setActiveArtisan(found);
-              }}
-              className="bg-white text-stone-900 font-semibold text-xs rounded-xl px-3 py-2 border-0 focus:ring-2 focus:ring-amber-400 shadow-inner"
-            >
-              {MOCK_ARTISANS.map(a => (
-                <option key={a.id} value={a.id}>
-                  {a.name} ({a.craftSpecialty} - {a.village.split(',')[0]})
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Artisan Account Management & Voice Help */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-terracotta-900/60 p-3 rounded-2xl border border-terracotta-400/40">
+          
+          <button
+            onClick={openArtisanLogin}
+            className="px-3.5 py-2.5 bg-white/90 hover:bg-white text-stone-900 font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+            title="Switch or Register another Artisan Account"
+          >
+            <UserCheck className="w-3.5 h-3.5 text-terracotta-600" />
+            <span>Switch Profile (ಖಾತೆ ಬದಲಿಸಿ)</span>
+          </button>
+
+          <button
+            onClick={logoutArtisan}
+            className="px-3 py-2.5 bg-red-900/80 hover:bg-red-800 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+            title="Log out of Artisan Portal"
+          >
+            <LogOut className="w-3.5 h-3.5 text-red-200" />
+            <span>Logout (ನಿರ್ಗಮಿಸಿ)</span>
+          </button>
 
           <button
             onClick={() => speakGuidance(`ನಮಸ್ಕಾರ ${activeArtisan.name}. ನಿಮ್ಮ ಒಟ್ಟು ಆದಾಯ ${dashboardData?.metrics?.totalEarningsINR || 0} ರೂಪಾಯಿಗಳು. ನಿಮ್ಮ ಹೊಸ ಆರ್ಡರ್‌ಗಳನ್ನು ಇಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.`)}
-            className="p-3 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all self-stretch sm:self-auto justify-center"
+            className="p-3 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all justify-center"
             title="Read Dashboard Aloud in Kannada"
           >
             <Volume2 className="w-4 h-4 text-stone-900" />
-            <span>ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ (Listen)</span>
+            <span>ಧ್ವನಿ (Listen)</span>
           </button>
         </div>
 

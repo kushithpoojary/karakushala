@@ -4,7 +4,7 @@ const app = require('./server');
 const PORT = 5001;
 let server;
 
-function request(method, path, body = null) {
+function request(method, path, body = null, customHeaders = {}) {
   return new Promise((resolve, reject) => {
     const dataString = body ? JSON.stringify(body) : null;
     const options = {
@@ -14,7 +14,8 @@ function request(method, path, body = null) {
       method,
       headers: {
         'Content-Type': 'application/json',
-        ...(dataString ? { 'Content-Length': Buffer.byteLength(dataString) } : {})
+        ...(dataString ? { 'Content-Length': Buffer.byteLength(dataString) } : {}),
+        ...customHeaders
       }
     };
 
@@ -132,7 +133,47 @@ async function runTests() {
       const resCheckDeleted = await request('GET', `/api/products/${prodToDelete}`);
       console.log(`Verification after delete: Status ${resCheckDeleted.status} (Expected 404: ${resCheckDeleted.status === 404 ? 'PASS' : 'FAIL'})`);
 
-      console.log('\n ALL 8 RESTFUL ENDPOINT TESTS PASSED WITH 100% SUCCESS!\n');
+      // 9. POST /api/artisans/send-otp (Artisan Mobile OTP Request)
+      console.log('\n--- 9. Testing POST /api/artisans/send-otp ---');
+      const resSendOtp = await request('POST', '/api/artisans/send-otp', { phone: '+91 98451 23450' });
+      console.log(`Status: ${resSendOtp.status}, Message: "${resSendOtp.body.message}", Demo OTP: ${resSendOtp.body.demoOtp}`);
+      if (resSendOtp.status !== 200 || resSendOtp.body.demoOtp !== '1234') {
+        throw new Error('Failed to send OTP to registered artisan!');
+      }
+
+      // 10. POST /api/artisans/send-otp with Unregistered Phone (404 check)
+      console.log('\n--- 10. Testing POST /api/artisans/send-otp (Unregistered Phone) ---');
+      const resUnregOtp = await request('POST', '/api/artisans/send-otp', { phone: '9000011111' });
+      console.log(`Status: ${resUnregOtp.status}, Requires Registration: ${resUnregOtp.body.error?.requiresRegistration}`);
+      if (resUnregOtp.status !== 404 || !resUnregOtp.body.error?.requiresRegistration) {
+        throw new Error('Unregistered phone did not return 404 with requiresRegistration flag!');
+      }
+
+      // 11. POST /api/artisans/login (Phone + OTP Authentication)
+      console.log('\n--- 11. Testing POST /api/artisans/login (Phone + OTP) ---');
+      const resLoginPhone = await request('POST', '/api/artisans/login', { phone: '98451 23450', otp: '1234' });
+      console.log(`Status: ${resLoginPhone.status}, Logged In Artisan: "${resLoginPhone.body.data.name}", Token: ${resLoginPhone.body.token.substring(0, 30)}...`);
+      if (resLoginPhone.status !== 200 || !resLoginPhone.body.token) {
+        throw new Error('Artisan phone + OTP login failed!');
+      }
+
+      // 12. POST /api/artisans/login (1-Click Demo Login by artisanId)
+      console.log('\n--- 12. Testing POST /api/artisans/login (1-Click Artisan ID) ---');
+      const resLoginId = await request('POST', '/api/artisans/login', { artisanId: 'artisan_beedu_2' });
+      console.log(`Status: ${resLoginId.status}, Logged In Artisan: "${resLoginId.body.data.name}" (${resLoginId.body.data.craftSpecialty})`);
+      if (resLoginId.status !== 200 || resLoginId.body.data.name !== 'Ganesh Devadiga') {
+        throw new Error('1-Click Artisan ID login failed!');
+      }
+
+      // 13. GET /api/artisans/me (Token-authenticated session check)
+      console.log('\n--- 13. Testing GET /api/artisans/me ---');
+      const resMe = await request('GET', '/api/artisans/me', null, { Authorization: `Bearer ${resLoginPhone.body.token}` });
+      console.log(`Status: ${resMe.status}, Verified Profile: "${resMe.body.data.name}" from ${resMe.body.data.village}`);
+      if (resMe.status !== 200 || resMe.body.data.id !== 'artisan_kasuti_1') {
+        throw new Error('Authenticated /api/artisans/me failed!');
+      }
+
+      console.log('\n ALL 13 RESTFUL ENDPOINT TESTS (INCLUDING ARTISAN LOGIN & AUTH) PASSED WITH 100% SUCCESS!\n');
       server.close();
       process.exit(0);
     } catch (err) {

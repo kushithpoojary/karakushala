@@ -61,6 +61,17 @@ const ArtisanModel = {
     return dbCache.artisans.find(a => a.id === id || a._id === id) || null;
   },
 
+  findByPhone: async (phone) => {
+    if (!phone) return null;
+    const cleanInput = phone.toString().replace(/\D/g, '').slice(-10);
+    if (!cleanInput) return null;
+    return dbCache.artisans.find(a => {
+      if (!a.phone) return false;
+      const cleanArtisan = a.phone.toString().replace(/\D/g, '').slice(-10);
+      return cleanArtisan === cleanInput;
+    }) || null;
+  },
+
   findOne: async (query = {}) => {
     return dbCache.artisans.find(a => {
       for (const key of Object.keys(query)) {
@@ -74,6 +85,7 @@ const ArtisanModel = {
     const item = {
       id: data.id || generateId('artisan'),
       name: data.name,
+      kannadaName: data.kannadaName || '',
       phone: data.phone,
       village: data.village,
       craftSpecialty: data.craftSpecialty, // Enum: 'Kasuti', 'Beedu', 'Coastal'
