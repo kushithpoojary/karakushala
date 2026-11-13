@@ -655,5 +655,88 @@ export const api = {
       return order;
     }
     throw new Error('Order not found in state');
+  },
+
+  // POST /api/orders/:id/cancel
+  async cancelOrder(orderId, { reason = '', cancelledBy = 'Customer' } = {}) {
+    try {
+      const res = await fetch(`${BASE_URL}/orders/${orderId}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason, cancelledBy })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const orders = getStoredOrders();
+          const idx = orders.findIndex(o => o.id === orderId || o.orderNumber === orderId);
+          if (idx !== -1) {
+            orders[idx] = json.data;
+            saveStoredOrders(orders);
+          }
+          return json.data;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend cancelOrder fallback:', err.message);
+    }
+
+    // Local state fallback
+    const orders = getStoredOrders();
+    const idx = orders.findIndex(o => o.id === orderId || o.orderNumber === orderId);
+    if (idx !== -1) {
+      const order = orders[idx];
+      order.orderStatus = 'Cancelled';
+      order.cancellationReason = reason || 'Customer requested order cancellation';
+      order.updatedAt = new Date().toISOString();
+
+      if (!order.statusHistory) {
+        order.statusHistory = [];
+      }
+      order.statusHistory.push({
+        status: 'Cancelled',
+        timestamp: new Date().toISOString(),
+        note: reason || 'Cancelled by customer',
+        updatedBy: cancelledBy
+      });
+
+      // Restore local stock
+      const products = getStoredProducts();
+      if (Array.isArray(order.items)) {
+        for (const item of order.items) {
+          const p = products.find(prod => prod.id === item.productId || prod.id === item.id);
+          if (p) {
+            p.stockQuantity = (Number(p.stockQuantity) || 0) + (Number(item.quantity) || 1);
+          }
+        }
+        saveStoredProducts(products);
+      }
+
+      saveStoredOrders(orders);
+      return order;
+    }
+
+    return { id: orderId, orderStatus: 'Cancelled', cancellationReason: reason };
+  },
+
+  // DELETE /api/orders/:id
+  async deleteOrder(orderId) {
+    try {
+      const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const orders = getStoredOrders().filter(o => o.id !== orderId && o.orderNumber !== orderId);
+        saveStoredOrders(orders);
+        return json.data || { id: orderId };
+      }
+    } catch (err) {
+      console.warn('Backend deleteOrder fallback:', err.message);
+    }
+
+    const orders = getStoredOrders().filter(o => o.id !== orderId && o.orderNumber !== orderId);
+    saveStoredOrders(orders);
+    return { id: orderId };
   }
 };

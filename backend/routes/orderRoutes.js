@@ -219,4 +219,69 @@ router.patch('/:id/status', async (req, res, next) => {
   }
 });
 
+// POST /api/orders/:id/cancel — Cancel an order and restore stock
+router.post('/:id/cancel', async (req, res, next) => {
+  try {
+    const { reason, cancelledBy } = req.body || {};
+    const cancelledOrder = await Order.cancelOrder(req.params.id, reason, cancelledBy || 'Customer');
+
+    res.json({
+      success: true,
+      message: `Order ${cancelledOrder.orderNumber} successfully cancelled and inventory restocked.`,
+      data: cancelledOrder
+    });
+  } catch (err) {
+    if (err.message && err.message.includes('cannot be cancelled')) {
+      return res.status(400).json({
+        success: false,
+        error: { message: err.message, statusCode: 400 }
+      });
+    }
+    next(err);
+  }
+});
+
+// PATCH /api/orders/:id/cancel — Alternative PATCH method
+router.patch('/:id/cancel', async (req, res, next) => {
+  try {
+    const { reason, cancelledBy } = req.body || {};
+    const cancelledOrder = await Order.cancelOrder(req.params.id, reason, cancelledBy || 'Customer');
+
+    res.json({
+      success: true,
+      message: `Order ${cancelledOrder.orderNumber} successfully cancelled and inventory restocked.`,
+      data: cancelledOrder
+    });
+  } catch (err) {
+    if (err.message && err.message.includes('cannot be cancelled')) {
+      return res.status(400).json({
+        success: false,
+        error: { message: err.message, statusCode: 400 }
+      });
+    }
+    next(err);
+  }
+});
+
+// DELETE /api/orders/:id — Delete / remove an order and restore stock
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const removedOrder = await Order.deleteOrder(req.params.id);
+    if (!removedOrder) {
+      return res.status(404).json({
+        success: false,
+        error: { message: `Order "${req.params.id}" not found`, statusCode: 404 }
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Order ${removedOrder.orderNumber} successfully deleted and removed.`,
+      data: removedOrder
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

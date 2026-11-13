@@ -495,9 +495,24 @@ export default function CustomerOrdersPage() {
         isOpen={Boolean(cancellingOrder)}
         order={cancellingOrder}
         onClose={() => setCancellingOrder(null)}
-        onOrderCancelled={(cancelledOrder) => {
-          setOrders(prev => prev.map(o => (o.id === cancelledOrder.id || o.orderNumber === cancelledOrder.orderNumber ? cancelledOrder : o)));
-          loadOrders();
+        onOrderCancelled={(cancelledIdentifier, cancelledOrder) => {
+          const targetId = cancelledIdentifier || cancelledOrder?.id || cancellingOrder?.id;
+          const targetNum = cancelledOrder?.orderNumber || cancellingOrder?.orderNumber;
+
+          // Directly REMOVE the ordered item from the ordered list as requested
+          setOrders(prev => prev.filter(o => o.id !== targetId && o.orderNumber !== targetNum && o.id !== targetNum));
+
+          // Also remove from local storage orders cache
+          try {
+            const raw = localStorage.getItem('karakushala_orders_cache');
+            if (raw) {
+              const list = JSON.parse(raw);
+              const updated = list.filter(o => o.id !== targetId && o.orderNumber !== targetNum && o.id !== targetNum);
+              localStorage.setItem('karakushala_orders_cache', JSON.stringify(updated));
+            }
+          } catch (e) {}
+
+          setCancellingOrder(null);
         }}
       />
 

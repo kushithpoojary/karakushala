@@ -234,6 +234,16 @@ const ProductModel = {
     return dbCache.products[idx];
   },
 
+  incrementStock: async (id, quantity) => {
+    const idx = dbCache.products.findIndex(p => p.id === id || p._id === id);
+    if (idx !== -1) {
+      dbCache.products[idx].stockQuantity = (Number(dbCache.products[idx].stockQuantity) || 0) + (Number(quantity) || 1);
+      saveDatabase();
+      return dbCache.products[idx];
+    }
+    return null;
+  },
+
   countDocuments: async () => dbCache.products.length,
 
   clear: async () => {
@@ -400,6 +410,71 @@ const OrderModel = {
 
     saveDatabase();
     return dbCache.orders[idx];
+  },
+
+  cancelOrder: async (id, reason = '', cancelledBy = 'Customer') => {
+    const idx = dbCache.orders.findIndex(o => o.id === id || o._id === id || o.orderNumber === id);
+    if (idx === -1) {
+      throw new Error(`Order "${id}" not found`);
+    }
+
+    const order = dbCache.orders[idx];
+    if (order.orderStatus === 'Delivered') {
+      throw new Error('Order has already been delivered and cannot be cancelled.');
+    }
+
+    order.orderStatus = 'Cancelled';
+    order.cancellationReason = reason || 'Cancelled upon customer request';
+    order.updatedAt = new Date().toISOString();
+
+    if (!Array.isArray(order.statusHistory)) {
+      order.statusHistory = [];
+    }
+
+    order.statusHistory.push({
+      status: 'Cancelled',
+      timestamp: new Date().toISOString(),
+      note: reason ? `Cancelled by ${cancelledBy}: ${reason}` : `Order cancelled by ${cancelledBy}`,
+      updatedBy: cancelledBy
+    });
+
+    // Restore product stock
+    if (Array.isArray(order.items)) {
+      for (const item of order.items) {
+        if (item.productId) {
+          try {
+            await ProductModel.incrementStock(item.productId, item.quantity);
+          } catch (e) {
+            console.warn(`Failed to restore stock for product ${item.productId}:`, e.message);
+          }
+        }
+      }
+    }
+
+    saveDatabase();
+    return dbCache.orders[idx];
+  },
+
+  deleteOrder: async (id) => {
+    const idx = dbCache.orders.findIndex(o => o.id === id || o._id === id || o.orderNumber === id);
+    if (idx === -1) return null;
+
+    const removedOrder = dbCache.orders[idx];
+
+    // Restore stock if not already cancelled/delivered
+    if (Array.isArray(removedOrder.items)) {
+      for (const item of removedOrder.items) {
+        if (item.productId) {
+          try {
+            await ProductModel.incrementStock(item.productId, item.quantity);
+          } catch (e) {}
+        }
+      }
+    }
+
+    dbCache.orders.splice(idx, 1);
+    saveDatabase();
+    return removedOrder;
   },
 
   countDocuments: async () => dbCache.orders.length,
