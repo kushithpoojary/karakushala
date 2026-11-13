@@ -10,8 +10,15 @@ const STORAGE_ORDERS_KEY = 'karakushala_orders_cache';
 function getStoredProducts() {
   try {
     const raw = localStorage.getItem(STORAGE_PRODUCTS_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Auto-refresh cache if new catalog items have been added
+      if (Array.isArray(parsed) && parsed.length >= MOCK_PRODUCTS.length) {
+        return parsed;
+      }
+    }
   } catch (e) {}
+  saveStoredProducts(MOCK_PRODUCTS);
   return [...MOCK_PRODUCTS];
 }
 
