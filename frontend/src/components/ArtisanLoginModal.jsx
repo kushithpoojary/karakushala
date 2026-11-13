@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { MOCK_ARTISANS } from '../data/mockData';
@@ -17,7 +17,9 @@ import {
   MapPin, 
   Clock, 
   RefreshCw,
-  HelpCircle
+  HelpCircle,
+  Mic,
+  MicOff
 } from 'lucide-react';
 
 export default function ArtisanLoginModal() {
@@ -42,16 +44,20 @@ export default function ArtisanLoginModal() {
   const [errorMessage, setErrorMessage] = useState('');
   const [notRegisteredHint, setNotRegisteredHint] = useState(false);
 
-  // Registration state
+  // Registration state (First Name & Last Name)
   const [regForm, setRegForm] = useState({
-    name: '',
-    kannadaName: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     village: '',
     craftSpecialty: 'Kasuti',
     yearsOfExperience: 10,
     bio: ''
   });
+
+  // Voice speech recognition state
+  const [listeningField, setListeningField] = useState(null);
+  const recognitionRef = useRef(null);
 
   // Available artisans for 1-click demo login
   const [availableArtisans, setAvailableArtisans] = useState(MOCK_ARTISANS);

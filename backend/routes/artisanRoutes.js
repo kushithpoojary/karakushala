@@ -170,11 +170,12 @@ router.get('/me', async (req, res, next) => {
 // 5. POST /api/artisans — Register a new artisan
 router.post('/', async (req, res, next) => {
   try {
-    const { name, kannadaName, phone, village, craftSpecialty, bio, yearsOfExperience, profileImage } = req.body;
-    if (!name || !phone || !village || !craftSpecialty) {
+    const { name, kannadaName, phone, village, craftSpecialty, bio, yearsOfExperience, profileImage, firstName, lastName } = req.body;
+    const resolvedName = name || `${firstName || ''} ${lastName || ''}`.trim() || firstName || '';
+    if (!resolvedName || !phone || !village || !craftSpecialty) {
       return res.status(400).json({
         success: false,
-        error: { message: 'Name, phone, village, and craftSpecialty are required.', statusCode: 400 }
+        error: { message: 'First Name/Name, phone, village, and craftSpecialty are required.', statusCode: 400 }
       });
     }
 
@@ -191,8 +192,10 @@ router.post('/', async (req, res, next) => {
     }
 
     const newArtisan = await Artisan.create({
-      name,
-      kannadaName: kannadaName || '',
+      name: resolvedName,
+      firstName: firstName || '',
+      lastName: lastName || '',
+      kannadaName: kannadaName || lastName || '',
       phone,
       village,
       craftSpecialty,
