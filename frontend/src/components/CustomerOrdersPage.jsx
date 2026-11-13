@@ -275,6 +275,10 @@ export default function CustomerOrdersPage() {
             const isDelivered = order.orderStatus === 'Delivered';
             const isCancelled = order.orderStatus === 'Cancelled';
             const isShipped = ['Shipped', 'Out for delivery', 'Delivered'].includes(order.orderStatus);
+            const isCod = (order.paymentMethod || '').toLowerCase().includes('cod') || 
+                          (order.paymentMethod || '').toLowerCase().includes('cash on delivery') ||
+                          (order.paymentStatus || '').toLowerCase().includes('unpaid') ||
+                          (order.paymentStatus || '').toLowerCase().includes('delivery');
 
             return (
               <div 
@@ -307,12 +311,20 @@ export default function CustomerOrdersPage() {
                   </div>
 
                   <div className="sm:text-right">
-                    <span className="text-[11px] text-stone-500 block">Total Paid:</span>
-                    <span className="font-serif text-lg sm:text-xl font-bold text-indigo-950">
+                    <span className="text-[11px] text-stone-500 block">
+                      {isCod && !isDelivered ? 'Payable on Delivery:' : 'Total Amount Paid:'}
+                    </span>
+                    <span className={`font-serif text-lg sm:text-xl font-bold ${
+                      isCod && !isDelivered ? 'text-amber-800' : 'text-indigo-950'
+                    }`}>
                       {formatINR(order.totalAmount)}
                     </span>
-                    <span className="text-[10px] text-emerald-700 font-semibold block">
-                      ✓ Direct Artisan Escrow Guaranteed
+                    <span className={`text-[10px] font-semibold block ${
+                      isCod && !isDelivered ? 'text-amber-700' : 'text-emerald-700'
+                    }`}>
+                      {isCod && !isDelivered 
+                        ? '⏳ Cash / UPI at Doorstep' 
+                        : '✓ Direct Artisan Escrow Guaranteed'}
                     </span>
                   </div>
                 </div>

@@ -288,6 +288,9 @@ const OrderModel = {
     estDate.setDate(estDate.getDate() + 7);
     const defaultEstDelivery = estDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
 
+    const isCod = (data.paymentMethod || '').toLowerCase().includes('cash on delivery') || (data.paymentMethod || '').toLowerCase().includes('cod');
+    const defaultPaymentStatus = isCod ? 'Unpaid - Cash on Delivery' : 'Paid - Mock';
+
     const item = {
       id: data.id || generateId('order'),
       orderNumber: data.orderNumber || orderNum,
@@ -303,7 +306,7 @@ const OrderModel = {
       })),
       totalAmount: Number(data.totalAmount),
       paymentMethod: data.paymentMethod || 'Mock UPI (GPay / PhonePe)',
-      paymentStatus: data.paymentStatus || 'Paid - Mock',
+      paymentStatus: data.paymentStatus || defaultPaymentStatus,
       orderStatus: initialStatus,
       courier: data.courier || '',
       trackingNumber: data.trackingNumber || '',

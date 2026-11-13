@@ -56,7 +56,7 @@
       "title": "Kasuti Temple Gopuram Handwoven Ilkal Saree",
       "category": "Kasuti Embroidery",
       "price": 4850,
-      "stockQuantity": 5,
+      "stockQuantity": 3,
       "images": [
         "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80",
         "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=900&q=80",
@@ -182,7 +182,7 @@
       "title": "Carved Coconut Shell & Brass Accent Oil Diya",
       "category": "Coastal Wood & Shell",
       "price": 950,
-      "stockQuantity": 15,
+      "stockQuantity": 14,
       "images": [
         "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=80",
         "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80",
@@ -2374,6 +2374,105 @@
         }
       ],
       "createdAt": "2026-11-08T10:00:00.000Z"
+    },
+    {
+      "id": "order_1794601941855_1eg7fk",
+      "orderNumber": "KK-2026-5739",
+      "buyerName": "Vikram Hegde",
+      "buyerPhone": "+91 99887 76655",
+      "shippingAddress": "15, Malleshwaram 8th Cross, Bengaluru 560003, PIN: 560038",
+      "items": [
+        {
+          "productId": "prod_kasuti_saree",
+          "title": "Kasuti Temple Gopuram Handwoven Ilkal Saree",
+          "quantity": 1,
+          "priceAtPurchase": 4850,
+          "image": ""
+        }
+      ],
+      "totalAmount": 4850,
+      "paymentMethod": "Cash on Delivery (COD)",
+      "paymentStatus": "Paid - Mock",
+      "orderStatus": "Placed",
+      "courier": "",
+      "trackingNumber": "",
+      "estimatedDeliveryDate": "21 Nov 2026",
+      "statusHistory": [
+        {
+          "status": "Placed",
+          "timestamp": "2026-11-13T20:32:21.854Z",
+          "note": "Order placed via Cash on Delivery (COD). Awaiting artisan review.",
+          "updatedBy": "Buyer"
+        }
+      ],
+      "createdAt": "2026-11-13T20:32:21.854Z",
+      "updatedAt": "2026-11-13T20:32:21.854Z"
+    },
+    {
+      "id": "order_1794602410765_zjhunq",
+      "orderNumber": "KK-2026-2811",
+      "buyerName": "Ramesh Hegde",
+      "buyerPhone": "+91 94481 22334",
+      "shippingAddress": "Kuvempu Nagar, Mysuru, Karnataka, PIN: 570023",
+      "items": [
+        {
+          "productId": "prod_coastal_diya",
+          "title": "Carved Coconut Shell & Brass Accent Oil Diya",
+          "quantity": 1,
+          "priceAtPurchase": 950,
+          "image": ""
+        }
+      ],
+      "totalAmount": 950,
+      "paymentMethod": "Cash on Delivery (COD)",
+      "paymentStatus": "Pending (Cash on Delivery)",
+      "orderStatus": "Placed",
+      "courier": "",
+      "trackingNumber": "",
+      "estimatedDeliveryDate": "21 Nov 2026",
+      "statusHistory": [
+        {
+          "status": "Placed",
+          "timestamp": "2026-11-13T20:40:10.759Z",
+          "note": "Order confirmed with Cash on Delivery. ₹950 payable at doorstep upon delivery.",
+          "updatedBy": "Buyer"
+        }
+      ],
+      "createdAt": "2026-11-13T20:40:10.765Z",
+      "updatedAt": "2026-11-13T20:40:10.765Z"
+    },
+    {
+      "id": "order_1794602665981_3rxc7e",
+      "orderNumber": "KK-2026-7807",
+      "buyerName": "Ananya Rao",
+      "buyerPhone": "+91 98801 23456",
+      "shippingAddress": "Flat 402, Shanthi Enclave, Indiranagar, Bengaluru, Karnataka, PIN: 560038",
+      "items": [
+        {
+          "productId": "prod_kasuti_saree",
+          "title": "Kasuti Temple Gopuram Handwoven Ilkal Saree",
+          "quantity": 1,
+          "priceAtPurchase": 4850,
+          "image": ""
+        }
+      ],
+      "totalAmount": 4850,
+      "paymentMethod": "Cash on Delivery (COD)",
+      "paymentStatus": "Pending (Cash on Delivery)",
+      "orderStatus": "Placed",
+      "courier": "",
+      "trackingNumber": "",
+      "estimatedDeliveryDate": "21 Nov 2026",
+      "statusHistory": [
+        {
+          "status": "Placed",
+          "timestamp": "2026-11-13T20:44:25.980Z",
+          "note": "Order confirmed with Cash on Delivery. ₹4850 payable at doorstep upon delivery.",
+          "updatedBy": "Buyer"
+        }
+      ],
+      "createdAt": "2026-11-13T20:44:25.980Z",
+      "updatedAt": "2026-11-13T20:44:25.980Z"
     }
   ]
 }

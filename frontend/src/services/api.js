@@ -538,7 +538,9 @@ export const api = {
       })),
       totalAmount: orderPayload.totalAmount,
       paymentMethod: orderPayload.paymentMethod || 'Mock UPI',
-      paymentStatus: 'Paid - Mock',
+      paymentStatus: (orderPayload.paymentMethod || '').toLowerCase().includes('cod') || (orderPayload.paymentMethod || '').toLowerCase().includes('cash on delivery')
+        ? 'Pending (Cash on Delivery)'
+        : 'Paid - Mock UPI',
       orderStatus: 'Placed',
       courier: 'Pending Courier Allocation',
       trackingNumber: 'Pending',
@@ -547,7 +549,9 @@ export const api = {
         {
           status: 'Placed',
           timestamp: new Date().toISOString(),
-          note: `Order placed successfully via ${orderPayload.paymentMethod || 'Mock UPI'}. Awaiting artisan acceptance.`,
+          note: (orderPayload.paymentMethod || '').toLowerCase().includes('cod') || (orderPayload.paymentMethod || '').toLowerCase().includes('cash on delivery')
+            ? `Order confirmed with Cash on Delivery. ₹${orderPayload.totalAmount} payable upon doorstep arrival.`
+            : `Order placed successfully via ${orderPayload.paymentMethod || 'Mock UPI'}. Awaiting artisan acceptance.`,
           updatedBy: 'Buyer'
         }
       ],
@@ -557,14 +561,22 @@ export const api = {
     const currentOrders = getStoredOrders();
     saveStoredOrders([newOrder, ...currentOrders]);
 
+    const isCod = (orderPayload.paymentMethod || '').toLowerCase().includes('cod') || (orderPayload.paymentMethod || '').toLowerCase().includes('cash on delivery');
+
     const receipt = {
-      transactionId: `TXN-UPI-${Date.now()}-${Math.floor(Math.random() * 8999 + 1000)}`,
-      paymentGateway: 'KaraKushala Direct Artisan UPI Gateway',
-      paidAmountINR: orderPayload.totalAmount,
-      paymentStatus: 'SUCCESS',
-      paidAt: new Date().toISOString(),
+      transactionId: isCod
+        ? `COD-REF-${Date.now().toString().slice(-6)}`
+        : `UPI-UTR-${Date.now().toString().slice(-6)}${Math.floor(100000 + Math.random() * 900000)}`,
+      paymentGateway: isCod
+        ? 'Cash on Delivery (Doorstep Settlement)'
+        : 'KaraKushala NPCI Direct Artisan UPI Gateway',
+      paidAmountINR: isCod ? 0 : orderPayload.totalAmount,
+      amountDueINR: isCod ? orderPayload.totalAmount : 0,
+      paymentStatus: isCod ? 'PAYMENT DUE ON DELIVERY' : 'SUCCESS - PAID VIA UPI',
+      paidAt: isCod ? null : new Date().toISOString(),
       fairArtisanShareINR: Math.round(orderPayload.totalAmount * 0.88),
-      platformFeeINR: 0
+      platformFeeINR: 0,
+      isCod
     };
 
     return { order: newOrder, receipt };

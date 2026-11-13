@@ -526,10 +526,27 @@ export default function TrackOrderPage() {
                 </p>
               </div>
 
-              <div className="pt-2 flex items-center justify-between text-xs text-stone-500">
-                <span>Payment Mode: <strong>{order.paymentMethod || 'Mock UPI'}</strong></span>
-                <span className="text-emerald-700 font-bold">✓ {order.paymentStatus || 'PAID'}</span>
-              </div>
+              {(() => {
+                const isCod = (order.paymentMethod || '').toLowerCase().includes('cod') ||
+                              (order.paymentMethod || '').toLowerCase().includes('cash on delivery') ||
+                              (order.paymentStatus || '').toLowerCase().includes('unpaid') ||
+                              (order.paymentStatus || '').toLowerCase().includes('delivery');
+                const isDelivered = order.orderStatus === 'Delivered';
+                return (
+                  <div className="pt-2 flex items-center justify-between text-xs text-stone-500">
+                    <span>Payment Mode: <strong>{order.paymentMethod || 'Instant UPI'}</strong></span>
+                    {isCod && !isDelivered ? (
+                      <span className="text-amber-800 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300">
+                        ⏳ Pay on Delivery ({formatINR(order.totalAmount)})
+                      </span>
+                    ) : (
+                      <span className="text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        ✓ {order.paymentStatus || 'PAID'}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Items in this Order */}
