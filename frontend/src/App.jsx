@@ -10,6 +10,8 @@ import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import ArtisanDashboard from './components/ArtisanDashboard';
 import ArtisanLoginModal from './components/ArtisanLoginModal';
+import UserLoginModal from './components/UserLoginModal';
+import WelcomeRoleModal from './components/WelcomeRoleModal';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic } from 'lucide-react';
 
 export default function App() {
@@ -235,6 +237,8 @@ export default function App() {
       <CartDrawer />
       <CheckoutModal />
       <ArtisanLoginModal />
+      <UserLoginModal />
+      <WelcomeRoleModal />
 
       {/* Toast Notification Container */}
       {toast && (

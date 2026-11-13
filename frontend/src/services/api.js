@@ -1,4 +1,4 @@
-import { MOCK_PRODUCTS, MOCK_ARTISANS, MOCK_ORDERS } from '../data/mockData';
+import { MOCK_PRODUCTS, MOCK_ARTISANS, MOCK_ORDERS, MOCK_BUYERS } from '../data/mockData';
 
 const BASE_URL = '/api';
 
@@ -286,6 +286,95 @@ export const api = {
         message: 'Artisan profile registered successfully!',
         token: `artisan_jwt_${newArtisan.id}_${Date.now()}`,
         data: newArtisan
+      };
+    }
+  },
+
+  // --- BUYER / USER AUTHENTICATION METHODS ---
+  async sendUserOtp(phone) {
+    try {
+      const res = await fetch(`${BASE_URL}/users/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Failed to send OTP to mobile number');
+      return json;
+    } catch (err) {
+      const cleanInput = phone.toString().replace(/\D/g, '').slice(-10);
+      const match = MOCK_BUYERS.find(b => b.phone.replace(/\D/g, '').slice(-10) === cleanInput);
+      return {
+        success: true,
+        message: `OTP sent successfully to registered mobile ${phone}.`,
+        demoOtp: '1234',
+        data: match || null
+      };
+    }
+  },
+
+  async loginUserWithPhone({ phone, otp, name }) {
+    try {
+      const res = await fetch(`${BASE_URL}/users/phone-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp, name })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Buyer login failed');
+      return json;
+    } catch (err) {
+      const cleanInput = phone.toString().replace(/\D/g, '').slice(-10);
+      let buyer = MOCK_BUYERS.find(b => b.phone.replace(/\D/g, '').slice(-10) === cleanInput);
+      if (!buyer) {
+        buyer = {
+          id: `buyer_${Date.now()}`,
+          name: name || `Craft Buyer (${cleanInput.slice(-4)})`,
+          phone: `+91 ${cleanInput}`,
+          email: `${cleanInput}@buyer.karakushala.in`,
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+          city: 'Karnataka, India',
+          address: 'Bengaluru, Karnataka'
+        };
+      }
+      return {
+        success: true,
+        message: `Welcome, ${buyer.name}!`,
+        token: `user_jwt_${buyer.id}_${Date.now()}`,
+        data: buyer
+      };
+    }
+  },
+
+  async loginUserWithGoogle(googleData = {}) {
+    try {
+      const res = await fetch(`${BASE_URL}/users/google-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(googleData)
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Google login failed');
+      return json;
+    } catch (err) {
+      const email = googleData.email || 'ananya.rao@gmail.com';
+      let buyer = MOCK_BUYERS.find(b => b.email.toLowerCase() === email.toLowerCase());
+      if (!buyer) {
+        buyer = {
+          id: `buyer_google_${Date.now()}`,
+          name: googleData.name || (email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)),
+          email,
+          phone: googleData.phone || '+91 98801 23456',
+          avatar: googleData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+          city: 'Bengaluru, Karnataka',
+          address: 'Indiranagar, Bengaluru, Karnataka - 560038'
+        };
+      }
+      return {
+        success: true,
+        message: `Welcome, ${buyer.name}! Signed in with Google.`,
+        token: `google_jwt_${buyer.id}_${Date.now()}`,
+        data: buyer
       };
     }
   },

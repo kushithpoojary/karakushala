@@ -1,3 +1,26 @@
+export const MOCK_BUYERS = [
+  {
+    id: 'user_demo_1',
+    name: 'Ananya Rao',
+    kannadaName: 'ಅನನ್ಯಾ ರಾವ್',
+    email: 'ananya.rao@gmail.com',
+    phone: '+91 98801 23456',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    city: 'Bengaluru, Karnataka',
+    address: 'Flat 402, Shanthi Enclave, 12th Main, Indiranagar, Bengaluru - 560038'
+  },
+  {
+    id: 'user_demo_2',
+    name: 'Vikram Hegde',
+    kannadaName: 'ವಿಕ್ರಮ್ ಹೆಗ್ಡೆ',
+    email: 'vikram.hegde@gmail.com',
+    phone: '+91 99887 76655',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    city: 'Mysuru, Karnataka',
+    address: '15, Malleshwaram 8th Cross, Bengaluru 560003'
+  }
+];
+
 export const MOCK_ARTISANS = [
   {
     id: 'artisan_kasuti_1',

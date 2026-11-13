@@ -7,6 +7,16 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const recognitionRef = useRef(null);
+  const onSearchChangeRef = useRef(onSearchChange);
+  const showToastRef = useRef(showToast);
+
+  useEffect(() => {
+    onSearchChangeRef.current = onSearchChange;
+  }, [onSearchChange]);
+
+  useEffect(() => {
+    showToastRef.current = showToast;
+  }, [showToast]);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -25,8 +35,8 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
         const transcript = event.results[0][0].transcript;
         if (transcript) {
           const clean = transcript.replace(/[.,!?]/g, '').trim();
-          onSearchChange(clean);
-          showToast(`🎙️ Heard: "${clean}"`, 'success');
+          onSearchChangeRef.current?.(clean);
+          showToastRef.current?.(`🎙️ Heard: "${clean}"`, 'success');
 
           // Audio confirmation
           if ('speechSynthesis' in window) {

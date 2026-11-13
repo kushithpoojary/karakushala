@@ -7,6 +7,7 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const productRoutes = require('./routes/productRoutes');
 const artisanRoutes = require('./routes/artisanRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -73,6 +74,7 @@ app.get('/api', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/artisans', artisanRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes);
 
 // SPA Fallback for client-side routing
 app.get('*', (req, res, next) => {

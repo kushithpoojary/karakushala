@@ -16,8 +16,28 @@ export function AppProvider({ children }) {
     return null;
   });
 
-  // Artisan Login Modal open/close state
+  // Currently logged-in buyer/user profile (persisted in localStorage)
+  const [activeUser, setActiveUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('karakushala_active_user');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+  });
+
+  // Welcome Role Selector modal open state (shows automatically when opening website if role not yet chosen)
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(() => {
+    try {
+      const chosen = sessionStorage.getItem('karakushala_role_chosen');
+      return !chosen;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  // Modals open/close state
   const [isArtisanLoginModalOpen, setIsArtisanLoginModalOpen] = useState(false);
+  const [isUserLoginModalOpen, setIsUserLoginModalOpen] = useState(false);
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState(() => {
@@ -160,6 +180,45 @@ export function AppProvider({ children }) {
 
   const isArtisanLoggedIn = Boolean(activeArtisan);
 
+  // User / Buyer Authentication handlers
+  const openUserLogin = () => setIsUserLoginModalOpen(true);
+  const closeUserLogin = () => setIsUserLoginModalOpen(false);
+
+  const loginUser = (user, token = null) => {
+    setActiveUser(user);
+    try {
+      localStorage.setItem('karakushala_active_user', JSON.stringify(user));
+      if (token) {
+        localStorage.setItem('karakushala_user_token', token);
+      }
+    } catch (e) {}
+    setIsUserLoginModalOpen(false);
+    showToast(`Welcome back, ${user.name}! Signed in successfully.`, 'success');
+  };
+
+  const logoutUser = () => {
+    setActiveUser(null);
+    try {
+      localStorage.removeItem('karakushala_active_user');
+      localStorage.removeItem('karakushala_user_token');
+    } catch (e) {}
+    showToast('Signed out of Buyer account', 'info');
+  };
+
+  const isUserLoggedIn = Boolean(activeUser);
+
+  // Welcome Role selection handlers
+  const openWelcomeModal = () => setIsWelcomeModalOpen(true);
+  const closeWelcomeModal = () => setIsWelcomeModalOpen(false);
+
+  const selectRole = (role) => {
+    try {
+      sessionStorage.setItem('karakushala_role_chosen', role);
+    } catch (e) {}
+    setIsWelcomeModalOpen(false);
+    setViewMode(role);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -175,6 +234,20 @@ export function AppProvider({ children }) {
         loginArtisan,
         logoutArtisan,
         switchArtisan,
+        activeUser,
+        setActiveUser,
+        isUserLoggedIn,
+        isUserLoginModalOpen,
+        setIsUserLoginModalOpen,
+        openUserLogin,
+        closeUserLogin,
+        loginUser,
+        logoutUser,
+        isWelcomeModalOpen,
+        setIsWelcomeModalOpen,
+        openWelcomeModal,
+        closeWelcomeModal,
+        selectRole,
         cart,
         cartCount,
         cartSubtotal,

@@ -334,21 +334,28 @@ export default function ArtisanLoginModal() {
                 // Step 1: Enter Phone Number
                 <form onSubmit={handleSendOtp} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
-                      ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ • Registered Mobile Number
+                    <label 
+                      htmlFor="artisan-phone-input"
+                      className="block text-xs font-bold text-stone-700 uppercase tracking-wider cursor-pointer"
+                    >
+                      ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ • Registered Mobile Number *
                     </label>
-                    <div className="relative flex items-center">
-                      <div className="absolute left-3.5 flex items-center gap-1.5 pointer-events-none text-stone-600 font-bold text-sm border-r border-cream-300 pr-2">
+                    <div 
+                      onClick={() => document.getElementById('artisan-phone-input')?.focus()}
+                      className="flex items-center w-full rounded-2xl border-2 border-cream-300 bg-cream-50 hover:border-terracotta-300 focus-within:border-terracotta-500 focus-within:ring-2 focus-within:ring-terracotta-500/20 focus-within:bg-white transition-all shadow-inner overflow-hidden cursor-text"
+                    >
+                      <div className="flex items-center gap-1.5 px-3.5 py-3.5 bg-cream-200/80 border-r border-cream-300 text-stone-800 font-bold text-sm shrink-0 select-none">
                         <span>🇮🇳</span>
                         <span>+91</span>
                       </div>
                       <input
+                        id="artisan-phone-input"
                         type="tel"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder="98451 23450"
                         maxLength={14}
-                        className="w-full pl-22 pr-4 py-3.5 bg-cream-50 border border-cream-300 rounded-2xl text-stone-900 font-semibold text-base focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all shadow-inner"
+                        className="flex-1 min-w-0 px-4 py-3.5 bg-transparent border-0 text-stone-900 font-semibold text-base focus:outline-none focus:ring-0 placeholder:text-stone-400"
                         autoFocus
                       />
                     </div>
@@ -505,7 +512,7 @@ export default function ArtisanLoginModal() {
                       <img
                         src={artisan.profileImage}
                         alt={artisan.name}
-                        className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
+                        className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
                       />
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
@@ -537,7 +544,7 @@ export default function ArtisanLoginModal() {
                       type="button"
                       disabled={loading}
                       onClick={() => handleQuickLogin(artisan)}
-                      className="px-4 py-2.5 bg-indigo-900 hover:bg-terracotta-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all group-hover:scale-102 shrink-0 touch-target"
+                      className="px-4 py-2.5 bg-indigo-900 hover:bg-terracotta-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all group-hover:scale-[1.02] shrink-0 touch-target"
                     >
                       <span>Login as {artisan.name.split(' ')[0]}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -590,17 +597,27 @@ export default function ArtisanLoginModal() {
 
                 {/* Mobile Number */}
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
+                  <label htmlFor="artisan-reg-phone" className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider cursor-pointer">
                     Mobile Phone (ಮೊಬೈಲ್) *
                   </label>
-                  <input
-                    type="tel"
-                    required
-                    value={regForm.phone}
-                    onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
-                    placeholder="98765 43210"
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
-                  />
+                  <div
+                    onClick={() => document.getElementById('artisan-reg-phone')?.focus()}
+                    className="flex items-center w-full rounded-xl border border-cream-300 bg-cream-50 focus-within:ring-2 focus-within:ring-terracotta-500 focus-within:bg-white overflow-hidden shadow-inner cursor-text"
+                  >
+                    <div className="flex items-center gap-1 px-3 py-2.5 bg-cream-200/80 border-r border-cream-300 text-stone-800 font-bold text-xs shrink-0 select-none">
+                      <span>🇮🇳</span>
+                      <span>+91</span>
+                    </div>
+                    <input
+                      id="artisan-reg-phone"
+                      type="tel"
+                      required
+                      value={regForm.phone}
+                      onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
+                      placeholder="98765 43210"
+                      className="flex-1 min-w-0 px-3.5 py-2.5 bg-transparent border-0 text-xs sm:text-sm font-semibold text-stone-900 focus:outline-none focus:ring-0"
+                    />
+                  </div>
                 </div>
 
                 {/* Craft Specialty */}

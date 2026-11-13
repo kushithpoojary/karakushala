@@ -118,21 +118,24 @@ export default function GuidedListingForm({ onProductCreated }) {
           recordedValue = 'Coastal Wood & Shell';
         }
         break;
-      case 'price':
+      case 'price': {
         const parsedPrice = parseNumberFromSpeech(clean);
         setPrice(parsedPrice);
         recordedValue = `₹${parsedPrice}`;
         break;
-      case 'stockQuantity':
+      }
+      case 'stockQuantity': {
         const parsedStock = parseNumberFromSpeech(clean);
         setStockQuantity(parsedStock);
         recordedValue = `${parsedStock} units`;
         break;
-      case 'hoursSpent':
+      }
+      case 'hoursSpent': {
         const parsedHours = parseNumberFromSpeech(clean);
         setHoursSpent(parsedHours);
         recordedValue = `${parsedHours} hours`;
         break;
+      }
       case 'provenanceLocation':
         setProvenanceLocation(clean);
         break;

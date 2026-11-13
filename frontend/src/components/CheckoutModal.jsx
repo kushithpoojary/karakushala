@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
-import { X, CheckCircle, QrCode, ShieldCheck, Truck, ArrowRight, Sparkles, Copy, Check, HeartHandshake } from 'lucide-react';
+import { X, CheckCircle, QrCode, ShieldCheck, Truck, ArrowRight, Sparkles, Copy, Check, HeartHandshake, User } from 'lucide-react';
 
 export default function CheckoutModal() {
   const {
@@ -12,17 +12,26 @@ export default function CheckoutModal() {
     clearCart,
     formatINR,
     showToast,
-    setLatestOrderReceipt
+    setLatestOrderReceipt,
+    activeUser
   } = useApp();
 
-  const [buyerName, setBuyerName] = useState('Vikram Hegde');
-  const [buyerPhone, setBuyerPhone] = useState('+91 98450 11223');
-  const [shippingAddress, setShippingAddress] = useState('Flat 4B, Cauvery Nilaya, Malleshwaram 7th Cross, Bengaluru, Karnataka');
-  const [pinCode, setPinCode] = useState('560003');
+  const [buyerName, setBuyerName] = useState('Ananya Rao');
+  const [buyerPhone, setBuyerPhone] = useState('+91 98801 23456');
+  const [shippingAddress, setShippingAddress] = useState('Flat 402, Shanthi Enclave, Indiranagar, Bengaluru, Karnataka');
+  const [pinCode, setPinCode] = useState('560038');
   const [paymentMethod, setPaymentMethod] = useState('UPI'); // 'UPI' or 'COD'
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrderData, setCompletedOrderData] = useState(null);
   const [copiedTxn, setCopiedTxn] = useState(false);
+
+  useEffect(() => {
+    if (activeUser) {
+      if (activeUser.name) setBuyerName(activeUser.name);
+      if (activeUser.phone) setBuyerPhone(activeUser.phone);
+      if (activeUser.address) setShippingAddress(activeUser.address);
+    }
+  }, [activeUser, isCheckoutOpen]);
 
   if (!isCheckoutOpen) return null;
 
