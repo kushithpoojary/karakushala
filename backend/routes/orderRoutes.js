@@ -109,6 +109,10 @@ router.post('/', async (req, res, next) => {
     const totalAmount = Number(req.body.totalAmount) || calculatedTotal;
     const orderNumber = `KK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
+    const estDate = new Date();
+    estDate.setDate(estDate.getDate() + 7);
+    const estDeliveryStr = estDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+
     const newOrder = await Order.create({
       orderNumber,
       buyerName: buyerName.trim(),
@@ -118,7 +122,16 @@ router.post('/', async (req, res, next) => {
       totalAmount,
       paymentMethod: paymentMethod || 'Mock UPI (GPay / PhonePe / Paytm)',
       paymentStatus: 'Paid - Mock',
-      orderStatus: 'Accepted', // Default accepted and routed to artisan
+      orderStatus: 'Placed',
+      estimatedDeliveryDate: estDeliveryStr,
+      statusHistory: [
+        {
+          status: 'Placed',
+          timestamp: new Date().toISOString(),
+          note: `Order placed via ${paymentMethod || 'Mock UPI'}. Awaiting artisan review.`,
+          updatedBy: 'Buyer'
+        }
+      ],
       createdAt: new Date().toISOString()
     });
 
@@ -146,18 +159,37 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// PATCH /api/orders/:id/status — Allow the artisan to update order status (Accepted -> Shipped -> Delivered)
+// PATCH /api/orders/:id/status — Allow the artisan to update order status (Placed -> Confirmed -> Being crafted -> Packed -> Shipped -> Out for delivery -> Delivered / Cancelled)
 router.patch('/:id/status', async (req, res, next) => {
   try {
-    const { status } = req.body;
+    const { status, courier, trackingNumber, estimatedDeliveryDate, note, updatedBy } = req.body;
     if (!status) {
       return res.status(400).json({
         success: false,
-        error: { message: 'Status field is required (Accepted, Shipped, or Delivered).', statusCode: 400 }
+        error: { message: 'Status field is required (Placed, Confirmed, Being crafted, Packed, Shipped, Out for delivery, Delivered, Cancelled).', statusCode: 400 }
       });
     }
 
-    const updatedOrder = await Order.findByIdAndUpdateStatus(req.params.id, status);
+    if (status.toLowerCase() === 'shipped') {
+      if (!courier || !courier.trim() || !trackingNumber || !trackingNumber.trim()) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            message: 'Courier partner and tracking number are strictly required when marking an order as Shipped.',
+            statusCode: 400
+          }
+        });
+      }
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdateStatus(req.params.id, status, {
+      courier,
+      trackingNumber,
+      estimatedDeliveryDate,
+      note,
+      updatedBy
+    });
+
     if (!updatedOrder) {
       return res.status(404).json({
         success: false,

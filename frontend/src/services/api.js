@@ -31,8 +31,14 @@ function saveStoredProducts(products) {
 function getStoredOrders() {
   try {
     const raw = localStorage.getItem(STORAGE_ORDERS_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length >= MOCK_ORDERS.length && parsed[0]?.statusHistory) {
+        return parsed;
+      }
+    }
   } catch (e) {}
+  saveStoredOrders(MOCK_ORDERS);
   return [...MOCK_ORDERS];
 }
 
@@ -432,6 +438,53 @@ export const api = {
     };
   },
 
+  // GET /api/orders
+  async getOrders(params = {}) {
+    try {
+      const query = new URLSearchParams();
+      if (params.orderStatus) query.append('orderStatus', params.orderStatus);
+      if (params.buyerPhone) query.append('buyerPhone', params.buyerPhone);
+
+      const url = `${BASE_URL}/orders${query.toString() ? '?' + query.toString() : ''}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          saveStoredOrders(json.data);
+          return json.data;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend /api/orders fallback:', err.message);
+    }
+
+    let list = getStoredOrders();
+    if (params.orderStatus) {
+      list = list.filter(o => o.orderStatus?.toLowerCase() === params.orderStatus.toLowerCase());
+    }
+    if (params.buyerPhone) {
+      const clean = params.buyerPhone.replace(/\D/g, '').slice(-10);
+      list = list.filter(o => o.buyerPhone?.replace(/\D/g, '').slice(-10) === clean);
+    }
+    return list;
+  },
+
+  // GET /api/orders/:id
+  async getOrderById(id) {
+    try {
+      const res = await fetch(`${BASE_URL}/orders/${id}`, { headers: { 'Accept': 'application/json' } });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) return json.data;
+      }
+    } catch (err) {
+      console.warn('Backend /api/orders/:id fallback:', err.message);
+    }
+
+    const list = getStoredOrders();
+    return list.find(o => o.id === id || o.orderNumber === id) || null;
+  },
+
   // POST /api/orders
   async createOrder(orderPayload) {
     try {
@@ -466,6 +519,10 @@ export const api = {
     }
     saveStoredProducts(products);
 
+    const estDate = new Date();
+    estDate.setDate(estDate.getDate() + 7);
+    const estDeliveryStr = estDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+
     const newOrder = {
       id: `order_${Date.now()}`,
       orderNumber,
@@ -476,12 +533,24 @@ export const api = {
         productId: i.productId || i.id,
         title: i.title,
         quantity: i.quantity || 1,
-        priceAtPurchase: i.priceAtPurchase || i.price
+        priceAtPurchase: i.priceAtPurchase || i.price,
+        image: i.image || i.imageUrl || ''
       })),
       totalAmount: orderPayload.totalAmount,
       paymentMethod: orderPayload.paymentMethod || 'Mock UPI',
       paymentStatus: 'Paid - Mock',
-      orderStatus: 'Accepted',
+      orderStatus: 'Placed',
+      courier: 'Pending Courier Allocation',
+      trackingNumber: 'Pending',
+      estimatedDeliveryDate: estDeliveryStr,
+      statusHistory: [
+        {
+          status: 'Placed',
+          timestamp: new Date().toISOString(),
+          note: `Order placed successfully via ${orderPayload.paymentMethod || 'Mock UPI'}. Awaiting artisan acceptance.`,
+          updatedBy: 'Buyer'
+        }
+      ],
       createdAt: new Date().toISOString()
     };
 
@@ -502,12 +571,19 @@ export const api = {
   },
 
   // PATCH /api/orders/:id/status
-  async updateOrderStatus(orderId, status) {
+  async updateOrderStatus(orderId, status, details = {}) {
+    // If status is Shipped, enforce courier and tracking number
+    if (status.toLowerCase() === 'shipped') {
+      if (!details.courier?.trim() || !details.trackingNumber?.trim()) {
+        throw new Error('Courier partner and tracking number are strictly required when marking an order as Shipped.');
+      }
+    }
+
     try {
       const res = await fetch(`${BASE_URL}/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status, ...details })
       });
       if (res.ok) {
         const json = await res.json();
@@ -520,19 +596,51 @@ export const api = {
           }
           return json.data;
         }
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error?.message) {
+          throw new Error(errJson.error.message);
+        }
       }
     } catch (err) {
+      if (err.message?.includes('required')) throw err;
       console.warn('Backend PATCH /api/orders/:id/status fallback:', err.message);
     }
 
-    // Fallback
+    // Fallback: update local storage
     const orders = getStoredOrders();
     const idx = orders.findIndex(o => o.id === orderId || o.orderNumber === orderId);
     if (idx !== -1) {
-      orders[idx].orderStatus = status;
-      orders[idx].updatedAt = new Date().toISOString();
+      const order = orders[idx];
+      order.orderStatus = status;
+      order.updatedAt = new Date().toISOString();
+      if (details.courier) order.courier = details.courier;
+      if (details.trackingNumber) order.trackingNumber = details.trackingNumber;
+      if (details.estimatedDeliveryDate) order.estimatedDeliveryDate = details.estimatedDeliveryDate;
+
+      if (!order.statusHistory) {
+        order.statusHistory = [{
+          status: 'Placed',
+          timestamp: order.createdAt,
+          note: 'Order initially placed',
+          updatedBy: 'Buyer'
+        }];
+      }
+
+      let note = details.note || `Order status updated to ${status}`;
+      if (status === 'Shipped') note = `Dispatched via ${order.courier}. Tracking: ${order.trackingNumber}`;
+
+      order.statusHistory.push({
+        status,
+        timestamp: new Date().toISOString(),
+        note,
+        updatedBy: details.updatedBy || 'Artisan',
+        courier: order.courier || '',
+        trackingNumber: order.trackingNumber || ''
+      });
+
       saveStoredOrders(orders);
-      return orders[idx];
+      return order;
     }
     throw new Error('Order not found in state');
   }

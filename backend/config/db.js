@@ -260,7 +260,7 @@ const OrderModel = {
 
     const ordersForArtisan = [];
     for (const order of dbCache.orders) {
-      const matchingItems = order.items.filter(item => artisanProdIds.has(item.productId));
+      const matchingItems = (order.items || []).filter(item => artisanProdIds.has(item.productId));
       if (matchingItems.length > 0) {
         ordersForArtisan.push({
           ...order,
@@ -280,6 +280,14 @@ const OrderModel = {
 
   create: async (data) => {
     const orderNum = `KK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const nowIso = data.createdAt || new Date().toISOString();
+    const initialStatus = data.orderStatus || 'Placed';
+
+    // Calculate estimated delivery: 7 days from now
+    const estDate = new Date();
+    estDate.setDate(estDate.getDate() + 7);
+    const defaultEstDelivery = estDate.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+
     const item = {
       id: data.id || generateId('order'),
       orderNumber: data.orderNumber || orderNum,
@@ -290,13 +298,26 @@ const OrderModel = {
         productId: i.productId,
         title: i.title,
         quantity: Number(i.quantity) || 1,
-        priceAtPurchase: Number(i.priceAtPurchase || i.price)
+        priceAtPurchase: Number(i.priceAtPurchase || i.price),
+        image: i.image || i.imageUrl || ''
       })),
       totalAmount: Number(data.totalAmount),
       paymentMethod: data.paymentMethod || 'Mock UPI (GPay / PhonePe)',
       paymentStatus: data.paymentStatus || 'Paid - Mock',
-      orderStatus: data.orderStatus || 'Accepted', // Enum: 'Pending', 'Accepted', 'Shipped', 'Delivered'
-      createdAt: data.createdAt || new Date().toISOString()
+      orderStatus: initialStatus,
+      courier: data.courier || '',
+      trackingNumber: data.trackingNumber || '',
+      estimatedDeliveryDate: data.estimatedDeliveryDate || defaultEstDelivery,
+      statusHistory: data.statusHistory || [
+        {
+          status: initialStatus,
+          timestamp: nowIso,
+          note: 'Order placed successfully by buyer',
+          updatedBy: 'Buyer'
+        }
+      ],
+      createdAt: nowIso,
+      updatedAt: nowIso
     };
 
     dbCache.orders.push(item);
@@ -304,18 +325,76 @@ const OrderModel = {
     return item;
   },
 
-  findByIdAndUpdateStatus: async (id, newStatus) => {
-    const validStatuses = ['Pending', 'Accepted', 'Shipped', 'Delivered'];
-    const matchedStatus = validStatuses.find(s => s.toLowerCase() === newStatus.toLowerCase());
+  findByIdAndUpdateStatus: async (id, newStatus, extra = {}) => {
+    const validStatuses = [
+      'Placed',
+      'Confirmed',
+      'Being crafted',
+      'Packed',
+      'Shipped',
+      'Out for delivery',
+      'Delivered',
+      'Cancelled'
+    ];
+    // Also support legacy aliases gracefully
+    let normalized = newStatus;
+    if (newStatus.toLowerCase() === 'accepted' || newStatus.toLowerCase() === 'pending') {
+      normalized = 'Confirmed';
+    }
+
+    const matchedStatus = validStatuses.find(s => s.toLowerCase() === normalized.toLowerCase());
     if (!matchedStatus) {
       throw new Error(`Invalid status "${newStatus}". Must be one of: ${validStatuses.join(', ')}`);
+    }
+
+    // Require courier and tracking number when marking Shipped
+    if (matchedStatus === 'Shipped') {
+      if (!extra.courier || !extra.courier.trim() || !extra.trackingNumber || !extra.trackingNumber.trim()) {
+        throw new Error('Courier partner and tracking number are strictly required when marking an order as Shipped.');
+      }
     }
 
     const idx = dbCache.orders.findIndex(o => o.id === id || o._id === id || o.orderNumber === id);
     if (idx === -1) return null;
 
-    dbCache.orders[idx].orderStatus = matchedStatus;
-    dbCache.orders[idx].updatedAt = new Date().toISOString();
+    const order = dbCache.orders[idx];
+    order.orderStatus = matchedStatus;
+    order.updatedAt = new Date().toISOString();
+
+    if (extra.courier) order.courier = extra.courier.trim();
+    if (extra.trackingNumber) order.trackingNumber = extra.trackingNumber.trim();
+    if (extra.estimatedDeliveryDate) order.estimatedDeliveryDate = extra.estimatedDeliveryDate.trim();
+
+    if (!Array.isArray(order.statusHistory)) {
+      order.statusHistory = [
+        {
+          status: 'Placed',
+          timestamp: order.createdAt || new Date().toISOString(),
+          note: 'Order initially placed',
+          updatedBy: 'Buyer'
+        }
+      ];
+    }
+
+    // Note generation per status
+    let defaultNote = `Order status moved to ${matchedStatus}`;
+    if (matchedStatus === 'Confirmed') defaultNote = 'Artisan confirmed craft specifications and materials';
+    else if (matchedStatus === 'Being crafted') defaultNote = 'Handcrafting and loom work commenced at Karnataka artisan cluster';
+    else if (matchedStatus === 'Packed') defaultNote = 'Handpacked with protective eco-friendly packaging and Karnataka GI heritage seal';
+    else if (matchedStatus === 'Shipped') defaultNote = `Dispatched via ${order.courier || extra.courier}. Tracking: ${order.trackingNumber || extra.trackingNumber}`;
+    else if (matchedStatus === 'Out for delivery') defaultNote = 'Package arrived at local delivery hub and is out for doorstep delivery';
+    else if (matchedStatus === 'Delivered') defaultNote = 'Package safely delivered to customer. Artisan fair wages settled';
+    else if (matchedStatus === 'Cancelled') defaultNote = extra.note || 'Order cancelled upon request';
+
+    order.statusHistory.push({
+      status: matchedStatus,
+      timestamp: new Date().toISOString(),
+      note: extra.note || defaultNote,
+      updatedBy: extra.updatedBy || 'Artisan',
+      courier: extra.courier || order.courier || '',
+      trackingNumber: extra.trackingNumber || order.trackingNumber || ''
+    });
+
     saveDatabase();
     return dbCache.orders[idx];
   },

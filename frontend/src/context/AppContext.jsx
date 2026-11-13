@@ -50,6 +50,28 @@ export function AppProvider({ children }) {
     }
   });
 
+  // Customer views: 'shop' | 'my-orders' | 'track-order'
+  const [customerView, setCustomerView] = useState('shop');
+  const [trackingOrderId, setTrackingOrderId] = useState(null);
+
+  const navigateToOrders = () => {
+    setViewMode('buyer');
+    setCustomerView('my-orders');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToTrackOrder = (orderId = null) => {
+    setViewMode('buyer');
+    if (orderId) setTrackingOrderId(orderId);
+    setCustomerView('track-order');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToShop = () => {
+    setViewMode('buyer');
+    setCustomerView('shop');
+  };
+
   // UI Modals & Drawers
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -257,6 +279,13 @@ export function AppProvider({ children }) {
         setIsCustomerCareModalOpen,
         openCustomerCare,
         closeCustomerCare,
+        customerView,
+        setCustomerView,
+        trackingOrderId,
+        setTrackingOrderId,
+        navigateToOrders,
+        navigateToTrackOrder,
+        navigateToShop,
         cart,
         cartCount,
         cartSubtotal,

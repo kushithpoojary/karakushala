@@ -1580,48 +1580,7 @@ export const MOCK_PRODUCTS = [
 
 ];
 
-export const MOCK_ORDERS = [
-  {
-    id: 'order_demo_1',
-    orderNumber: 'KK-2026-1082',
-    buyerName: 'Ananya Sharma',
-    buyerPhone: '+91 98201 54321',
-    shippingAddress: '42, Lavelle Road, Shanthala Nagar, Bengaluru, Karnataka 560001',
-    items: [
-      {
-        productId: 'prod_kasuti_saree',
-        title: 'Kasuti Temple Gopuram Handwoven Ilkal Saree',
-        quantity: 1,
-        priceAtPurchase: 4850
-      }
-    ],
-    totalAmount: 4850,
-    paymentMethod: 'Mocked UPI (GPay)',
-    paymentStatus: 'Paid - Mock',
-    orderStatus: 'Accepted',
-    createdAt: new Date(Date.now() - 3600000 * 4).toISOString()
-  },
-  {
-    id: 'order_demo_2',
-    orderNumber: 'KK-2026-9421',
-    buyerName: 'Rohan Iyer',
-    buyerPhone: '+91 97112 33445',
-    shippingAddress: 'Flat 304, Green Palms, Marine Drive, Kochi, Kerala 682011',
-    items: [
-      {
-        productId: 'prod_beedu_lamp',
-        title: 'Coastal Heritage Daiva Shrine Canopy Lamp',
-        quantity: 1,
-        priceAtPurchase: 1850
-      }
-    ],
-    totalAmount: 1850,
-    paymentMethod: 'Mocked UPI (PhonePe)',
-    paymentStatus: 'Paid - Mock',
-    orderStatus: 'Shipped',
-    createdAt: new Date(Date.now() - 3600000 * 26).toISOString()
-  }
-];
+export { ORDER_STATUSES, MOCK_ORDERS } from "./mockOrders";
 
 export const CATEGORIES = [
   'All Crafts',

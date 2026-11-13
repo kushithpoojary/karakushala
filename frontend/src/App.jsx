@@ -13,10 +13,12 @@ import ArtisanLoginModal from './components/ArtisanLoginModal';
 import UserLoginModal from './components/UserLoginModal';
 import WelcomeRoleModal from './components/WelcomeRoleModal';
 import CustomerCareModal from './components/CustomerCareModal';
+import CustomerOrdersPage from './components/CustomerOrdersPage';
+import TrackOrderPage from './components/TrackOrderPage';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
-  const { viewMode, toast, openCustomerCare } = useApp();
+  const { viewMode, customerView, toast, openCustomerCare } = useApp();
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All Crafts');
@@ -109,6 +111,10 @@ export default function App() {
       <main className="flex-1">
         {viewMode === 'artisan' ? (
           <ArtisanDashboard />
+        ) : customerView === 'my-orders' ? (
+          <CustomerOrdersPage />
+        ) : customerView === 'track-order' ? (
+          <TrackOrderPage />
         ) : (
           <div>
             {/* Hero Section */}

@@ -1,12 +1,16 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import VoiceSearchBar from './VoiceSearchBar';
-import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut, User, Compass, Headphones } from 'lucide-react';
+import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut, User, Compass, Headphones, Package } from 'lucide-react';
 
 export default function Navbar({ onSearchChange, searchQuery }) {
   const {
     viewMode,
     setViewMode,
+    customerView,
+    navigateToOrders,
+    navigateToTrackOrder,
+    navigateToShop,
     cartCount,
     setIsCartOpen,
     activeArtisan,
@@ -55,7 +59,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
 
           {/* Logo & Brand Identity */}
           <div
-            onClick={() => setViewMode('buyer')}
+            onClick={navigateToShop}
             className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group shrink-0"
           >
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-terracotta-600 text-white flex items-center justify-center shadow-md shadow-terracotta-600/30 group-hover:scale-105 transition-transform">
@@ -114,12 +118,27 @@ export default function Navbar({ onSearchChange, searchQuery }) {
               <span className="hidden xl:inline text-[10px] text-stone-500 font-normal">(ಸಹಾಯ)</span>
             </button>
 
+            {/* My Orders & Live Tracking Button (Accessible to customers) */}
+            <button
+              onClick={navigateToOrders}
+              title="My Orders & Live Dispatch Tracking (ನನ್ನ ಆರ್ಡರ್‌ಗಳು)"
+              className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full transition-all flex items-center gap-1.5 text-xs font-bold border touch-target shadow-xs ${
+                viewMode === 'buyer' && (customerView === 'my-orders' || customerView === 'track-order')
+                  ? 'bg-amber-100 text-amber-950 border-amber-400 ring-2 ring-amber-300'
+                  : 'bg-cream-200 hover:bg-cream-300 text-stone-700 hover:text-stone-900 border-cream-300'
+              }`}
+            >
+              <Package className="w-4 h-4 text-terracotta-600" />
+              <span>Orders</span>
+              <span className="hidden xl:inline text-[10px] text-stone-500 font-normal">(ಆರ್ಡರ್)</span>
+            </button>
+
             {/* Role Switcher Pill: Buyer vs Artisan Dashboard */}
             <div className="bg-cream-200 p-1 rounded-full flex items-center border border-cream-300">
               <button
-                onClick={() => setViewMode('buyer')}
+                onClick={navigateToShop}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                  viewMode === 'buyer'
+                  viewMode === 'buyer' && customerView === 'shop'
                     ? 'bg-indigo-900 text-white shadow-sm'
                     : 'text-stone-600 hover:text-stone-900'
                 }`}
@@ -165,19 +184,26 @@ export default function Navbar({ onSearchChange, searchQuery }) {
                 <span className="hidden lg:inline text-[10px] text-indigo-800 font-semibold">(ಲಾಗಿನ್)</span>
               </button>
             ) : (
-              <div className="flex items-center gap-2 bg-indigo-50/80 border border-indigo-200 py-1 px-2.5 rounded-full shadow-xs">
+              <div 
+                onClick={navigateToOrders}
+                className="flex items-center gap-2 bg-indigo-50/90 hover:bg-indigo-100/90 border border-indigo-200 py-1 px-2.5 rounded-full shadow-xs cursor-pointer transition-colors group"
+                title="View My Orders (ಆರ್ಡರ್‌ಗಳನ್ನು ನೋಡಿ)"
+              >
                 <img
                   src={activeUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                   alt={activeUser?.name}
                   className="w-6 h-6 rounded-full object-cover border border-indigo-300 shrink-0"
                 />
-                <span className="font-bold text-indigo-950 text-xs truncate max-w-[90px] hidden sm:inline">
+                <span className="font-bold text-indigo-950 text-xs truncate max-w-[90px] hidden sm:inline group-hover:text-terracotta-600 transition-colors">
                   {activeUser?.name?.split(' ')[0]}
                 </span>
                 <button
-                  onClick={logoutUser}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    logoutUser();
+                  }}
                   title="Sign out of Buyer Account (ಖಾತೆಯಿಂದ ನಿರ್ಗಮಿಸಿ)"
-                  className="p-1 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                  className="p-1 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors ml-0.5"
                   aria-label="Logout user"
                 >
                   <LogOut className="w-3.5 h-3.5" />

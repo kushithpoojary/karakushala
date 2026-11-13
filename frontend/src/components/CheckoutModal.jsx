@@ -13,7 +13,8 @@ export default function CheckoutModal() {
     formatINR,
     showToast,
     setLatestOrderReceipt,
-    activeUser
+    activeUser,
+    navigateToTrackOrder
   } = useApp();
 
   const [buyerName, setBuyerName] = useState('Ananya Rao');
@@ -194,15 +195,31 @@ export default function CheckoutModal() {
                 </p>
               </div>
 
-              <button
-                onClick={() => {
-                  setIsCheckoutOpen(false);
-                  setCompletedOrderData(null);
-                }}
-                className="w-full py-3.5 px-6 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-sm shadow-md"
-              >
-                Return to Storefront
-              </button>
+              <div className="space-y-2 pt-2">
+                <button
+                  onClick={() => {
+                    const orderNum = completedOrderData.order?.orderNumber || completedOrderData.order?.id;
+                    setIsCheckoutOpen(false);
+                    setCompletedOrderData(null);
+                    navigateToTrackOrder(orderNum);
+                  }}
+                  className="w-full py-3.5 px-6 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all touch-target"
+                >
+                  <Truck className="w-4 h-4 text-amber-300" />
+                  <span>Track Your Order Now (ಲೈವ್ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ)</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsCheckoutOpen(false);
+                    setCompletedOrderData(null);
+                  }}
+                  className="w-full py-2.5 px-6 rounded-xl bg-cream-200 hover:bg-cream-300 text-stone-700 font-bold text-xs transition-colors"
+                >
+                  Return to Storefront
+                </button>
+              </div>
             </div>
           ) : (
             /* Checkout Details & Payment Selection Form */
