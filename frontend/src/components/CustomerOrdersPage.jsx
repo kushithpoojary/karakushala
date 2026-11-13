@@ -20,6 +20,7 @@ import {
   RefreshCw,
   ExternalLink
 } from 'lucide-react';
+import OrderCancellationModal from './OrderCancellationModal';
 
 export default function CustomerOrdersPage() {
   const { 
@@ -37,6 +38,7 @@ export default function CustomerOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [trackInput, setTrackInput] = useState('');
+  const [cancellingOrder, setCancellingOrder] = useState(null);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -421,6 +423,27 @@ export default function CustomerOrdersPage() {
                   </div>
                 </div>
 
+                {/* Cancelled Notice Banner */}
+                {order.orderStatus === 'Cancelled' && (
+                  <div className="bg-red-50/90 border border-red-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-red-900 animate-fadeIn">
+                    <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-red-950">Order Cancelled (ರದ್ದುಮಾಡಲಾಗಿದೆ)</span>
+                        <span className="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200">
+                          Refund Processed
+                        </span>
+                      </div>
+                      <p className="text-red-800">
+                        Reason: <strong className="font-semibold italic">"{order.cancellationReason || order.statusHistory?.find(h => h.status === 'Cancelled')?.note || 'Cancelled upon customer request.'}"</strong>
+                      </p>
+                      <p className="text-[11px] text-red-700">
+                        {isCod ? '✓ Cash on Delivery payment liability cancelled.' : '✓ Full payment refund scheduled to your account.'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Footer Buttons */}
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-cream-200">
                   <div className="text-[11px] text-stone-500 flex items-center gap-1.5 w-full sm:w-auto">
@@ -430,7 +453,19 @@ export default function CustomerOrdersPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                  <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap">
+                    {/* PROMINENT ORDER CANCELLATION BUTTON FOR ACTIVE ORDERS */}
+                    {!isDelivered && !isCancelled && (
+                      <button
+                        onClick={() => setCancellingOrder(order)}
+                        className="px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all active:scale-95 touch-target"
+                        title="Open Cancellation Options"
+                      >
+                        <XCircle className="w-4 h-4 text-red-600" />
+                        <span>Cancel Order (ಆರ್ಡರ್ ರದ್ದು)</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={openCustomerCare}
                       className="px-3.5 py-2.5 rounded-xl border border-cream-300 hover:bg-cream-100 text-stone-700 text-xs font-semibold flex items-center gap-1.5 transition-colors touch-target"
@@ -454,6 +489,17 @@ export default function CustomerOrdersPage() {
           })}
         </div>
       )}
+
+      {/* Voice-Enabled Order Cancellation Modal with Options */}
+      <OrderCancellationModal
+        isOpen={Boolean(cancellingOrder)}
+        order={cancellingOrder}
+        onClose={() => setCancellingOrder(null)}
+        onOrderCancelled={(cancelledOrder) => {
+          setOrders(prev => prev.map(o => (o.id === cancelledOrder.id || o.orderNumber === cancelledOrder.orderNumber ? cancelledOrder : o)));
+          loadOrders();
+        }}
+      />
 
     </div>
   );

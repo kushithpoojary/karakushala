@@ -22,6 +22,7 @@ import {
   User,
   ShoppingBag
 } from 'lucide-react';
+import OrderCancellationModal from './OrderCancellationModal';
 
 export default function TrackOrderPage() {
   const { 
@@ -38,6 +39,7 @@ export default function TrackOrderPage() {
   const [searchInput, setSearchInput] = useState('');
   const [copiedId, setCopiedId] = useState(false);
   const [allOrders, setAllOrders] = useState([]);
+  const [cancellingOrder, setCancellingOrder] = useState(null);
 
   // Ordered sequence of stages for normal progression
   const PIPELINE_STAGES = [
@@ -257,8 +259,8 @@ export default function TrackOrderPage() {
                 </p>
               </div>
 
-              {/* Status Badge */}
-              <div className="sm:text-right space-y-1">
+              {/* Status Badge & Cancel Action */}
+              <div className="sm:text-right space-y-2 flex flex-col sm:items-end">
                 <span className="text-xs text-stone-500 block">Current Order Status:</span>
                 <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${
                   order.orderStatus === 'Delivered'
@@ -278,6 +280,18 @@ export default function TrackOrderPage() {
                   )}
                   <span>{order.orderStatus}</span>
                 </span>
+
+                {/* Cancel Button in Header for active orders */}
+                {order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled' && (
+                  <button
+                    onClick={() => setCancellingOrder(order)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-xs active:scale-95 touch-target"
+                    title="Cancel order and select cancellation options"
+                  >
+                    <XCircle className="w-3.5 h-3.5 text-red-600" />
+                    <span>Cancel Order (ಆರ್ಡರ್ ರದ್ದು)</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -379,16 +393,23 @@ export default function TrackOrderPage() {
 
             {/* Special Cancelled Notice if Order is Cancelled */}
             {order.orderStatus === 'Cancelled' && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+              <div className="p-4 sm:p-5 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3.5 animate-fadeIn">
                 <XCircle className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
-                <div className="text-xs space-y-1">
-                  <h4 className="font-bold text-red-950 text-sm">Order Cancelled (ರದ್ದುಮಾಡಲಾಗಿದೆ)</h4>
-                  <p className="text-red-800 leading-relaxed">
-                    {getHistoryEntry('Cancelled')?.note || 'This order was cancelled prior to yarn cutting. Full refund has been initiated to your source payment method.'}
+                <div className="text-xs space-y-1.5 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-red-950 text-sm sm:text-base">Order Cancelled (ರದ್ದುಮಾಡಲಾಗಿದೆ)</h4>
+                    <span className="bg-red-100 text-red-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-red-200">
+                      Refund Scheduled
+                    </span>
+                  </div>
+                  <p className="text-red-900 leading-relaxed">
+                    Cancellation Option / Reason: <strong className="font-semibold italic">"{order.cancellationReason || getHistoryEntry('Cancelled')?.note || 'Cancelled upon customer request. Handcrafted production halted.'}"</strong>
                   </p>
-                  <span className="text-[11px] text-red-600 font-medium block">
-                    Cancelled at: {getHistoryEntry('Cancelled')?.timestamp ? new Date(getHistoryEntry('Cancelled').timestamp).toLocaleString('en-IN') : 'N/A'}
-                  </span>
+                  <div className="flex items-center gap-3 pt-1 text-[11px] text-red-700 flex-wrap">
+                    <span>Cancelled on: {getHistoryEntry('Cancelled')?.timestamp ? new Date(getHistoryEntry('Cancelled').timestamp).toLocaleString('en-IN') : new Date().toLocaleDateString('en-IN')}</span>
+                    <span>•</span>
+                    <span>Processed by: {getHistoryEntry('Cancelled')?.updatedBy || 'Customer'}</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -587,27 +608,50 @@ export default function TrackOrderPage() {
 
           </div>
 
-          {/* Need Help CTA */}
+          {/* Need Help & Cancellation Options CTA */}
           <div className="bg-gradient-to-r from-indigo-950 to-indigo-900 text-white rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <h4 className="font-serif font-bold text-base sm:text-lg flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-amber-300" />
-                <span>Have a question about this shipment?</span>
+                <span>Need support or want to cancel this order?</span>
               </h4>
               <p className="text-xs text-stone-300 max-w-lg">
-                Our Karnataka rural craft care desk is available to assist you with delivery queries or custom artisan notes.
+                You can select cancellation options or contact our Karnataka rural craft care desk for delivery assistance.
               </p>
             </div>
-            <button
-              onClick={openCustomerCare}
-              className="px-5 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-2xl text-xs shadow-md transition-all shrink-0 active:scale-95 touch-target"
-            >
-              Contact Customer Care (ಸಹಾಯವಾಣಿ)
-            </button>
+            <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+              {order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled' && (
+                <button
+                  onClick={() => setCancellingOrder(order)}
+                  className="px-4 py-3 bg-red-600/95 hover:bg-red-700 text-white font-bold rounded-2xl text-xs shadow-md transition-all active:scale-95 touch-target flex items-center gap-1.5 border border-red-500"
+                  title="Open Cancellation Options"
+                >
+                  <XCircle className="w-4 h-4" />
+                  <span>Cancel Order (ಆರ್ಡರ್ ರದ್ದು)</span>
+                </button>
+              )}
+              <button
+                onClick={openCustomerCare}
+                className="px-5 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-2xl text-xs shadow-md transition-all shrink-0 active:scale-95 touch-target"
+              >
+                Contact Customer Care (ಸಹಾಯವಾಣಿ)
+              </button>
+            </div>
           </div>
 
         </div>
       )}
+
+      {/* Voice-Enabled Order Cancellation Modal with Options */}
+      <OrderCancellationModal
+        isOpen={Boolean(cancellingOrder)}
+        order={cancellingOrder}
+        onClose={() => setCancellingOrder(null)}
+        onOrderCancelled={(cancelledOrder) => {
+          setOrder(cancelledOrder);
+          setAllOrders(prev => prev.map(o => (o.id === cancelledOrder.id || o.orderNumber === cancelledOrder.orderNumber ? cancelledOrder : o)));
+        }}
+      />
 
     </div>
   );
