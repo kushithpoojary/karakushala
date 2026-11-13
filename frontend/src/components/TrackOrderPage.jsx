@@ -173,7 +173,7 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
+    <div className="max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       
       {/* Top Navigation Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -398,8 +398,10 @@ export default function TrackOrderPage() {
               
               {/* Connecting Vertical Line (behind steps) */}
               <div 
-                className="absolute left-[23px] sm:left-[31px] top-4 bottom-4 w-1 bg-cream-300 -translate-x-1/2 z-0" 
-              />
+                className="absolute left-[23px] sm:left-[31px] top-4 bottom-4 w-1 bg-cream-300 -translate-x-1/2 z-0 overflow-hidden rounded-full" 
+              >
+                <div className="w-full h-full timeline-pulse-beam opacity-40" />
+              </div>
 
               {PIPELINE_STAGES.map((stage, idx) => {
                 const stageState = getStageState(stage.key);
@@ -413,12 +415,12 @@ export default function TrackOrderPage() {
                     
                     {/* Timeline Node Icon Circle */}
                     <div className="relative shrink-0">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all shadow-sm ${
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-300 shadow-sm ${
                         isCompleted
                           ? 'bg-emerald-600 text-white ring-4 ring-emerald-100'
                           : isCurrent
-                          ? 'bg-terracotta-600 text-white ring-4 ring-terracotta-100 animate-pulse'
-                          : 'bg-white text-stone-400 border-2 border-cream-300'
+                          ? 'bg-terracotta-600 text-white ring-4 ring-terracotta-200 animate-timelinePulse shadow-glow-terracotta'
+                          : 'bg-white text-stone-400 border-2 border-cream-300 group-hover:border-cream-400'
                       }`}>
                         {isCompleted ? (
                           <Check className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
@@ -431,11 +433,11 @@ export default function TrackOrderPage() {
                     </div>
 
                     {/* Timeline Content Block */}
-                    <div className={`flex-1 rounded-2xl p-4 transition-all border ${
+                    <div className={`flex-1 rounded-2xl p-4 transition-all duration-300 border ${
                       isCurrent
-                        ? 'bg-amber-50/70 border-amber-300 shadow-sm'
+                        ? 'bg-amber-50/80 border-amber-300 shadow-md transform sm:translate-x-1'
                         : isCompleted
-                        ? 'bg-cream-50/70 border-cream-200'
+                        ? 'bg-cream-50/70 border-cream-200 hover:border-cream-300'
                         : 'bg-transparent border-transparent opacity-60'
                     }`}>
                       
@@ -450,7 +452,7 @@ export default function TrackOrderPage() {
                             ({stage.kannada})
                           </span>
                           {isCurrent && (
-                            <span className="bg-terracotta-600 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full animate-bounce">
+                            <span className="bg-terracotta-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full animate-pulse shadow-sm">
                               Active Stage (ಪ್ರಸ್ತುತ)
                             </span>
                           )}

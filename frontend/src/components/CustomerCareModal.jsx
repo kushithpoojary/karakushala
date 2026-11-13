@@ -263,7 +263,7 @@ export default function CustomerCareModal() {
       
       {/* Modal Container */}
       <div 
-        className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto max-h-[92vh] flex flex-col animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

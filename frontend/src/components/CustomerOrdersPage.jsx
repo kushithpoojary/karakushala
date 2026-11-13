@@ -165,7 +165,7 @@ export default function CustomerOrdersPage() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
+    <div className="max-w-6xl 2xl:max-w-7xl 3xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-cream-100 via-white to-amber-50/50 rounded-3xl p-6 sm:p-8 border border-cream-300 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -283,7 +283,7 @@ export default function CustomerOrdersPage() {
             return (
               <div 
                 key={order.id || order.orderNumber}
-                className="bg-white rounded-3xl border border-cream-300 shadow-earth p-5 sm:p-7 space-y-5 transition-all hover:border-terracotta-400"
+                className="bg-white rounded-3xl border border-cream-300 shadow-earth p-5 sm:p-7 space-y-5 card-hover-lift hover:border-terracotta-400"
               >
                 {/* Order Top Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-cream-200">

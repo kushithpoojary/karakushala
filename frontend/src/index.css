@@ -3,10 +3,81 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+  }
   body {
     background-color: #FDFBF7;
     color: #26211C;
     -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+  }
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Hardware accelerated smooth card hover elevation */
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  will-change: transform, box-shadow;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -4px rgba(139, 69, 19, 0.14), 0 6px 12px -2px rgba(139, 69, 19, 0.08);
+}
+
+/* Tactile button press interaction */
+.btn-press {
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Subtle glowing pulse for live tracking / alerts */
+.halo-pulse-amber {
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+  animation: haloAmber 2s infinite;
+}
+
+@keyframes haloAmber {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+/* Timeline traveling light pulse */
+.timeline-pulse-beam {
+  background: linear-gradient(180deg, #C85A32 0%, #E9C46A 50%, #C85A32 100%);
+  background-size: 100% 200%;
+  animation: travelingBeam 3s linear infinite;
+}
+
+@keyframes travelingBeam {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 200%;
   }
 }
 

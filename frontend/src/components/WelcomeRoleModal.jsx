@@ -59,7 +59,7 @@ export default function WelcomeRoleModal() {
       
       {/* Modal Card */}
       <div 
-        className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto"
+        className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

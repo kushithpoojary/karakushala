@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
   const artisanShare = product.priceBreakdown?.artisanFairWage || Math.round(product.price * 0.82);
 
   return (
-    <div className="group bg-white rounded-2xl border border-cream-300 shadow-earth hover:shadow-earth-lg transition-all duration-300 flex flex-col overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift flex flex-col overflow-hidden">
       
       {/* Product Image & Badges */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
@@ -28,7 +28,7 @@ export default function ProductCard({ product }) {
           src={imageSrc}
           alt={product.title}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
 
         {/* Category Pill */}

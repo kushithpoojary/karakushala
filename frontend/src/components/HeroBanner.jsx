@@ -11,8 +11,8 @@ export default function HeroBanner({ onExploreClick }) {
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-terracotta-100/60 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-mustard-100/50 blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 2xl:gap-16 items-center">
 
           {/* Left Column: Heading & Value Proposition */}
           <div className="lg:col-span-7 space-y-6">
@@ -91,7 +91,7 @@ export default function HeroBanner({ onExploreClick }) {
               
               {/* Main Visual Card */}
               <div className="rounded-3xl overflow-hidden shadow-earth-lg border-4 border-white bg-white">
-                <div className="relative h-64 sm:h-72 w-full overflow-hidden">
+                <div className="relative h-64 sm:h-72 2xl:h-96 w-full overflow-hidden">
                   <img
                     src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
                     alt="Karnataka Kasuti Handloom Ilkal Saree"

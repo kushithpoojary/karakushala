@@ -290,7 +290,7 @@ export default function ArtisanLoginModal() {
       
       {/* Modal Container */}
       <div 
-        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto"
+        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-cream-300 overflow-hidden my-auto animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Heritage Header Banner */}

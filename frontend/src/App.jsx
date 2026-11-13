@@ -121,7 +121,7 @@ export default function App() {
             <HeroBanner onExploreClick={handleExploreClick} />
 
             {/* Buyer Catalogue Section */}
-            <section ref={catalogueRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-6">
+            <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-6">
               
               {/* Catalogue Header */}
               <div className="space-y-4">
@@ -198,8 +198,8 @@ export default function App() {
 
               {/* Product Grid */}
               {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6].map(i => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                     <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-cream-300 p-4 space-y-3">
                       <div className="w-full h-44 bg-cream-200 rounded-xl" />
                       <div className="w-3/4 h-4 bg-cream-200 rounded" />
@@ -227,7 +227,7 @@ export default function App() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
                   {filteredProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}

@@ -306,7 +306,7 @@ export default function ArtisanOrdersList({ orders = [], onOrderStatusUpdated })
           return (
             <div
               key={order.id}
-              className="bg-white rounded-3xl border border-cream-300 shadow-earth p-5 sm:p-6 transition-all hover:border-terracotta-400 space-y-4"
+              className="bg-white rounded-3xl border border-cream-300 shadow-earth p-5 sm:p-6 card-hover-lift hover:border-terracotta-400 space-y-4"
             >
               {/* Order Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-cream-200">
