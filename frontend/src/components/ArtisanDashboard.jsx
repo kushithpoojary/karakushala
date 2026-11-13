@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { MOCK_ARTISANS } from '../data/mockData';
 import GuidedListingForm from './GuidedListingForm';
 import ArtisanOrdersList from './ArtisanOrdersList';
-import { PlusCircle, Package, Layers, Sparkles, Volume2, UserCheck, CheckCircle2, TrendingUp, IndianRupee, Store, RefreshCw, Trash2, AlertTriangle, LogIn, LogOut, ShieldCheck, ArrowRight } from 'lucide-react';
+import { PlusCircle, Package, Layers, Sparkles, Volume2, UserCheck, CheckCircle2, TrendingUp, IndianRupee, Store, RefreshCw, Trash2, AlertTriangle, LogIn, LogOut, ShieldCheck, ArrowRight, Headphones } from 'lucide-react';
 
 export default function ArtisanDashboard() {
   const {
@@ -17,6 +17,7 @@ export default function ArtisanDashboard() {
     setViewMode,
     formatINR,
     showToast,
+    openCustomerCare,
     audioVoiceAssistance
   } = useApp();
 
@@ -160,6 +161,15 @@ export default function ArtisanDashboard() {
         {/* Artisan Account Management & Voice Help */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-terracotta-900/60 p-3 rounded-2xl border border-terracotta-400/40">
           
+          <button
+            onClick={openCustomerCare}
+            className="px-3.5 py-2.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+            title="Customer Care & Grievance Helpdesk"
+          >
+            <Headphones className="w-3.5 h-3.5 text-stone-900" />
+            <span>Support (ಸಹಾಯ)</span>
+          </button>
+
           <button
             onClick={openArtisanLogin}
             className="px-3.5 py-2.5 bg-white/90 hover:bg-white text-stone-900 font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"

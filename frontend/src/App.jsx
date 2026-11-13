@@ -12,10 +12,11 @@ import ArtisanDashboard from './components/ArtisanDashboard';
 import ArtisanLoginModal from './components/ArtisanLoginModal';
 import UserLoginModal from './components/UserLoginModal';
 import WelcomeRoleModal from './components/WelcomeRoleModal';
-import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic } from 'lucide-react';
+import CustomerCareModal from './components/CustomerCareModal';
+import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
-  const { viewMode, toast } = useApp();
+  const { viewMode, toast, openCustomerCare } = useApp();
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All Crafts');
@@ -239,6 +240,17 @@ export default function App() {
       <ArtisanLoginModal />
       <UserLoginModal />
       <WelcomeRoleModal />
+      <CustomerCareModal />
+
+      {/* Floating Customer Care Help Pill (Bottom-left, accessible to buyers & sellers) */}
+      <button
+        onClick={openCustomerCare}
+        className="fixed bottom-5 left-5 z-30 bg-indigo-900 hover:bg-terracotta-600 text-white px-3.5 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold transition-all hover:scale-105 active:scale-95 border-2 border-amber-300/40"
+        title="Customer Care & Artisan Support (ಸಹಾಯವಾಣಿ)"
+      >
+        <Headphones className="w-4 h-4 text-amber-300" />
+        <span className="hidden sm:inline">Customer Care (ಸಹಾಯ)</span>
+      </button>
 
       {/* Toast Notification Container */}
       {toast && (

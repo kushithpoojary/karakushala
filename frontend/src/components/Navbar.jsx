@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import VoiceSearchBar from './VoiceSearchBar';
-import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut, User, Compass } from 'lucide-react';
+import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut, User, Compass, Headphones } from 'lucide-react';
 
 export default function Navbar({ onSearchChange, searchQuery }) {
   const {
@@ -18,6 +18,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
     openUserLogin,
     logoutUser,
     openWelcomeModal,
+    openCustomerCare,
     audioVoiceAssistance,
     setAudioVoiceAssistance,
     showToast
@@ -100,6 +101,17 @@ export default function Navbar({ onSearchChange, searchQuery }) {
             >
               {audioVoiceAssistance ? <Volume2 className="w-4 h-4 text-stone-900" /> : <VolumeX className="w-4 h-4" />}
               <span className="hidden xl:inline">ಧ್ವನಿ (Audio)</span>
+            </button>
+
+            {/* Customer Care Button (Accessible to both buyers and sellers) */}
+            <button
+              onClick={openCustomerCare}
+              title="Customer Care & Grievance Helpdesk (ಗ್ರಾಹಕ ಸೇವೆ / ಕಲಾಕಾರರ ಸಹಾಯ)"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-cream-200 hover:bg-cream-300 text-stone-700 hover:text-stone-900 transition-all flex items-center gap-1.5 text-xs font-bold border border-cream-300 touch-target shadow-xs"
+            >
+              <Headphones className="w-4 h-4 text-terracotta-600" />
+              <span className="hidden sm:inline">Care</span>
+              <span className="hidden xl:inline text-[10px] text-stone-500 font-normal">(ಸಹಾಯ)</span>
             </button>
 
             {/* Role Switcher Pill: Buyer vs Artisan Dashboard */}

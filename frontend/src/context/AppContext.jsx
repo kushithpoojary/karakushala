@@ -38,6 +38,7 @@ export function AppProvider({ children }) {
   // Modals open/close state
   const [isArtisanLoginModalOpen, setIsArtisanLoginModalOpen] = useState(false);
   const [isUserLoginModalOpen, setIsUserLoginModalOpen] = useState(false);
+  const [isCustomerCareModalOpen, setIsCustomerCareModalOpen] = useState(false);
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState(() => {
@@ -219,6 +220,10 @@ export function AppProvider({ children }) {
     setViewMode(role);
   };
 
+  // Customer Care modal handlers
+  const openCustomerCare = () => setIsCustomerCareModalOpen(true);
+  const closeCustomerCare = () => setIsCustomerCareModalOpen(false);
+
   return (
     <AppContext.Provider
       value={{
@@ -248,6 +253,10 @@ export function AppProvider({ children }) {
         openWelcomeModal,
         closeWelcomeModal,
         selectRole,
+        isCustomerCareModalOpen,
+        setIsCustomerCareModalOpen,
+        openCustomerCare,
+        closeCustomerCare,
         cart,
         cartCount,
         cartSubtotal,
