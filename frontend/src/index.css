@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FDFBF7;
+    color: #26211C;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Subtle handloom warp/weft textured background effect */
+.pattern-warp-weft {
+  background-image: radial-gradient(#C85A32 0.75px, transparent 0.75px), radial-gradient(#1D2D44 0.75px, #FDFBF7 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  background-opacity: 0.05;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F3E9;
+}
+::-webkit-scrollbar-thumb {
+  background: #D5C39F;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C85A32;
+}
+
+/* Big accessible touch targets */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+}

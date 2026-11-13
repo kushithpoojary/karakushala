@@ -1,0 +1,13 @@
+{
+  "name": "karakushala",
+  "version": "1.0.0",
+  "description": "KaraKushala - Local Artisan Marketplace for Kasuti Embroidery and Beedu Craft",
+  "scripts": {
+    "seed": "node backend/seed.js",
+    "test": "node backend/test-endpoints.js",
+    "build": "npm run build --prefix frontend",
+    "start": "node backend/server.js",
+    "dev:backend": "node backend/server.js",
+    "dev:frontend": "npm run dev --prefix frontend"
+  }
+}

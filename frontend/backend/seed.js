@@ -1,0 +1,224 @@
+const { Artisan, Product, Order, saveDatabase } = require('./config/db');
+
+async function seedDatabase() {
+  console.log('--- Seeding KaraKushala Artisan Marketplace Database ---');
+
+  // Clear existing records
+  await Artisan.clear();
+  await Product.clear();
+  await Order.clear();
+
+  // 1. Seed 3 Authentic Artisans from Karnataka
+  const artisans = [
+    {
+      id: 'artisan_kasuti_1',
+      name: 'Parvati Bai Deshpande',
+      phone: '+91 98451 23450',
+      village: 'Navalgund, Dharwad District',
+      craftSpecialty: 'Kasuti',
+      bio: 'Master Kasuti artisan practicing the traditional Gavanti and Murgi double-running stitches passed down 4 generations from the Chalukyan era. She leads a self-help cooperative of 35 women embroiders in Dharwad.',
+      yearsOfExperience: 28,
+      profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'artisan_beedu_2',
+      name: 'Ganesh Devadiga',
+      phone: '+91 94812 67891',
+      village: 'Maravanthe, Udupi Coastal Region',
+      craftSpecialty: 'Beedu',
+      bio: 'Specialist in sacred coastal Beedu (palm leaf and wild cane lattice) weaving traditionally used in Daiva Aradhane shrines and coastal canopy architecture. He preserves 800-year-old coastal weaving geometry.',
+      yearsOfExperience: 22,
+      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'artisan_coastal_3',
+      name: 'Kavita Naik',
+      phone: '+91 97410 88234',
+      village: 'Kumta & Honnavar, Uttara Kannada',
+      craftSpecialty: 'Coastal',
+      bio: 'Award-winning coastal artisan transforming discarded coconut shells, weathered driftwood, and natural sea-glass into intricate temple sculptures, lamps, and acoustic rhythm instruments.',
+      yearsOfExperience: 16,
+      profileImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80'
+    }
+  ];
+
+  for (const artisan of artisans) {
+    await Artisan.create(artisan);
+    console.log(` Created Artisan: ${artisan.name} (${artisan.craftSpecialty} - ${artisan.village})`);
+  }
+
+  // 2. Seed 6 Detailed Products with Rich Craft-Provenance Stories
+  const products = [
+    {
+      id: 'prod_kasuti_saree',
+      artisanId: 'artisan_kasuti_1',
+      title: 'Kasuti Temple Gopuram Handwoven Ilkal Saree',
+      category: 'Kasuti Embroidery',
+      price: 4850,
+      stockQuantity: 6,
+      images: [
+        'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 72,
+        materialsUsed: 'Pure Mulberry silk thread, handloom Ilkal cotton body, natural indigo & turmeric dye',
+        culturalSignificance: 'Traditional Gopura (temple spire) and chariot motifs derived from the 7th-century Aihole and Pattadakal temples. Stitched purely by thread-counting without drawing on fabric.',
+        provenanceLocation: 'Navalgund Cluster, Dharwad, North Karnataka'
+      }
+    },
+    {
+      id: 'prod_kasuti_tapestry',
+      artisanId: 'artisan_kasuti_1',
+      title: 'Hand-Embroidered Kasuti Peacock Khadi Tapestry',
+      category: 'Kasuti Embroidery',
+      price: 2400,
+      stockQuantity: 10,
+      images: [
+        'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 36,
+        materialsUsed: 'Kashida raw silk threads, unbleached handspun organic cotton khadi canvas',
+        culturalSignificance: 'The Mayura (peacock) is stitched using the Neygi weaving stitch and Menthi cross-stitch, symbolizing prosperity and monsoon harvest in the Malaprabha river basin.',
+        provenanceLocation: 'Kalghatgi Village, Dharwad, Karnataka'
+      }
+    },
+    {
+      id: 'prod_beedu_chest',
+      artisanId: 'artisan_beedu_2',
+      title: 'Beedu Sacred Daiva Palm-Lattice Storage Chest',
+      category: 'Beedu Craft',
+      price: 3200,
+      stockQuantity: 5,
+      images: [
+        'https://images.unsplash.com/photo-1584589167171-541ce45f1eea?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1595246140625-573b715d11dc?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 44,
+        materialsUsed: 'Seasoned wild palm ribs, boiled river reeds, herbal neem oil coating',
+        culturalSignificance: 'Ancient coastal Beedu geometric weave used historically by Tuluva elders to preserve sacred heirloom seeds and temple manuscripts from coastal humidity and pests.',
+        provenanceLocation: 'Maravanthe Estuary, Udupi, Karnataka'
+      }
+    },
+    {
+      id: 'prod_beedu_lamp',
+      artisanId: 'artisan_beedu_2',
+      title: 'Coastal Heritage Daiva Shrine Canopy Lamp',
+      category: 'Beedu Craft',
+      price: 1850,
+      stockQuantity: 8,
+      images: [
+        'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 28,
+        materialsUsed: 'Split forest cane, palm bark fiber, brass-pinned joints, cold-pressed castor seal',
+        culturalSignificance: 'Emits a hypnotic warm geometric shadow pattern inspired by traditional Bootha Kola ritual dance canopies of coastal Karavali.',
+        provenanceLocation: 'Kundapura Backwaters, Udupi, Karnataka'
+      }
+    },
+    {
+      id: 'prod_coastal_diya',
+      artisanId: 'artisan_coastal_3',
+      title: 'Carved Coconut Shell & Brass Accent Oil Diya',
+      category: 'Coastal Wood & Shell',
+      price: 950,
+      stockQuantity: 15,
+      images: [
+        'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 14,
+        materialsUsed: 'Polished aged coastal coconut shell, recycled bell-metal brass spout, coconut oil polish',
+        culturalSignificance: 'Every shell is hand-carved with sea wave ripples (Kadalina Ale), celebrating coastal Karnatakas intimate bond with the Arabian Sea.',
+        provenanceLocation: 'Kumta Seashore, Uttara Kannada, Karnataka'
+      }
+    },
+    {
+      id: 'prod_coastal_windchime',
+      artisanId: 'artisan_coastal_3',
+      title: 'Driftwood & Marine Shell Acoustic Wind Chime',
+      category: 'Coastal Wood & Shell',
+      price: 1450,
+      stockQuantity: 7,
+      images: [
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80'
+      ],
+      craftStory: {
+        hoursSpent: 18,
+        materialsUsed: 'Salt-cured beach driftwood, conical sea whelk shells, jute twine, dried betel nut beads',
+        culturalSignificance: 'Artisans gather sea-tumbled shells after the southwest monsoon; when stirred by wind, each hollow shell creates melodic coastal resonance.',
+        provenanceLocation: 'Aghanashini Estuary, Gokarna Coastal Belt, Karnataka'
+      }
+    }
+  ];
+
+  for (const product of products) {
+    await Product.create(product);
+    console.log(` Created Product: "${product.title}" - ₹${product.price} (${product.category})`);
+  }
+
+  // 3. Seed Sample Incoming Orders for the Hackathon Demo
+  const orders = [
+    {
+      id: 'order_demo_1',
+      orderNumber: 'KK-2026-1082',
+      buyerName: 'Ananya Sharma',
+      buyerPhone: '+91 98201 54321',
+      shippingAddress: '42, Lavelle Road, Shanthala Nagar, Bengaluru, Karnataka 560001',
+      items: [
+        {
+          productId: 'prod_kasuti_saree',
+          title: 'Kasuti Temple Gopuram Handwoven Ilkal Saree',
+          quantity: 1,
+          priceAtPurchase: 4850
+        }
+      ],
+      totalAmount: 4850,
+      paymentMethod: 'Mocked UPI (GPay)',
+      paymentStatus: 'Paid - Mock',
+      orderStatus: 'Accepted',
+      createdAt: new Date(Date.now() - 3600000 * 4).toISOString() // 4 hours ago
+    },
+    {
+      id: 'order_demo_2',
+      orderNumber: 'KK-2026-9421',
+      buyerName: 'Rohan Iyer',
+      buyerPhone: '+91 97112 33445',
+      shippingAddress: 'Flat 304, Green Palms, Marine Drive, Kochi, Kerala 682011',
+      items: [
+        {
+          productId: 'prod_beedu_lamp',
+          title: 'Coastal Heritage Daiva Shrine Canopy Lamp',
+          quantity: 1,
+          priceAtPurchase: 1850
+        }
+      ],
+      totalAmount: 1850,
+      paymentMethod: 'Mocked UPI (PhonePe)',
+      paymentStatus: 'Paid - Mock',
+      orderStatus: 'Shipped',
+      createdAt: new Date(Date.now() - 3600000 * 26).toISOString() // 26 hours ago
+    }
+  ];
+
+  for (const order of orders) {
+    await Order.create(order);
+    console.log(` Created Demo Order: ${order.orderNumber} for ${order.buyerName} - ₹${order.totalAmount} [${order.orderStatus}]`);
+  }
+
+  console.log('--- Database Seeding Completed Successfully! ---');
+}
+
+seedDatabase()
+  .then(() => process.exit(0))
+  .catch(err => {
+    console.error('Seeding failed:', err);
+    process.exit(1);
+  });
