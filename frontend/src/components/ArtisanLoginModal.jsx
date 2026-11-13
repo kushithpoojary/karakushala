@@ -44,7 +44,7 @@ export default function ArtisanLoginModal() {
   const [errorMessage, setErrorMessage] = useState('');
   const [notRegisteredHint, setNotRegisteredHint] = useState(false);
 
-  // Registration state (First Name, Last Name, and Full Name)
+  // Registration state: First Name & Last Name
   const [regForm, setRegForm] = useState({
     name: '',
     firstName: '',
@@ -164,6 +164,191 @@ export default function ArtisanLoginModal() {
     }
   };
 
+  // Spoken number parser (digits or words)
+  const parseNumberFromSpeech = (text) => {
+    const match = text.match(/\d+/g);
+    if (match && match.length > 0) {
+      return match.join('');
+    }
+
+    const words = text.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
+    const wordMap = {
+      'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+      'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
+      'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+      'hundred': 100, 'thousand': 1000, 'lakh': 100000, 'lakhs': 100000
+    };
+
+    let total = 0;
+    let current = 0;
+    let found = false;
+
+    for (const w of words) {
+      if (wordMap[w] !== undefined) {
+        found = true;
+        const val = wordMap[w];
+        if (val === 100) {
+          current = (current || 1) * 100;
+        } else if (val === 1000 || val === 100000) {
+          total += (current || 1) * val;
+          current = 0;
+        } else {
+          current += val;
+        }
+      }
+    }
+    total += current;
+    return found ? total.toString() : text.replace(/\D/g, '') || text;
+  };
+
+  const handleVoiceInputResult = (fieldKey, cleanText) => {
+    setListeningField(null);
+    let recordedValue = cleanText;
+
+    switch (fieldKey) {
+      case 'loginPhone': {
+        const digits = cleanText.replace(/\D/g, '') || parseNumberFromSpeech(cleanText);
+        setPhoneNumber(digits.slice(0, 10));
+        recordedValue = digits.slice(0, 10);
+        break;
+      }
+      case 'loginOtp': {
+        const digits = cleanText.replace(/\D/g, '') || parseNumberFromSpeech(cleanText);
+        setOtp(digits.slice(0, 6));
+        recordedValue = digits.slice(0, 6);
+        break;
+      }
+      case 'regFirstName':
+        setRegForm(prev => ({ ...prev, firstName: cleanText }));
+        break;
+      case 'regLastName':
+        setRegForm(prev => ({ ...prev, lastName: cleanText }));
+        break;
+      case 'regPhone': {
+        const digits = cleanText.replace(/\D/g, '') || parseNumberFromSpeech(cleanText);
+        setRegForm(prev => ({ ...prev, phone: digits.slice(0, 10) }));
+        recordedValue = digits.slice(0, 10);
+        break;
+      }
+      case 'regCraftSpecialty': {
+        const lower = cleanText.toLowerCase();
+        let specialty = 'Kasuti';
+        if (lower.includes('beedu') || lower.includes('cane') || lower.includes('palm')) {
+          specialty = 'Beedu';
+        } else if (lower.includes('coastal') || lower.includes('wood') || lower.includes('shell')) {
+          specialty = 'Coastal';
+        } else if (lower.includes('kasuti') || lower.includes('embroid') || lower.includes('saree')) {
+          specialty = 'Kasuti';
+        }
+        setRegForm(prev => ({ ...prev, craftSpecialty: specialty }));
+        recordedValue = specialty;
+        break;
+      }
+      case 'regVillage':
+        setRegForm(prev => ({ ...prev, village: cleanText }));
+        break;
+      case 'regYearsOfExperience': {
+        const parsed = parseNumberFromSpeech(cleanText);
+        const digits = parsed.replace(/\D/g, '') || '10';
+        setRegForm(prev => ({ ...prev, yearsOfExperience: digits }));
+        recordedValue = `${digits} years`;
+        break;
+      }
+      case 'regBio':
+        setRegForm(prev => ({ ...prev, bio: cleanText }));
+        break;
+      default:
+        break;
+    }
+
+    showToast(`🎙️ Voice Recorded for ${fieldKey}: "${recordedValue}"`, 'success');
+
+    // Audio feedback confirmation
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(`Recorded ${recordedValue}`);
+      u.rate = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  const startVoiceInput = (fieldKey, fieldLabel = '') => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      showToast('Speech Recognition not supported in this browser. Please use Chrome, Edge, or Safari.', 'warning');
+      return;
+    }
+
+    if (listeningField === fieldKey) {
+      try { recognitionRef.current?.stop(); } catch (e) {}
+      setListeningField(null);
+      return;
+    }
+
+    setListeningField(fieldKey);
+    showToast(`🎙️ Listening for ${fieldLabel || fieldKey}... ಮಾತನಾಡಿ`, 'info');
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-IN';
+
+      recognition.onresult = (event) => {
+        const raw = event.results[0][0].transcript;
+        if (!raw) return;
+        handleVoiceInputResult(fieldKey, raw.trim());
+      };
+
+      recognition.onerror = (event) => {
+        setListeningField(null);
+        if (event.error === 'not-allowed') {
+          showToast('Microphone access denied. Please allow microphone in browser.', 'warning');
+        } else if (event.error === 'no-speech') {
+          showToast('No speech detected. Please speak into the mic.', 'info');
+        }
+      };
+
+      recognition.onend = () => {
+        setListeningField(null);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn('Recognition start exception:', err);
+      setListeningField(null);
+    }
+  };
+
+  const VoiceButton = ({ fieldKey, label = '' }) => {
+    const isThisActive = listeningField === fieldKey;
+    return (
+      <button
+        type="button"
+        onClick={() => startVoiceInput(fieldKey, label)}
+        className={`px-2 py-0.5 rounded-full text-[11px] font-bold transition-all flex items-center gap-1 shadow-xs shrink-0 ${
+          isThisActive
+            ? 'bg-red-600 text-white animate-bounce ring-2 ring-red-400'
+            : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+        }`}
+        title={`Click to speak ${label} (ಧ್ವನಿ ಮೂಲಕ ಭರ್ತಿ)`}
+      >
+        {isThisActive ? (
+          <>
+            <MicOff className="w-3 h-3 animate-pulse" />
+            <span>Listening...</span>
+          </>
+        ) : (
+          <>
+            <Mic className="w-3 h-3 text-amber-700" />
+            <span>Voice (ಧ್ವನಿ)</span>
+          </>
+        )}
+      </button>
+    );
+  };
+
   // 1. Send OTP handler
   const handleSendOtp = async (e) => {
     e?.preventDefault();
@@ -248,14 +433,14 @@ export default function ArtisanLoginModal() {
     }
   };
 
-  // 4. Register New Artisan handler
+  // 4. Register New Artisan handler (First Name & Last Name)
   const handleRegisterArtisan = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    const resolvedName = regForm.name || `${regForm.firstName || ''} ${regForm.lastName || ''}`.trim() || regForm.firstName || '';
+    const resolvedName = regForm.firstName || regForm.name || `${regForm.firstName || ''} ${regForm.lastName || ''}`.trim();
     if (!resolvedName || !regForm.phone || !regForm.village) {
-      setErrorMessage('ಹೆಸರು, ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ಗ್ರಾಮ ಕಡ್ಡಾಯ (Name, Phone, and Village are required)');
+      setErrorMessage('ಮೊದಲ ಹೆಸರು, ಮೊಬೈಲ್ ಮತ್ತು ಗ್ರಾಮ ಕಡ್ಡಾಯ (First Name, Phone, and Village are required)');
       return;
     }
 
@@ -267,10 +452,16 @@ export default function ArtisanLoginModal() {
 
     setLoading(true);
     try {
+      const fullName = `${regForm.firstName || regForm.name || ''} ${regForm.lastName || ''}`.trim() || regForm.firstName || regForm.name;
       const res = await api.registerArtisan({
-        ...regForm,
-        name: resolvedName,
+        name: fullName,
+        firstName: regForm.firstName || regForm.name,
+        lastName: regForm.lastName,
+        kannadaName: regForm.lastName,
         phone: `+91 ${clean.slice(0, 5)} ${clean.slice(5)}`,
+        village: regForm.village,
+        craftSpecialty: regForm.craftSpecialty,
+        bio: regForm.bio,
         yearsOfExperience: Number(regForm.yearsOfExperience) || 5
       });
 
@@ -418,15 +609,20 @@ export default function ArtisanLoginModal() {
                 // Step 1: Enter Phone Number
                 <form onSubmit={handleSendOtp} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label 
-                      htmlFor="artisan-phone-input"
-                      className="block text-xs font-bold text-stone-700 uppercase tracking-wider cursor-pointer"
-                    >
-                      ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ • Registered Mobile Number *
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label 
+                        htmlFor="artisan-phone-input"
+                        className="block text-xs font-bold text-stone-700 uppercase tracking-wider cursor-pointer"
+                      >
+                        ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ • Registered Mobile Number *
+                      </label>
+                      <VoiceButton fieldKey="loginPhone" label="Mobile Number" />
+                    </div>
                     <div 
                       onClick={() => document.getElementById('artisan-phone-input')?.focus()}
-                      className="flex items-center w-full rounded-2xl border-2 border-cream-300 bg-cream-50 hover:border-terracotta-300 focus-within:border-terracotta-500 focus-within:ring-2 focus-within:ring-terracotta-500/20 focus-within:bg-white transition-all shadow-inner overflow-hidden cursor-text"
+                      className={`flex items-center w-full rounded-2xl border-2 bg-cream-50 hover:border-terracotta-300 focus-within:border-terracotta-500 focus-within:ring-2 focus-within:ring-terracotta-500/20 focus-within:bg-white transition-all shadow-inner overflow-hidden cursor-text ${
+                        listeningField === 'loginPhone' ? 'border-red-500 ring-2 ring-red-400 bg-red-50/30' : 'border-cream-300'
+                      }`}
                     >
                       <div className="flex items-center gap-1.5 px-3.5 py-3.5 bg-cream-200/80 border-r border-cream-300 text-stone-800 font-bold text-sm shrink-0 select-none">
                         <span>🇮🇳</span>
@@ -517,9 +713,12 @@ export default function ArtisanLoginModal() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
-                      4-ಅಂಕಿಯ ಒಟಿಪಿ ಕೋಡ್ • Enter 4-Digit OTP
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
+                        4-ಅಂಕಿಯ ಒಟಿಪಿ ಕೋಡ್ • Enter 4-Digit OTP
+                      </label>
+                      <VoiceButton fieldKey="loginOtp" label="OTP" />
+                    </div>
                     <div className="relative">
                       <input
                         type="text"
@@ -527,7 +726,9 @@ export default function ArtisanLoginModal() {
                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         placeholder="1 2 3 4"
                         maxLength={6}
-                        className="w-full text-center tracking-[0.4em] font-mono text-2xl py-3.5 bg-cream-50 border border-cream-300 rounded-2xl text-stone-900 font-bold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all shadow-inner"
+                        className={`w-full text-center tracking-[0.4em] font-mono text-2xl py-3.5 bg-cream-50 border rounded-2xl text-stone-900 font-bold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all shadow-inner ${
+                          listeningField === 'loginOtp' ? 'border-red-500 ring-2 ring-red-400 bg-red-50/30' : 'border-cream-300'
+                        }`}
                         autoFocus
                       />
                     </div>
@@ -639,7 +840,7 @@ export default function ArtisanLoginModal() {
             </div>
           )}
 
-          {/* TAB 3: New Artisan Registration */}
+          {/* TAB 3: New Artisan Registration (First Name & Last Name with Voice-to-Text) */}
           {activeTab === 'register' && (
             <form onSubmit={handleRegisterArtisan} className="space-y-4 animate-fadeIn">
               <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-2xl flex items-center gap-2 text-xs text-indigo-900">
@@ -650,82 +851,73 @@ export default function ArtisanLoginModal() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Full Name */}
+                {/* First Name (previously Full Name) */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
-                      Full Name (ಹೆಸರು) *
+                      First Name (ಮೊದಲ ಹೆಸರು) *
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => toggleVoiceInput('name')}
-                      className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold transition-all ${
-                        listeningField === 'name' 
-                          ? 'bg-red-600 text-white animate-pulse' 
-                          : 'bg-terracotta-100 hover:bg-terracotta-200 text-terracotta-800'
-                      }`}
-                      title="Speak Name (ಧ್ವನಿ ಮೂಲಕ ಹೇಳಿ)"
-                    >
-                      {listeningField === 'name' ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-                      <span>{listeningField === 'name' ? 'ಆಲಿಸಲಾಗುತ್ತಿದೆ...' : 'ಧ್ವನಿ (Speak)'}</span>
-                    </button>
+                    <VoiceButton fieldKey="regFirstName" label="First Name" />
                   </div>
                   <input
                     type="text"
                     required
-                    value={regForm.name}
+                    value={regForm.firstName || regForm.name || ''}
                     onChange={(e) => {
                       const val = e.target.value;
-                      const parts = val.split(' ');
-                      setRegForm({ 
-                        ...regForm, 
-                        name: val,
-                        firstName: parts[0] || '',
-                        lastName: parts.slice(1).join(' ') || ''
-                      });
+                      setRegForm(prev => ({
+                        ...prev,
+                        firstName: val,
+                        name: `${val} ${prev.lastName || ''}`.trim()
+                      }));
                     }}
-                    placeholder="e.g. Shantavva Badiger"
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
+                    placeholder="e.g. Shantavva"
+                    className={`w-full px-3.5 py-2.5 bg-cream-50 border rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regFirstName' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   />
                 </div>
 
-                {/* Kannada Name */}
+                {/* Last Name (previously Kannada Name) */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
-                      Kannada Name (ಕನ್ನಡದಲ್ಲಿ ಹೆಸರು)
+                      Last Name (ಕೊನೆಯ ಹೆಸರು)
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => toggleVoiceInput('kannadaName')}
-                      className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold transition-all ${
-                        listeningField === 'kannadaName' 
-                          ? 'bg-red-600 text-white animate-pulse' 
-                          : 'bg-amber-100 hover:bg-amber-200 text-amber-900'
-                      }`}
-                      title="Speak in Kannada"
-                    >
-                      {listeningField === 'kannadaName' ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-                      <span>{listeningField === 'kannadaName' ? 'ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ...' : 'ಧ್ವನಿ (ಕನ್ನಡ)'}</span>
-                    </button>
+                    <VoiceButton fieldKey="regLastName" label="Last Name" />
                   </div>
                   <input
                     type="text"
-                    value={regForm.kannadaName}
-                    onChange={(e) => setRegForm({ ...regForm, kannadaName: e.target.value })}
-                    placeholder="ಉದಾ: ಶಾಂತವ್ವ ಬಡಿಗೇರ"
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
+                    value={regForm.lastName || regForm.kannadaName || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setRegForm(prev => ({
+                        ...prev,
+                        lastName: val,
+                        kannadaName: val,
+                        name: `${prev.firstName || ''} ${val}`.trim()
+                      }));
+                    }}
+                    placeholder="e.g. Badiger / ಬಡಿಗೇರ"
+                    className={`w-full px-3.5 py-2.5 bg-cream-50 border rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regLastName' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   />
                 </div>
 
                 {/* Mobile Number */}
                 <div className="space-y-1">
-                  <label htmlFor="artisan-reg-phone" className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider cursor-pointer">
-                    Mobile Phone (ಮೊಬೈಲ್) *
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="artisan-reg-phone" className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider cursor-pointer">
+                      Mobile Phone (ಮೊಬೈಲ್) *
+                    </label>
+                    <VoiceButton fieldKey="regPhone" label="Mobile Phone" />
+                  </div>
                   <div
                     onClick={() => document.getElementById('artisan-reg-phone')?.focus()}
-                    className="flex items-center w-full rounded-xl border border-cream-300 bg-cream-50 focus-within:ring-2 focus-within:ring-terracotta-500 focus-within:bg-white overflow-hidden shadow-inner cursor-text"
+                    className={`flex items-center w-full rounded-xl border bg-cream-50 focus-within:ring-2 focus-within:ring-terracotta-500 focus-within:bg-white overflow-hidden shadow-inner cursor-text transition-all ${
+                      listeningField === 'regPhone' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   >
                     <div className="flex items-center gap-1 px-3 py-2.5 bg-cream-200/80 border-r border-cream-300 text-stone-800 font-bold text-xs shrink-0 select-none">
                       <span>🇮🇳</span>
@@ -745,15 +937,20 @@ export default function ArtisanLoginModal() {
 
                 {/* Craft Specialty */}
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
-                    Craft Specialty (ಕಲಾ ಪ್ರಕಾರ) *
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
+                      Craft Specialty (ಕಲಾ ಪ್ರಕಾರ) *
+                    </label>
+                    <VoiceButton fieldKey="regCraftSpecialty" label="Craft Specialty" />
+                  </div>
                   <select
                     value={regForm.craftSpecialty}
                     onChange={(e) => setRegForm({ ...regForm, craftSpecialty: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
+                    className={`w-full px-3.5 py-2.5 bg-cream-50 border rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regCraftSpecialty' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   >
-                    <option value="Kasuti">Kasuti Embroidery (ಕಸೂತಿ ಕಸೂತಿ ಕಲೆ)</option>
+                    <option value="Kasuti">Kasuti Embroidery (ಕಸೂತಿ ಕಲೆ)</option>
                     <option value="Beedu">Beedu Craft (ಕರಾವಳಿ ಬೀಡು ಹೆಣಿಗೆ)</option>
                     <option value="Coastal">Coastal Wood & Shell (ಕರಾವಳಿ ಕೆತ್ತನೆ)</option>
                   </select>
@@ -765,19 +962,7 @@ export default function ArtisanLoginModal() {
                     <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
                       Village / Town (ಗ್ರಾಮ & ಜಿಲ್ಲೆ) *
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => toggleVoiceInput('village')}
-                      className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold transition-all ${
-                        listeningField === 'village' 
-                          ? 'bg-red-600 text-white animate-pulse' 
-                          : 'bg-terracotta-100 hover:bg-terracotta-200 text-terracotta-800'
-                      }`}
-                      title="Speak Village"
-                    >
-                      {listeningField === 'village' ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-                      <span>{listeningField === 'village' ? 'Listening...' : 'ಧ್ವನಿ'}</span>
-                    </button>
+                    <VoiceButton fieldKey="regVillage" label="Village" />
                   </div>
                   <input
                     type="text"
@@ -785,53 +970,57 @@ export default function ArtisanLoginModal() {
                     value={regForm.village}
                     onChange={(e) => setRegForm({ ...regForm, village: e.target.value })}
                     placeholder="e.g. Navalgund, Dharwad"
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
+                    className={`w-full px-3.5 py-2.5 bg-cream-50 border rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regVillage' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   />
                 </div>
 
                 {/* Years Experience */}
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
-                    Experience in Years (ಅನುಭವ)
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
+                      Experience in Years (ಅನುಭವ)
+                    </label>
+                    <VoiceButton fieldKey="regYearsOfExperience" label="Experience Years" />
+                  </div>
                   <input
                     type="number"
                     min={1}
                     max={60}
                     value={regForm.yearsOfExperience}
                     onChange={(e) => setRegForm({ ...regForm, yearsOfExperience: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
+                    className={`w-full px-3.5 py-2.5 bg-cream-50 border rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regYearsOfExperience' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
                   />
                 </div>
               </div>
 
-              {/* Bio */}
+              {/* Bio (Heritage Craft Bio) with Voice-to-Text */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider">
                     Heritage Craft Bio (ನಿಮ್ಮ ಕಲೆಯ ಕಥೆ & ಪಾರಂಪರ್ಯ)
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => toggleVoiceInput('bio')}
-                    className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold transition-all ${
-                      listeningField === 'bio' 
-                        ? 'bg-red-600 text-white animate-pulse' 
-                        : 'bg-terracotta-100 hover:bg-terracotta-200 text-terracotta-800'
-                    }`}
-                    title="Speak Bio Story"
-                  >
-                    {listeningField === 'bio' ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-                    <span>{listeningField === 'bio' ? 'Listening...' : 'ಧ್ವನಿ (Speak Bio)'}</span>
-                  </button>
+                  <VoiceButton fieldKey="regBio" label="Heritage Craft Bio" />
                 </div>
-                <textarea
-                  rows={2}
-                  value={regForm.bio}
-                  onChange={(e) => setRegForm({ ...regForm, bio: e.target.value })}
-                  placeholder="Describe your handcraft tradition, generational lineage, or cooperative..."
-                  className="w-full px-3.5 py-2 bg-cream-50 border border-cream-300 rounded-xl text-xs sm:text-sm font-medium focus:ring-2 focus:ring-terracotta-500 focus:bg-white"
-                />
+                <div className="relative">
+                  <textarea
+                    rows={3}
+                    value={regForm.bio}
+                    onChange={(e) => setRegForm({ ...regForm, bio: e.target.value })}
+                    placeholder="Describe your handcraft tradition, generational lineage, or speak into the mic..."
+                    className={`w-full px-3.5 py-2 bg-cream-50 border rounded-xl text-xs sm:text-sm font-medium focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition-all ${
+                      listeningField === 'regBio' ? 'border-red-500 bg-red-50/40 ring-2 ring-red-400' : 'border-cream-300'
+                    }`}
+                  />
+                  {listeningField === 'regBio' && (
+                    <span className="absolute right-3 bottom-3 text-xs text-red-600 font-bold animate-pulse bg-white/90 px-2 py-0.5 rounded shadow">
+                      Recording bio... ಮಾತನಾಡಿ
+                    </span>
+                  )}
+                </div>
               </div>
 
               <button

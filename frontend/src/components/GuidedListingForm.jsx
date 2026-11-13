@@ -30,62 +30,32 @@ export default function GuidedListingForm({ onProductCreated }) {
   const [listeningField, setListeningField] = useState(null);
   const recognitionRef = useRef(null);
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-IN'; // Indian English handles regional pronunciation smoothly
-
-      recognition.onresult = (event) => {
-        const rawTranscript = event.results[0][0].transcript;
-        if (!rawTranscript) return;
-
-        const clean = rawTranscript.trim();
-        handleVoiceInputResult(clean);
-      };
-
-      recognition.onerror = (event) => {
-        console.warn('Speech recognition error in listing form:', event.error);
-        setListeningField(null);
-        if (event.error === 'not-allowed') {
-          showToast('Microphone access denied. Please allow microphone in browser.', 'warning');
-        } else if (event.error === 'no-speech') {
-          showToast('No speech detected. Please speak into the mic.', 'info');
-        }
-      };
-
-      recognition.onend = () => {
-        setListeningField(null);
-      };
-
-      recognitionRef.current = recognition;
-    }
-  }, [listeningField]);
-
-  // Number parser for spoken prices and numbers
+  // Number parser for spoken prices and numbers (extracts digits or parses words like "twenty four hundred")
   const parseNumberFromSpeech = (text) => {
-    const directDigits = text.replace(/[^0-9]/g, '');
-    if (directDigits) return directDigits;
+    const match = text.match(/\d+/g);
+    if (match && match.length > 0) {
+      return match.join('');
+    }
 
-    const words = text.toLowerCase().split(/\s+/);
+    const words = text.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
     const wordMap = {
-      'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-      'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'twenty': 20, 'thirty': 30,
-      'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
-      'hundred': 100, 'thousand': 1000, 'lakh': 100000
+      'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+      'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
+      'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+      'hundred': 100, 'thousand': 1000, 'lakh': 100000, 'lakhs': 100000
     };
 
     let total = 0;
     let current = 0;
+    let found = false;
     for (const w of words) {
       if (wordMap[w] !== undefined) {
+        found = true;
         const val = wordMap[w];
         if (val === 100) {
           current = (current || 1) * 100;
-        } else if (val === 1000) {
-          total += (current || 1) * 1000;
+        } else if (val === 1000 || val === 100000) {
+          total += (current || 1) * val;
           current = 0;
         } else {
           current += val;
@@ -93,30 +63,16 @@ export default function GuidedListingForm({ onProductCreated }) {
       }
     }
     total += current;
-    return total > 0 ? total.toString() : text;
+    return found ? total.toString() : text.replace(/\D/g, '') || text;
   };
 
-  const handleVoiceInputResult = (clean) => {
-    const field = listeningField;
+  const handleVoiceInputResult = (field, clean) => {
     setListeningField(null);
-
     let recordedValue = clean;
 
     switch (field) {
       case 'title':
         setTitle(clean);
-        break;
-      case 'craftType':
-        if (clean.toLowerCase().includes('kasuti') || clean.toLowerCase().includes('embroid')) {
-          setCraftType('Kasuti Embroidery');
-          recordedValue = 'Kasuti Embroidery';
-        } else if (clean.toLowerCase().includes('beedu') || clean.toLowerCase().includes('cane') || clean.toLowerCase().includes('palm')) {
-          setCraftType('Beedu Craft');
-          recordedValue = 'Beedu Craft';
-        } else if (clean.toLowerCase().includes('coastal') || clean.toLowerCase().includes('wood') || clean.toLowerCase().includes('shell') || clean.toLowerCase().includes('diya')) {
-          setCraftType('Coastal Wood & Shell');
-          recordedValue = 'Coastal Wood & Shell';
-        }
         break;
       case 'price': {
         const parsedPrice = parseNumberFromSpeech(clean);
@@ -168,7 +124,7 @@ export default function GuidedListingForm({ onProductCreated }) {
     }
 
     if (listeningField === fieldName) {
-      recognitionRef.current?.stop();
+      try { recognitionRef.current?.stop(); } catch (e) {}
       setListeningField(null);
       return;
     }
@@ -177,9 +133,36 @@ export default function GuidedListingForm({ onProductCreated }) {
     showToast(`🎙️ Listening for ${fieldName} (${fieldLabelKannada})... ಮಾತನಾಡಿ`, 'info');
 
     try {
-      recognitionRef.current?.start();
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-IN';
+
+      recognition.onresult = (event) => {
+        const rawTranscript = event.results[0][0].transcript;
+        if (!rawTranscript) return;
+        handleVoiceInputResult(fieldName, rawTranscript.trim());
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Speech recognition error in listing form:', event.error);
+        setListeningField(null);
+        if (event.error === 'not-allowed') {
+          showToast('Microphone access denied. Please allow microphone in browser.', 'warning');
+        } else if (event.error === 'no-speech') {
+          showToast('No speech detected. Please speak into the mic.', 'info');
+        }
+      };
+
+      recognition.onend = () => {
+        setListeningField(null);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
     } catch (err) {
       console.warn('Recognition start exception:', err);
+      setListeningField(null);
     }
   };
 
@@ -426,17 +409,12 @@ export default function GuidedListingForm({ onProductCreated }) {
         {currentStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
             
-            {/* 1. Craft Specialty Pill Selector with Voice input */}
+            {/* 1. Craft Specialty Pill Selector */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-stone-700">
                   1. Select Craft Type (ಕಲಾ ಪ್ರಕಾರ)
                 </label>
-                <VoiceInputButton
-                  fieldKey="craftType"
-                  fieldLabelKn="ಕಲಾ ಪ್ರಕಾರ"
-                  sampleText="Kasuti, Beedu, or Coastal"
-                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
