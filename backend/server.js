@@ -54,7 +54,10 @@ app.get('/api', (req, res) => {
         'GET /api/artisans': 'List all registered artisans',
         'GET /api/artisans/:id': 'Fetch artisan profile details',
         'GET /api/artisans/:id/dashboard': 'Return all products and incoming orders for specific artisan',
-        'POST /api/artisans': 'Register a new artisan'
+        'POST /api/artisans/send-otp': 'Send demo OTP to artisan mobile number for authentication',
+        'POST /api/artisans/login': 'Authenticate artisan with phone + OTP or quick artisanId',
+        'GET /api/artisans/me': 'Get currently logged-in artisan profile',
+        'POST /api/artisans': 'Register a new artisan profile'
       },
       orders: {
         'GET /api/orders': 'List all orders with optional orderStatus filter',

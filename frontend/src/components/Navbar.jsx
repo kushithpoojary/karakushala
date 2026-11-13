@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import VoiceSearchBar from './VoiceSearchBar';
-import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut } from 'lucide-react';
 
 export default function Navbar({ onSearchChange, searchQuery }) {
   const {
@@ -10,6 +10,9 @@ export default function Navbar({ onSearchChange, searchQuery }) {
     cartCount,
     setIsCartOpen,
     activeArtisan,
+    isArtisanLoggedIn,
+    openArtisanLogin,
+    logoutArtisan,
     audioVoiceAssistance,
     setAudioVoiceAssistance,
     showToast
@@ -109,7 +112,13 @@ export default function Navbar({ onSearchChange, searchQuery }) {
               </button>
 
               <button
-                onClick={() => setViewMode('artisan')}
+                onClick={() => {
+                  if (!isArtisanLoggedIn) {
+                    openArtisanLogin();
+                  } else {
+                    setViewMode('artisan');
+                  }
+                }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                   viewMode === 'artisan'
                     ? 'bg-terracotta-600 text-white shadow-sm'
@@ -118,11 +127,51 @@ export default function Navbar({ onSearchChange, searchQuery }) {
               >
                 <UserCheck className="w-3.5 h-3.5 text-amber-200" />
                 <span>Artisan</span>
+                {isArtisanLoggedIn && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-white"></span>
+                )}
                 <span className="hidden sm:inline text-[10px] bg-amber-800/40 text-amber-200 px-1.5 py-0.2 rounded-full">
                   ಕಲಾಕಾರ
                 </span>
               </button>
             </div>
+
+            {/* Artisan Authentication Pill (Login button or Logged-in profile badge) */}
+            {!isArtisanLoggedIn ? (
+              <button
+                onClick={openArtisanLogin}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-95 touch-target"
+                title="Log in to Artisan Portal (ಕಲಾಕಾರರ ಲಾಗಿನ್)"
+              >
+                <LogIn className="w-3.5 h-3.5 text-amber-800" />
+                <span>Artisan Login</span>
+                <span className="hidden lg:inline text-[10px] text-amber-800 font-semibold">(ಲಾಗಿನ್)</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 bg-cream-50 border border-amber-300/80 py-1 px-2.5 rounded-full shadow-xs">
+                <img
+                  src={activeArtisan?.profileImage}
+                  alt={activeArtisan?.name}
+                  className="w-6 h-6 rounded-full object-cover border border-amber-400 shrink-0"
+                />
+                <div className="hidden lg:flex flex-col text-left leading-none">
+                  <span className="font-bold text-stone-900 text-xs truncate max-w-[90px]">
+                    {activeArtisan?.name?.split(' ')[0]}
+                  </span>
+                  <span className="text-[9px] text-terracotta-700 font-medium">
+                    {activeArtisan?.craftSpecialty}
+                  </span>
+                </div>
+                <button
+                  onClick={logoutArtisan}
+                  title="Log out of Artisan Portal (ಕಲಾಕಾರ ಖಾತೆಯಿಂದ ನಿರ್ಗಮಿಸಿ)"
+                  className="p-1 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                  aria-label="Logout"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
 
             {/* Cart Button */}
             <button

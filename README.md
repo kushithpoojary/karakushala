@@ -38,7 +38,15 @@ By cutting out exploitative middleman commissions, **over 88% of every purchase 
   - 13% Ethical Raw Materials & Natural Dyes.
   - 5% Eco-Packaging & Insured Courier.
 
-### 3. Simple Artisan Dashboard ('Sell Your Craft' Mode)
+### 3. Artisan Authentication & Login Portal (ಕಲಾಕಾರರ ಲಾಗಿನ್)
+- **Engineered for Karnataka Artisans & Low Digital Literacy**:
+  - **Mobile Phone + OTP Login**: Fast login using 10-digit registered mobile numbers with SMS OTP verification (`1234` demo testing OTP).
+  - **1-Click Quick Demo Login**: Instant one-click authentication as Karnataka master artisans (Parvati Bai Deshpande - Kasuti, Ganesh Devadiga - Beedu, Kavita Naik - Coastal).
+  - **New Artisan Registration**: Onboarding form for rural artisans to register their name, mobile, village/district, craft specialty, and generational bio.
+  - **Audio Guidance in Kannada**: Web Speech API audio assistance reading login instructions aloud in Kannada (`ಧ್ವನಿ ಸಹಾಯ`).
+  - **Persistent Session State**: Secure session storage with active status indicators, account switching, and logout controls.
+
+### 4. Simple Artisan Dashboard ('Sell Your Craft' Mode)
 - **Engineered for Low Digital Literacy**:
   - Large tactile touch targets, visual icons, and dual English + Kannada greetings (`ನಮಸ್ಕಾರ`).
   - One-tap audio guidance assistant that reads dashboard instructions aloud in Kannada.
@@ -55,7 +63,7 @@ By cutting out exploitative middleman commissions, **over 88% of every purchase 
     - `Mark as Ready / Shipped (ರವಾನಿಸಲಾಗಿದೆ)` -> `Mark as Delivered (ತಲುಪಿದೆ)`.
     - Instant live API sync via `PATCH /api/orders/:id/status`.
 
-### 4. Cart & Mocked Checkout Flow
+### 5. Cart & Mocked Checkout Flow
 - **Slide-Over Cart Drawer**: Quantity adjustment (+ / - / remove), free insured courier threshold meter, and total direct artisan contribution summary.
 - **Mocked Checkout Modal**:
   - Buyer name, phone, and Karnataka address fields.
@@ -78,13 +86,13 @@ kalasethu/
 │   │   └── Order.js         # Order Model
 │   ├── routes/
 │   │   ├── productRoutes.js # GET /api/products, GET /api/products/:id, POST /api/products
-│   │   ├── artisanRoutes.js # GET /api/artisans, GET /api/artisans/:id/dashboard, POST
+│   │   ├── artisanRoutes.js # GET /api/artisans, POST /send-otp, POST /login, GET /me, POST /
 │   │   └── orderRoutes.js   # POST /api/orders, PATCH /api/orders/:id/status
 │   ├── middleware/
 │   │   ├── upload.js        # Multer image upload middleware
 │   │   └── errorHandler.js  # Clean JSON error responses
-│   ├── seed.js              # Database seeder (3 Karnataka artisans, 6 rich products, 2 demo orders)
-│   ├── test-endpoints.js    # Automated test suite asserting all 7 RESTful API endpoints
+│   ├── seed.js              # Database seeder (3 Karnataka artisans, 9 rich products, 2 demo orders)
+│   ├── test-endpoints.js    # Automated test suite asserting all 13 RESTful API endpoints
 │   └── server.js            # Express server (CORS, Morgan, Static uploads, SPA fallback)
 ├── frontend/
 │   ├── src/

@@ -3,35 +3,38 @@
     {
       "id": "artisan_kasuti_1",
       "name": "Parvati Bai Deshpande",
+      "kannadaName": "ಪಾರ್ವತಿ ಬಾಯಿ ದೇಶಪಾಂಡೆ",
       "phone": "+91 98451 23450",
       "village": "Navalgund, Dharwad District",
       "craftSpecialty": "Kasuti",
       "bio": "Master Kasuti artisan practicing traditional Gavanti and Murgi double-running stitches passed down 4 generations from the Chalukyan era. She leads a self-help cooperative of 35 women embroiders in Dharwad.",
       "yearsOfExperience": 28,
       "profileImage": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80",
-      "createdAt": "2026-11-13T13:03:49.825Z"
+      "createdAt": "2026-11-13T14:58:52.307Z"
     },
     {
       "id": "artisan_beedu_2",
       "name": "Ganesh Devadiga",
+      "kannadaName": "ಗಣೇಶ್ ದೇವಾಡಿಗ",
       "phone": "+91 94812 67891",
       "village": "Maravanthe, Udupi Coastal Region",
       "craftSpecialty": "Beedu",
       "bio": "Specialist in sacred coastal Beedu (palm leaf and wild cane lattice) weaving traditionally used in Daiva Aradhane shrines and coastal canopy architecture. He preserves 800-year-old coastal weaving geometry.",
       "yearsOfExperience": 22,
       "profileImage": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=600&q=80",
-      "createdAt": "2026-11-13T13:03:49.827Z"
+      "createdAt": "2026-11-13T14:58:52.310Z"
     },
     {
       "id": "artisan_coastal_3",
       "name": "Kavita Naik",
+      "kannadaName": "ಕವಿತಾ ನಾಯ್ಕ್",
       "phone": "+91 97410 88234",
       "village": "Kumta & Honnavar, Uttara Kannada",
       "craftSpecialty": "Coastal",
       "bio": "Award-winning coastal artisan transforming discarded coconut shells, weathered driftwood, and natural sea-glass into intricate temple sculptures, lamps, and acoustic rhythm instruments.",
       "yearsOfExperience": 16,
       "profileImage": "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=600&q=80",
-      "createdAt": "2026-11-13T13:03:49.827Z"
+      "createdAt": "2026-11-13T14:58:52.311Z"
     }
   ],
   "products": [
@@ -54,7 +57,7 @@
         "culturalSignificance": "Traditional Gopura (temple spire) and chariot motifs derived from the 7th-century Aihole and Pattadakal temples. Stitched purely by thread-counting without drawing on fabric.",
         "provenanceLocation": "Navalgund Cluster, Dharwad, North Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.828Z"
+      "createdAt": "2026-11-13T14:58:52.311Z"
     },
     {
       "id": "prod_kasuti_tapestry",
@@ -75,7 +78,7 @@
         "culturalSignificance": "The Mayura (peacock) is stitched using the Neygi weaving stitch and Menthi cross-stitch, symbolizing prosperity and monsoon harvest in the Malaprabha river basin.",
         "provenanceLocation": "Kalghatgi Village, Dharwad, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.828Z"
+      "createdAt": "2026-11-13T14:58:52.312Z"
     },
     {
       "id": "prod_kasuti_dupatta",
@@ -96,7 +99,7 @@
         "culturalSignificance": "Padma (lotus) motifs stitched with Neygi stitch, symbolizing purity blooming out of adversity, traditional to Dharwad brides.",
         "provenanceLocation": "Navalgund, Dharwad, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.829Z"
+      "createdAt": "2026-11-13T14:58:52.313Z"
     },
     {
       "id": "prod_beedu_chest",
@@ -117,7 +120,7 @@
         "culturalSignificance": "Ancient coastal Beedu geometric weave used historically by Tuluva elders to preserve sacred heirloom seeds and temple manuscripts from coastal humidity and pests.",
         "provenanceLocation": "Maravanthe Estuary, Udupi, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.829Z"
+      "createdAt": "2026-11-13T14:58:52.313Z"
     },
     {
       "id": "prod_beedu_lamp",
@@ -138,7 +141,7 @@
         "culturalSignificance": "Emits a hypnotic warm geometric shadow pattern inspired by traditional Bootha Kola ritual dance canopies of coastal Karavali.",
         "provenanceLocation": "Kundapura Backwaters, Udupi, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.829Z"
+      "createdAt": "2026-11-13T14:58:52.314Z"
     },
     {
       "id": "prod_beedu_basket",
@@ -159,7 +162,7 @@
         "culturalSignificance": "Served in Udupi temple feasts during Navaratri celebrations, symbolizing harmony between forest and river.",
         "provenanceLocation": "Maravanthe, Udupi, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.830Z"
+      "createdAt": "2026-11-13T14:58:52.314Z"
     },
     {
       "id": "prod_coastal_diya",
@@ -180,7 +183,7 @@
         "culturalSignificance": "Every shell is hand-carved with sea wave ripples (Kadalina Ale), celebrating coastal Karnatakas intimate bond with the Arabian Sea.",
         "provenanceLocation": "Kumta Seashore, Uttara Kannada, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.830Z"
+      "createdAt": "2026-11-13T14:58:52.315Z"
     },
     {
       "id": "prod_coastal_windchime",
@@ -201,7 +204,7 @@
         "culturalSignificance": "Artisans gather sea-tumbled shells after the southwest monsoon; when stirred by wind, each hollow shell creates melodic coastal resonance.",
         "provenanceLocation": "Aghanashini Estuary, Gokarna Coastal Belt, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.831Z"
+      "createdAt": "2026-11-13T14:58:52.316Z"
     },
     {
       "id": "prod_coastal_boat",
@@ -222,7 +225,7 @@
         "culturalSignificance": "Modeled after traditional Karavali \"Pata-Doni\" fishing boats that navigate the Sharavathi estuary confluence, honoring the fishing and maritime artisan lore of Honnavar.",
         "provenanceLocation": "Honnavar Port Estuary, Uttara Kannada, Karnataka"
       },
-      "createdAt": "2026-11-13T13:03:49.831Z"
+      "createdAt": "2026-11-13T14:58:52.316Z"
     }
   ],
   "orders": [
@@ -243,9 +246,8 @@
       "totalAmount": 4850,
       "paymentMethod": "Mocked UPI (GPay)",
       "paymentStatus": "Paid - Mock",
-      "orderStatus": "Delivered",
-      "createdAt": "2026-11-13T09:03:49.831Z",
-      "updatedAt": "2026-11-13T13:53:17.047Z"
+      "orderStatus": "Accepted",
+      "createdAt": "2026-11-13T10:58:52.317Z"
     },
     {
       "id": "order_demo_2",
@@ -265,7 +267,7 @@
       "paymentMethod": "Mocked UPI (PhonePe)",
       "paymentStatus": "Paid - Mock",
       "orderStatus": "Shipped",
-      "createdAt": "2026-11-12T11:03:49.831Z"
+      "createdAt": "2026-11-12T12:58:52.317Z"
     }
   ]
 }

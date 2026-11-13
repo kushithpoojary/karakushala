@@ -24,7 +24,7 @@ export default function GuidedListingForm({ onProductCreated }) {
   const [hoursSpent, setHoursSpent] = useState('32');
   const [materialsUsed, setMaterialsUsed] = useState('Pure mulberry silk threads and handloom Ilkal khadi');
   const [culturalSignificance, setCulturalSignificance] = useState('Sacred temple Gopuram motif hand-stitched by thread-counting');
-  const [provenanceLocation, setProvenanceLocation] = useState(activeArtisan.village || 'Navalgund, Dharwad, Karnataka');
+  const [provenanceLocation, setProvenanceLocation] = useState(activeArtisan?.village || 'Navalgund, Dharwad, Karnataka');
 
   // Audio speech recognition state for input fields
   const [listeningField, setListeningField] = useState(null);
@@ -235,7 +235,7 @@ export default function GuidedListingForm({ onProductCreated }) {
 
     try {
       const payload = {
-        artisanId: activeArtisan.id,
+        artisanId: activeArtisan?.id || 'artisan_kasuti_1',
         title: title.trim(),
         category: craftType,
         price: Number(price),

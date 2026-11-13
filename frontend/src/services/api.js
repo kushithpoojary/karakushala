@@ -174,6 +174,122 @@ export const api = {
     return { success: true, message: 'Deleted locally' };
   },
 
+  // GET /api/artisans
+  async getArtisans() {
+    try {
+      const res = await fetch(`${BASE_URL}/artisans`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) return json.data;
+      }
+    } catch (err) {
+      console.warn('Backend /api/artisans fallback:', err.message);
+    }
+    return [...MOCK_ARTISANS];
+  },
+
+  // POST /api/artisans/send-otp
+  async sendArtisanOtp(phone) {
+    try {
+      const res = await fetch(`${BASE_URL}/artisans/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error?.message || 'Failed to send OTP to mobile number');
+      }
+      return json;
+    } catch (err) {
+      // Offline / fallback check against mock artisans
+      const cleanInput = phone.toString().replace(/\D/g, '').slice(-10);
+      const match = MOCK_ARTISANS.find(a => a.phone.replace(/\D/g, '').slice(-10) === cleanInput);
+      if (match) {
+        return {
+          success: true,
+          message: `OTP sent successfully to registered mobile ${match.phone}.`,
+          demoOtp: '1234',
+          data: match
+        };
+      }
+      throw err;
+    }
+  },
+
+  // POST /api/artisans/login
+  async loginArtisan({ phone, otp, artisanId }) {
+    try {
+      const res = await fetch(`${BASE_URL}/artisans/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp, artisanId })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const error = new Error(json.error?.message || 'Artisan login failed');
+        error.requiresRegistration = json.error?.requiresRegistration;
+        throw error;
+      }
+      return json;
+    } catch (err) {
+      if (err.requiresRegistration) throw err;
+      // Fallback against mock data
+      let artisan = null;
+      if (artisanId) {
+        artisan = MOCK_ARTISANS.find(a => a.id === artisanId);
+      } else if (phone) {
+        const cleanInput = phone.toString().replace(/\D/g, '').slice(-10);
+        artisan = MOCK_ARTISANS.find(a => a.phone.replace(/\D/g, '').slice(-10) === cleanInput);
+      }
+      if (artisan) {
+        return {
+          success: true,
+          message: `Namaskara, ${artisan.name}! Logged in successfully.`,
+          token: `artisan_jwt_${artisan.id}_${Date.now()}`,
+          data: artisan
+        };
+      }
+      throw err;
+    }
+  },
+
+  // POST /api/artisans (Registration)
+  async registerArtisan(artisanData) {
+    try {
+      const res = await fetch(`${BASE_URL}/artisans`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(artisanData)
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error?.message || 'Artisan registration failed');
+      }
+      return json;
+    } catch (err) {
+      console.warn('Backend /api/artisans registration fallback:', err.message);
+      const newArtisan = {
+        id: `artisan_${Date.now()}`,
+        name: artisanData.name,
+        kannadaName: artisanData.kannadaName || '',
+        phone: artisanData.phone,
+        village: artisanData.village,
+        craftSpecialty: artisanData.craftSpecialty || 'Kasuti',
+        bio: artisanData.bio || '',
+        yearsOfExperience: Number(artisanData.yearsOfExperience) || 5,
+        profileImage: artisanData.profileImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
+        createdAt: new Date().toISOString()
+      };
+      return {
+        success: true,
+        message: 'Artisan profile registered successfully!',
+        token: `artisan_jwt_${newArtisan.id}_${Date.now()}`,
+        data: newArtisan
+      };
+    }
+  },
+
   // GET /api/artisans/:id/dashboard
   async getArtisanDashboard(artisanId) {
     try {

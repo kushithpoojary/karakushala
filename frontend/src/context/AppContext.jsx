@@ -7,8 +7,17 @@ export function AppProvider({ children }) {
   // 'buyer' (Storefront & Catalogue) or 'artisan' (Sell Your Craft / Dashboard)
   const [viewMode, setViewMode] = useState('buyer');
 
-  // Currently simulated logged-in artisan for the Artisan Dashboard
-  const [activeArtisan, setActiveArtisan] = useState(MOCK_ARTISANS[0]);
+  // Currently logged-in artisan profile (persisted in localStorage)
+  const [activeArtisan, setActiveArtisan] = useState(() => {
+    try {
+      const saved = localStorage.getItem('karakushala_active_artisan');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+  });
+
+  // Artisan Login Modal open/close state
+  const [isArtisanLoginModalOpen, setIsArtisanLoginModalOpen] = useState(false);
 
   // Cart state persisted in localStorage
   const [cart, setCart] = useState(() => {
@@ -108,6 +117,49 @@ export function AppProvider({ children }) {
     }).format(num);
   };
 
+  const openArtisanLogin = () => setIsArtisanLoginModalOpen(true);
+  const closeArtisanLogin = () => setIsArtisanLoginModalOpen(false);
+
+  const loginArtisan = (artisan, token = null) => {
+    setActiveArtisan(artisan);
+    try {
+      localStorage.setItem('karakushala_active_artisan', JSON.stringify(artisan));
+      if (token) {
+        localStorage.setItem('karakushala_artisan_token', token);
+      }
+    } catch (e) {}
+    setIsArtisanLoginModalOpen(false);
+    setViewMode('artisan');
+    showToast(`ನಮಸ್ಕಾರ, ${artisan.name}! Welcome to your Artisan Portal.`, 'success');
+
+    if ('speechSynthesis' in window && audioVoiceAssistance) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(`ನಮಸ್ಕಾರ ${artisan.name}. ಕಲಾಕಾರರ ಖಾತೆಗೆ ಯಶಸ್ವಿಯಾಗಿ ಲಾಗಿನ್ ಆಗಿದ್ದೀರಿ.`);
+      u.lang = 'kn-IN';
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  const logoutArtisan = () => {
+    setActiveArtisan(null);
+    try {
+      localStorage.removeItem('karakushala_active_artisan');
+      localStorage.removeItem('karakushala_artisan_token');
+    } catch (e) {}
+    setViewMode('buyer');
+    showToast('Logged out of Artisan Portal (ಕಲಾಕಾರ ಖಾತೆಯಿಂದ ನಿರ್ಗಮಿಸಲಾಗಿದೆ)', 'info');
+  };
+
+  const switchArtisan = (artisan) => {
+    setActiveArtisan(artisan);
+    try {
+      localStorage.setItem('karakushala_active_artisan', JSON.stringify(artisan));
+    } catch (e) {}
+    showToast(`Switched active profile to ${artisan.name}`, 'info');
+  };
+
+  const isArtisanLoggedIn = Boolean(activeArtisan);
+
   return (
     <AppContext.Provider
       value={{
@@ -115,6 +167,14 @@ export function AppProvider({ children }) {
         setViewMode,
         activeArtisan,
         setActiveArtisan,
+        isArtisanLoggedIn,
+        isArtisanLoginModalOpen,
+        setIsArtisanLoginModalOpen,
+        openArtisanLogin,
+        closeArtisanLogin,
+        loginArtisan,
+        logoutArtisan,
+        switchArtisan,
         cart,
         cartCount,
         cartSubtotal,
