@@ -11,7 +11,25 @@ export default function ProductCard({ product, index = 0 }) {
     profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80'
   };
 
-  const imageSrc = product.images?.[0] || 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80';
+  // Ultra-robust image resolver: guarantees a valid image URL for every craft product
+  const getProductImage = (p) => {
+    if (!p) return 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80';
+    if (Array.isArray(p.images) && p.images.length > 0 && typeof p.images[0] === 'string' && p.images[0].startsWith('http')) {
+      return p.images[0];
+    }
+    if (typeof p.images === 'string' && p.images.startsWith('http')) {
+      return p.images.split(' ')[0];
+    }
+    if (typeof p.imageUrl === 'string' && p.imageUrl.startsWith('http')) {
+      return p.imageUrl;
+    }
+    if (typeof p.image === 'string' && p.image.startsWith('http')) {
+      return p.image;
+    }
+    return 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80';
+  };
+
+  const imageSrc = getProductImage(product);
   const hoursSpent = product.craftStory?.hoursSpent || 24;
   const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 3;
   const isOutOfStock = product.stockQuantity <= 0;
@@ -37,7 +55,11 @@ export default function ProductCard({ product, index = 0 }) {
         <img
           src={imageSrc}
           alt={product.title}
-          loading="lazy"
+          loading="eager"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80';
+          }}
           className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
         />
 

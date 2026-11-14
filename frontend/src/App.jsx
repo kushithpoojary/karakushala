@@ -21,26 +21,37 @@ import ToastNotification from './components/ToastNotification';
 import HeritageLatticeBackground from './components/HeritageLatticeBackground';
 import CatalogueFloralBackground from './components/CatalogueFloralBackground';
 import WebsiteIntroSplash from './components/WebsiteIntroSplash';
+import { MOCK_PRODUCTS } from './data/mockData';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
   const { viewMode, customerView, toast, openCustomerCare } = useApp();
-  const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Initialize with MOCK_PRODUCTS directly so all 59 crafts and images are 100% visible immediately
+  const [allProducts, setAllProducts] = useState(() => {
+    try {
+      const stored = localStorage.getItem('karakushala_products_cache');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return MOCK_PRODUCTS;
+  });
+  const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All Crafts');
   const [searchQuery, setSearchQuery] = useState('');
 
   const catalogueRef = useRef(null);
 
   const fetchAllProducts = async () => {
-    setLoading(true);
     try {
       const data = await api.getProducts();
-      setAllProducts(data);
+      if (Array.isArray(data) && data.length > 0) {
+        setAllProducts(data);
+      }
     } catch (err) {
       console.error('Error fetching products:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -176,9 +187,24 @@ export default function App() {
                       </p>
                     </div>
 
-                    {/* Active Filter Pill Count */}
-                    <div className="text-xs text-stone-900 font-bold bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-orange-200 shadow-sm">
-                      Showing <strong className="text-terracotta-700 font-extrabold text-sm">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
+                    {/* Active Filter Pill Count with Reset Shortcut */}
+                    <div className="flex items-center gap-2">
+                      <div className="text-xs text-stone-900 font-bold bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-orange-200 shadow-sm">
+                        Showing <strong className="text-terracotta-700 font-extrabold text-sm">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
+                      </div>
+                      {(searchQuery || selectedCategory !== 'All Crafts') && (
+                        <button
+                          onClick={() => {
+                            setSearchQuery('');
+                            setSelectedCategory('All Crafts');
+                          }}
+                          className="text-xs font-bold bg-stone-900 hover:bg-black text-amber-300 px-3 py-2 rounded-xl border border-amber-300/40 shadow-sm transition-all active:scale-95 flex items-center gap-1"
+                          title="Reset to view all craft products"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span>Show All</span>
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -189,12 +215,28 @@ export default function App() {
                     productCounts={productCounts}
                   />
 
-                  {/* Quick Search Suggestion Pills with Colorful Badges */}
+                  {/* Quick Search Suggestion Pills with Toggleable Selection */}
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-500">
                     <span className="font-bold text-white whitespace-nowrap flex items-center gap-1.5 pl-0.5">
                       <Search className="w-3.5 h-3.5 text-amber-300" />
                       <span>Popular:</span>
                     </span>
+
+                    {/* All Crafts Quick Pill */}
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCategory('All Crafts');
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap border active:scale-95 shadow-xs ${
+                        !searchQuery && selectedCategory === 'All Crafts'
+                          ? 'bg-stone-900 text-amber-300 border-transparent shadow-sm'
+                          : 'bg-white/95 text-stone-800 border-cream-300 hover:bg-white'
+                      }`}
+                    >
+                      ✨ All Crafts
+                    </button>
+
                     {quickSearchPills.map((term, i) => {
                       const pillGradients = [
                         'hover:border-rose-400 hover:text-rose-700',
@@ -206,19 +248,25 @@ export default function App() {
                         'hover:border-purple-400 hover:text-purple-700',
                       ];
                       const hoverClass = pillGradients[i % pillGradients.length];
+                      const isSelected = searchQuery.toLowerCase() === term.toLowerCase();
 
                       return (
                         <button
                           key={term}
                           onClick={() => {
-                            setSearchQuery(term);
-                            setSelectedCategory('All Crafts');
+                            if (isSelected) {
+                              setSearchQuery('');
+                            } else {
+                              setSearchQuery(term);
+                              setSelectedCategory('All Crafts');
+                            }
                           }}
                           className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap border active:scale-95 shadow-xs ${
-                            searchQuery.toLowerCase() === term.toLowerCase()
-                              ? 'bg-gradient-to-r from-stone-900 to-stone-800 text-amber-300 border-transparent font-bold shadow-sm'
+                            isSelected
+                              ? 'bg-gradient-to-r from-stone-900 to-stone-800 text-amber-300 border-transparent font-bold shadow-md'
                               : `bg-white/95 text-stone-800 border-cream-300 ${hoverClass}`
                           }`}
+                          title={isSelected ? 'Click to deselect and view all crafts' : `Filter by ${term}`}
                         >
                           {term}
                         </button>
