@@ -3,9 +3,9 @@ import { Palette, Sparkles } from 'lucide-react';
 
 export default function HeritageLatticeBackground() {
   const canvasRef = useRef(null);
+  const charkaCanvasRef = useRef(null);
 
-  // Background theme: 'violet' (Light Violet / Lavender) as default requested by user,
-  // with fallback options for 'sandalwood' and 'twilight'
+  // Background theme: 'violet' (Light Violet / Lavender)
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem('karakushala_bg_theme') || 'violet';
@@ -25,18 +25,14 @@ export default function HeritageLatticeBackground() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const charkaCanvas = charkaCanvasRef.current;
+    if (!canvas || !charkaCanvas) return;
 
     const ctx = canvas.getContext('2d', { alpha: false });
+    const charkaCtx = charkaCanvas.getContext('2d', { alpha: true });
     let animationFrameId;
     let width = 0;
     let height = 0;
-
-    // Mouse tracking with snappy responsive inertia
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetMouseX = 0;
-    let targetMouseY = 0;
 
     // Small Circle Charka (ಚರಕ / Spinning Wheel) cursor tracker
     let rawMouseX = window.innerWidth / 2;
@@ -48,29 +44,38 @@ export default function HeritageLatticeBackground() {
 
     // Charka trail history for fluid motion trail
     const charkaTrail = [];
-    const maxTrailLength = 8;
+    const maxTrailLength = 7;
 
     const handleResize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
+
+      // Setup background canvas
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
+
+      // Setup Charka overlay canvas
+      charkaCanvas.width = Math.floor(width * dpr);
+      charkaCanvas.height = Math.floor(height * dpr);
+      charkaCanvas.style.width = `${width}px`;
+      charkaCanvas.style.height = `${height}px`;
+      charkaCtx.setTransform(1, 0, 0, 1, 0, 0);
+      charkaCtx.scale(dpr, dpr);
     };
 
     handleResize();
     window.addEventListener('resize', handleResize, { passive: true });
 
+    // Track mouse position ONLY for the Charka - NEVER displace the background grid!
     const handleMouseMove = (e) => {
       rawMouseX = e.clientX;
       rawMouseY = e.clientY;
       isMouseOnScreen = true;
-      targetMouseX = (e.clientX / (width || 1) - 0.5) * 60;
-      targetMouseY = (e.clientY / (height || 1) - 0.5) * 60;
     };
 
     const handleMouseLeave = () => {
@@ -81,15 +86,15 @@ export default function HeritageLatticeBackground() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     // Floating subtle thread particles (ambient craft silk dust)
-    const particleCount = 35;
+    const particleCount = 30;
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * (width || window.innerWidth),
         y: Math.random() * (height || window.innerHeight),
-        radius: 1.2 + Math.random() * 2.2,
-        speedY: 0.65 + Math.random() * 0.85, // Reset to faster, lively speed
-        speedX: (Math.random() - 0.5) * 0.45,
+        radius: 1.2 + Math.random() * 2.0,
+        speedY: 0.65 + Math.random() * 0.85,
+        speedX: (Math.random() - 0.5) * 0.4,
         opacity: 0.25 + Math.random() * 0.45,
         phase: Math.random() * Math.PI * 2
       });
@@ -100,25 +105,8 @@ export default function HeritageLatticeBackground() {
     const render = (currentTime) => {
       const elapsed = (currentTime - startTime) * 0.001; // elapsed seconds
 
-      // Snappy, lively mouse damping (0.12 for immediate responsive tracking)
-      mouseX += (targetMouseX - mouseX) * 0.12;
-      mouseY += (targetMouseY - mouseY) * 0.12;
-
-      // Small Circle Charka follows cursor with smooth elasticity
-      charkaX += (rawMouseX - charkaX) * 0.15;
-      charkaY += (rawMouseY - charkaY) * 0.15;
-      // Fast, active Charka spinning rotation
-      charkaAngle += 0.065;
-
-      // Update Charka motion trail
-      charkaTrail.unshift({ x: charkaX, y: charkaY });
-      if (charkaTrail.length > maxTrailLength) {
-        charkaTrail.pop();
-      }
-
       // 1. Draw Background Gradient according to active reference theme
       if (theme === 'twilight') {
-        // Image 2: Dusk Indigo to Warm Twilight Bronze / Burnt Sienna
         const bgGrad = ctx.createLinearGradient(0, 0, width, height * 0.85);
         bgGrad.addColorStop(0, '#212338');
         bgGrad.addColorStop(0.42, '#342938');
@@ -126,7 +114,6 @@ export default function HeritageLatticeBackground() {
         bgGrad.addColorStop(1, '#66453c');
         ctx.fillStyle = bgGrad;
       } else if (theme === 'sandalwood') {
-        // Image 1: Warm Sandalwood / Blush Peach / Terracotta
         const bgGrad = ctx.createLinearGradient(0, 0, width * 0.35, height);
         bgGrad.addColorStop(0, '#F9EDE3');
         bgGrad.addColorStop(0.35, '#F6DEC9');
@@ -134,7 +121,7 @@ export default function HeritageLatticeBackground() {
         bgGrad.addColorStop(1, '#E9C0A2');
         ctx.fillStyle = bgGrad;
       } else {
-        // DEFAULT: Beautiful Light Violet Gradient (as requested by user)
+        // DEFAULT: Beautiful Light Violet Gradient (for top main page)
         const bgGrad = ctx.createLinearGradient(0, 0, width * 0.45, height);
         bgGrad.addColorStop(0, '#FCF9FF');    // Pure soft lavender pearl
         bgGrad.addColorStop(0.30, '#F3EAFF'); // Light violet mist
@@ -144,11 +131,9 @@ export default function HeritageLatticeBackground() {
       }
       ctx.fillRect(0, 0, width, height);
 
-      // RESET TO FASTER, LIVELY ANIMATION SPEED:
-      // Breathing wave: lively ~5.2 second period (elapsed * 1.2 instead of 0.35)
+      // Animation parameters - NOTICE: gentleDriftX and gentleDriftY are 0!
+      // Background grid stays 100% FIXED in place when cursor moves!
       const breathingWave = Math.sin(elapsed * 1.2) * 0.045 + 1;
-      const gentleDriftX = Math.sin(elapsed * 0.95) * 11 + mouseX;
-      const gentleDriftY = Math.cos(elapsed * 0.85) * 11 + mouseY;
       const lineGlowPulse = Math.sin(elapsed * 1.6) * 0.12 + 0.38;
 
       // 2. Exact Sacred Geometric Kasuti Mandala Lattice Grid
@@ -156,10 +141,10 @@ export default function HeritageLatticeBackground() {
       const spacing = baseSpacing * breathingWave;
       const radius = spacing * 0.44; // Outer circle radius
 
-      const startCol = Math.floor(-gentleDriftX / spacing) - 1;
-      const endCol = Math.ceil((width - gentleDriftX) / spacing) + 1;
-      const startRow = Math.floor(-gentleDriftY / spacing) - 1;
-      const endRow = Math.ceil((height - gentleDriftY) / spacing) + 1;
+      const startCol = 0;
+      const endCol = Math.ceil(width / spacing) + 1;
+      const startRow = 0;
+      const endRow = Math.ceil(height / spacing) + 1;
 
       // Color palette for linework
       let strokeColor, secondaryStroke, dotColor, particleColor, charkaColor, charkaGlow;
@@ -168,27 +153,27 @@ export default function HeritageLatticeBackground() {
         secondaryStroke = `rgba(215, 172, 132, ${lineGlowPulse * 0.85})`;
         dotColor = `rgba(255, 218, 175, ${lineGlowPulse * 1.6})`;
         particleColor = 'rgba(238, 198, 158, ';
-        charkaColor = 'rgba(255, 218, 175, 0.9)';
-        charkaGlow = 'rgba(238, 198, 158, 0.6)';
+        charkaColor = 'rgba(255, 218, 175, 0.95)';
+        charkaGlow = 'rgba(238, 198, 158, 0.7)';
       } else if (theme === 'sandalwood') {
         strokeColor = `rgba(196, 128, 80, ${lineGlowPulse})`;
         secondaryStroke = `rgba(212, 149, 107, ${lineGlowPulse * 0.8})`;
         dotColor = `rgba(188, 118, 72, ${lineGlowPulse * 1.5})`;
         particleColor = 'rgba(212, 149, 107, ';
-        charkaColor = 'rgba(196, 128, 80, 0.9)';
-        charkaGlow = 'rgba(212, 149, 107, 0.6)';
+        charkaColor = 'rgba(196, 128, 80, 0.95)';
+        charkaGlow = 'rgba(212, 149, 107, 0.7)';
       } else {
         // LIGHT VIOLET THEME: Royal violet & luminous lavender
         strokeColor = `rgba(139, 92, 246, ${lineGlowPulse * 1.15})`;
         secondaryStroke = `rgba(167, 139, 250, ${lineGlowPulse * 0.85})`;
         dotColor = `rgba(124, 58, 237, ${lineGlowPulse * 1.6})`;
         particleColor = 'rgba(167, 139, 250, ';
-        charkaColor = 'rgba(124, 58, 237, 0.92)';
-        charkaGlow = 'rgba(167, 139, 250, 0.65)';
+        charkaColor = 'rgba(124, 58, 237, 0.95)';
+        charkaGlow = 'rgba(167, 139, 250, 0.75)';
       }
 
       ctx.save();
-      ctx.translate(gentleDriftX, gentleDriftY);
+      // NO cursor translation! Zero jitter! The background grid stays completely still!
 
       // --- Pass 1: Connecting Inter-cell Diagonal Lines (Sacred Grid Weave) ---
       ctx.lineWidth = 1.15;
@@ -200,13 +185,11 @@ export default function HeritageLatticeBackground() {
           const cx = c * spacing;
           const cy = r * spacing;
 
-          // Connect center to diagonal neighbors
           ctx.moveTo(cx, cy);
           ctx.lineTo(cx + spacing, cy + spacing);
           ctx.moveTo(cx + spacing, cy);
           ctx.lineTo(cx, cy + spacing);
 
-          // Horizontal & vertical center connectors
           ctx.moveTo(cx - radius, cy);
           ctx.lineTo(cx + radius, cy);
           ctx.moveTo(cx, cy - radius);
@@ -221,12 +204,11 @@ export default function HeritageLatticeBackground() {
           const cx = c * spacing;
           const cy = r * spacing;
 
-          // Lively cell micro-oscillation (elapsed * 1.25 for active movement)
           const cellPhase = (c * 17 + r * 23) * 0.12;
           const cellRot = Math.sin(elapsed * 1.25 + cellPhase) * 0.055;
           const r1 = radius;
-          const r2 = radius * 0.62; // Inner concentric diamond
-          const rInnerCircle = radius * 0.28; // Center small circle
+          const r2 = radius * 0.62;
+          const rInnerCircle = radius * 0.28;
 
           ctx.save();
           ctx.translate(cx, cy);
@@ -239,7 +221,7 @@ export default function HeritageLatticeBackground() {
           ctx.arc(0, 0, r1, 0, Math.PI * 2);
           ctx.stroke();
 
-          // 2. Outer Diamond (Rotated Square - vertices touching the circle)
+          // 2. Outer Diamond
           ctx.lineWidth = 1.45;
           ctx.beginPath();
           ctx.moveTo(0, -r1);
@@ -269,7 +251,6 @@ export default function HeritageLatticeBackground() {
           ctx.fillStyle = dotColor;
           const dotRadius = 2.5;
 
-          // Outer diamond 4 corner dots
           const outerDots = [
             [0, -r1], [r1, 0], [0, r1], [-r1, 0]
           ];
@@ -279,7 +260,6 @@ export default function HeritageLatticeBackground() {
             ctx.fill();
           }
 
-          // Inner diamond 4 corner dots
           const innerDots = [
             [0, -r2], [r2, 0], [0, r2], [-r2, 0]
           ];
@@ -295,7 +275,7 @@ export default function HeritageLatticeBackground() {
 
       ctx.restore();
 
-      // 3. Floating Light Craft Particles (Silk Dust Drift - Lively Speed)
+      // 3. Floating Light Craft Particles (Silk Dust Drift)
       for (let i = 0; i < particleCount; i++) {
         const p = particles[i];
         p.y -= p.speedY;
@@ -313,57 +293,73 @@ export default function HeritageLatticeBackground() {
         ctx.fill();
       }
 
-      // 4. INTERACTIVE SMALL CIRCLE CHARKA (ಚರಕ) THAT MOVES WITH THE CURSOR
+      // =========================================================================
+      // 4. INTERACTIVE SMALL CIRCLE CHARKA (ಚರಕ) - DRAWN ON OVERLAY CANVAS (z-30)
+      // Floats and spins smoothly right with the cursor over all sections!
+      // =========================================================================
+      charkaCtx.clearRect(0, 0, width, height);
+
       if (isMouseOnScreen) {
-        // Draw trailing silk stardust behind the Charka
-        for (let i = 1; i < charkaTrail.length; i++) {
-          const tp = charkaTrail[i];
-          const trOpacity = (1 - i / charkaTrail.length) * 0.35;
-          ctx.fillStyle = `${particleColor}${trOpacity})`;
-          ctx.beginPath();
-          ctx.arc(tp.x, tp.y, (charkaTrail.length - i) * 1.5, 0, Math.PI * 2);
-          ctx.fill();
+        // Smoothly glide Charka toward cursor position
+        charkaX += (rawMouseX - charkaX) * 0.18;
+        charkaY += (rawMouseY - charkaY) * 0.18;
+        charkaAngle += 0.07; // active spinning Charka rotation
+
+        // Update motion trail
+        charkaTrail.unshift({ x: charkaX, y: charkaY });
+        if (charkaTrail.length > maxTrailLength) {
+          charkaTrail.pop();
         }
 
-        ctx.save();
-        ctx.translate(charkaX, charkaY);
+        // Draw glowing motion trail
+        for (let i = 1; i < charkaTrail.length; i++) {
+          const tp = charkaTrail[i];
+          const trOpacity = (1 - i / charkaTrail.length) * 0.4;
+          charkaCtx.fillStyle = `rgba(167, 139, 250, ${trOpacity})`;
+          charkaCtx.beginPath();
+          charkaCtx.arc(tp.x, tp.y, (charkaTrail.length - i) * 1.6, 0, Math.PI * 2);
+          charkaCtx.fill();
+        }
 
-        // Soft glowing aura for the Charka
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = charkaGlow;
+        charkaCtx.save();
+        charkaCtx.translate(charkaX, charkaY);
+
+        // Soft outer glow aura
+        charkaCtx.shadowBlur = 18;
+        charkaCtx.shadowColor = charkaGlow;
 
         // Outer Charka rim circle
-        const charkaOuterRadius = 24;
-        ctx.strokeStyle = charkaColor;
-        ctx.lineWidth = 2.0;
-        ctx.beginPath();
-        ctx.arc(0, 0, charkaOuterRadius, 0, Math.PI * 2);
-        ctx.stroke();
+        const charkaOuterRadius = 23;
+        charkaCtx.strokeStyle = charkaColor;
+        charkaCtx.lineWidth = 2.2;
+        charkaCtx.beginPath();
+        charkaCtx.arc(0, 0, charkaOuterRadius, 0, Math.PI * 2);
+        charkaCtx.stroke();
 
         // Concentric inner rim circle
-        const charkaInnerRadius = 17;
-        ctx.lineWidth = 1.1;
-        ctx.strokeStyle = secondaryStroke;
-        ctx.beginPath();
-        ctx.arc(0, 0, charkaInnerRadius, 0, Math.PI * 2);
-        ctx.stroke();
+        const charkaInnerRadius = 16;
+        charkaCtx.lineWidth = 1.2;
+        charkaCtx.strokeStyle = secondaryStroke;
+        charkaCtx.beginPath();
+        charkaCtx.arc(0, 0, charkaInnerRadius, 0, Math.PI * 2);
+        charkaCtx.stroke();
 
         // Center hub circle
         const charkaHubRadius = 6.5;
-        ctx.fillStyle = charkaColor;
-        ctx.beginPath();
-        ctx.arc(0, 0, charkaHubRadius, 0, Math.PI * 2);
-        ctx.fill();
+        charkaCtx.fillStyle = charkaColor;
+        charkaCtx.beginPath();
+        charkaCtx.arc(0, 0, charkaHubRadius, 0, Math.PI * 2);
+        charkaCtx.fill();
 
-        // Center jewel axle dot (pure white)
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(0, 0, 2.2, 0, Math.PI * 2);
-        ctx.fill();
+        // Center jewel axle dot (bright white)
+        charkaCtx.fillStyle = '#FFFFFF';
+        charkaCtx.beginPath();
+        charkaCtx.arc(0, 0, 2.2, 0, Math.PI * 2);
+        charkaCtx.fill();
 
-        // 12 Traditional Charka Spokes radiating from center hub to outer rim (continuously spinning)
-        ctx.lineWidth = 1.25;
-        ctx.strokeStyle = charkaColor;
+        // 12 Traditional Charka Spokes radiating from center hub to rim
+        charkaCtx.lineWidth = 1.3;
+        charkaCtx.strokeStyle = charkaColor;
         const spokeCount = 12;
 
         for (let s = 0; s < spokeCount; s++) {
@@ -371,32 +367,31 @@ export default function HeritageLatticeBackground() {
           const cosA = Math.cos(spAngle);
           const sinA = Math.sin(spAngle);
 
-          // Spoke line from hub to outer rim
-          ctx.beginPath();
-          ctx.moveTo(cosA * charkaHubRadius, sinA * charkaHubRadius);
-          ctx.lineTo(cosA * charkaOuterRadius, sinA * charkaOuterRadius);
-          ctx.stroke();
+          charkaCtx.beginPath();
+          charkaCtx.moveTo(cosA * charkaHubRadius, sinA * charkaHubRadius);
+          charkaCtx.lineTo(cosA * charkaOuterRadius, sinA * charkaOuterRadius);
+          charkaCtx.stroke();
 
           // Outer rim bead knot at every spoke tip
-          ctx.fillStyle = dotColor;
-          ctx.beginPath();
-          ctx.arc(cosA * charkaOuterRadius, sinA * charkaOuterRadius, 1.8, 0, Math.PI * 2);
-          ctx.fill();
+          charkaCtx.fillStyle = dotColor;
+          charkaCtx.beginPath();
+          charkaCtx.arc(cosA * charkaOuterRadius, sinA * charkaOuterRadius, 1.8, 0, Math.PI * 2);
+          charkaCtx.fill();
         }
 
-        // 4 Cardinal ornamental diamonds extending subtly from the Charka rim
-        const cardinalDistance = charkaOuterRadius + 4;
+        // 4 Cardinal ornamental knot pearls
+        const cardinalDist = charkaOuterRadius + 4;
         for (let cd = 0; cd < 4; cd++) {
           const cdAngle = charkaAngle + (cd * Math.PI) / 2;
-          const cx = Math.cos(cdAngle) * cardinalDistance;
-          const cy = Math.sin(cdAngle) * cardinalDistance;
-          ctx.fillStyle = dotColor;
-          ctx.beginPath();
-          ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
-          ctx.fill();
+          const cx = Math.cos(cdAngle) * cardinalDist;
+          const cy = Math.sin(cdAngle) * cardinalDist;
+          charkaCtx.fillStyle = dotColor;
+          charkaCtx.beginPath();
+          charkaCtx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+          charkaCtx.fill();
         }
 
-        ctx.restore();
+        charkaCtx.restore();
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -414,14 +409,22 @@ export default function HeritageLatticeBackground() {
 
   return (
     <>
+      {/* 1. Background Geometric Lattice Canvas (Fixed z-0, zero cursor movement) */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 pointer-events-none z-0 select-none transition-opacity duration-1000"
+        className="fixed inset-0 pointer-events-none z-0 select-none"
         style={{ opacity: 0.96 }}
         aria-hidden="true"
       />
 
-      {/* Floating Theme Controller Pill (Light Violet, Sandalwood Silk, Twilight Dusk) */}
+      {/* 2. Interactive Spinning Charka Cursor Canvas (Overlay z-30, floats above content) */}
+      <canvas
+        ref={charkaCanvasRef}
+        className="fixed inset-0 pointer-events-none z-30 select-none"
+        aria-hidden="true"
+      />
+
+      {/* Floating Theme Controller Pill */}
       <aside 
         aria-label="Heritage lattice animation theme controls"
         className="fixed bottom-5 right-5 z-40"
@@ -432,7 +435,7 @@ export default function HeritageLatticeBackground() {
               <div className="flex items-center justify-between pb-1 border-b border-purple-100">
                 <span className="text-[11px] font-bold text-stone-800 flex items-center gap-1.5">
                   <Palette className="w-3.5 h-3.5 text-violet-600" />
-                  Lattice Animation Theme
+                  Upper Theme
                 </span>
                 <button
                   type="button"
@@ -444,7 +447,7 @@ export default function HeritageLatticeBackground() {
                 </button>
               </div>
 
-              {/* Theme 1: Light Violet (Default requested by user) */}
+              {/* Theme 1: Light Violet (Default) */}
               <button
                 type="button"
                 onClick={() => {
@@ -460,11 +463,11 @@ export default function HeritageLatticeBackground() {
                 <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#FCF9FF] via-[#E6D7FB] to-[#D8C3F6] border border-violet-400 shadow-xs flex-shrink-0" />
                 <div className="text-left">
                   <p className="leading-tight font-bold text-violet-900">Light Violet (Default)</p>
-                  <p className="text-[10px] text-stone-500 font-normal">Soft Lilac & Royal Charka</p>
+                  <p className="text-[10px] text-stone-500 font-normal">Upper Page Atmosphere</p>
                 </div>
               </button>
 
-              {/* Theme 2: Sandalwood Silk (Image 1) */}
+              {/* Theme 2: Sandalwood Silk */}
               <button
                 type="button"
                 onClick={() => {
@@ -480,11 +483,11 @@ export default function HeritageLatticeBackground() {
                 <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#F9EDE3] via-[#F6DEC9] to-[#E9C0A2] border border-amber-400 shadow-xs flex-shrink-0" />
                 <div className="text-left">
                   <p className="leading-tight">Sandalwood Silk</p>
-                  <p className="text-[10px] text-stone-500 font-normal">Warm Peach (Image 1)</p>
+                  <p className="text-[10px] text-stone-500 font-normal">Warm Peach Theme</p>
                 </div>
               </button>
 
-              {/* Theme 3: Twilight Dusk (Image 2) */}
+              {/* Theme 3: Twilight Dusk */}
               <button
                 type="button"
                 onClick={() => {
@@ -500,16 +503,16 @@ export default function HeritageLatticeBackground() {
                 <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#212338] via-[#523c39] to-[#66453c] border border-amber-300 shadow-xs flex-shrink-0" />
                 <div className="text-left">
                   <p className="leading-tight">Twilight Dusk</p>
-                  <p className="text-[10px] text-stone-500 font-normal">Indigo Bronze (Image 2)</p>
+                  <p className="text-[10px] text-stone-500 font-normal">Indigo Bronze Theme</p>
                 </div>
               </button>
 
               <div className="pt-1 border-t border-purple-100 flex items-center justify-between text-[10px] text-stone-500">
                 <span className="flex items-center gap-1 text-violet-700 font-medium">
                   <Sparkles className="w-2.5 h-2.5 text-violet-600" />
-                  Speed: Active & Responsive
+                  Background: Fixed
                 </span>
-                <span className="text-[10px] text-purple-600">🪡 Charka cursor on</span>
+                <span className="text-[10px] text-purple-600">🪡 Charka follows cursor</span>
               </div>
             </div>
           ) : (
@@ -517,8 +520,8 @@ export default function HeritageLatticeBackground() {
               type="button"
               onClick={() => setShowThemeControls(true)}
               className="bg-white/90 hover:bg-white backdrop-blur-xl border border-violet-300/80 hover:border-violet-500 text-stone-800 shadow-lg hover:shadow-xl rounded-full px-3.5 py-2 text-xs font-semibold transition-all flex items-center gap-2 active:scale-95 group"
-              title="Change Background Animation Theme"
-              aria-label="Change Background Animation Theme"
+              title="Upper Theme Selector"
+              aria-label="Upper Theme Selector"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>

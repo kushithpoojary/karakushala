@@ -136,143 +136,153 @@ export default function App() {
             <TrackOrderPage />
           ) : (
             <div>
-              {/* Hero Section */}
+              {/* Hero Section (Upper Section: Light Violet Theme Preserved) */}
               <HeroBanner onExploreClick={handleExploreClick} />
 
-              {/* Buyer Catalogue Section */}
-              <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-7">
-              
-              {/* Catalogue Header */}
-              <div className="space-y-4">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                  <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 via-rose-100 to-indigo-100 border border-amber-300 text-stone-800 text-xs font-bold shadow-xs">
-                      <span className="text-sm">🏛️</span>
-                      <span>GI Heritage Handcrafts • ಉತ್ತರ ಕರ್ನಾಟಕ & ಕರಾವಳಿ ಕ್ಲಸ್ಟರ್</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              {/* Orange Background Zone starting from Karnataka Living Crafts Catalogue */}
+              <div className="relative bg-gradient-to-b from-[#f97316] via-[#ea580c] to-[#c2410c] text-stone-900 border-t-4 border-amber-300 shadow-2xl">
+                {/* Subtle traditional warm pattern overlay for depth */}
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+
+                {/* Ambient warm glowing accents inside orange zone */}
+                <div className="absolute top-12 left-10 w-96 h-96 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-500/20 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Buyer Catalogue Section */}
+                <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-7 relative z-10">
+                
+                {/* Catalogue Header */}
+                <div className="space-y-4">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-amber-300 text-stone-900 text-xs font-bold shadow-xs">
+                        <span className="text-sm">🏛️</span>
+                        <span>GI Heritage Handcrafts • ಉತ್ತರ ಕರ್ನಾಟಕ & ಕರಾವಳಿ ಕ್ಲಸ್ಟರ್</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                      </div>
+
+                      <h2 className="font-serif text-2xl sm:text-4xl font-extrabold text-white mt-2 flex items-center gap-2 flex-wrap drop-shadow-sm">
+                        <span>Karnataka Living Crafts Catalogue</span>
+                        <span className="text-xs sm:text-sm font-sans font-bold bg-stone-950 text-amber-300 px-3 py-1 rounded-full shadow-md">
+                          ಕರಕುಶಲ ಮಳಿಗೆ
+                        </span>
+                      </h2>
+                      <p className="text-orange-100 text-xs sm:text-sm mt-1 font-medium">
+                        Each piece is tagged with verified provenance, multi-photo angles, direct fair-wage breakdowns, and authentic artisan voice stories.
+                      </p>
                     </div>
 
-                    <h2 className="font-serif text-2xl sm:text-4xl font-bold text-indigo-950 mt-2 flex items-center gap-2 flex-wrap">
-                      <span>Karnataka Living Crafts Catalogue</span>
-                      <span className="text-xs sm:text-sm font-sans font-bold bg-amber-400 text-stone-950 px-2.5 py-0.5 rounded-full shadow-xs">
-                        ಕರಕುಶಲ ಮಳಿಗೆ
-                      </span>
-                    </h2>
-                    <p className="text-stone-600 text-xs sm:text-sm mt-1">
-                      Each piece is tagged with verified provenance, multi-photo angles, direct fair-wage breakdowns, and authentic artisan voice stories.
-                    </p>
+                    {/* Active Filter Pill Count */}
+                    <div className="text-xs text-stone-900 font-bold bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-orange-200 shadow-sm">
+                      Showing <strong className="text-terracotta-700 font-extrabold text-sm">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
+                    </div>
                   </div>
 
-                  {/* Active Filter Pill Count */}
-                  <div className="text-xs text-stone-600 font-semibold bg-white px-3.5 py-2 rounded-xl border border-cream-300 shadow-xs">
-                    Showing <strong className="text-terracotta-700 font-bold text-sm">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
+                  {/* Multi-Color Category Pills */}
+                  <CategoryFilter
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={setSelectedCategory}
+                    productCounts={productCounts}
+                  />
+
+                  {/* Quick Search Suggestion Pills with Colorful Badges */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-500">
+                    <span className="font-bold text-white whitespace-nowrap flex items-center gap-1.5 pl-0.5">
+                      <Search className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Popular:</span>
+                    </span>
+                    {quickSearchPills.map((term, i) => {
+                      const pillGradients = [
+                        'hover:border-rose-400 hover:text-rose-700',
+                        'hover:border-amber-400 hover:text-amber-800',
+                        'hover:border-emerald-400 hover:text-emerald-700',
+                        'hover:border-indigo-400 hover:text-indigo-700',
+                        'hover:border-cyan-400 hover:text-cyan-700',
+                        'hover:border-terracotta-400 hover:text-terracotta-700',
+                        'hover:border-purple-400 hover:text-purple-700',
+                      ];
+                      const hoverClass = pillGradients[i % pillGradients.length];
+
+                      return (
+                        <button
+                          key={term}
+                          onClick={() => {
+                            setSearchQuery(term);
+                            setSelectedCategory('All Crafts');
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap border active:scale-95 shadow-xs ${
+                            searchQuery.toLowerCase() === term.toLowerCase()
+                              ? 'bg-gradient-to-r from-stone-900 to-stone-800 text-amber-300 border-transparent font-bold shadow-sm'
+                              : `bg-white/95 text-stone-800 border-cream-300 ${hoverClass}`
+                          }`}
+                        >
+                          {term}
+                        </button>
+                      );
+                    })}
                   </div>
-                </div>
 
-                {/* Multi-Color Category Pills */}
-                <CategoryFilter
-                  selectedCategory={selectedCategory}
-                  onSelectCategory={setSelectedCategory}
-                  productCounts={productCounts}
-                />
+                  {/* Active Search Notification Banner */}
+                  {searchQuery.trim() && (
+                    <div className="p-3.5 bg-white/95 border border-amber-300 rounded-2xl flex items-center justify-between text-xs sm:text-sm text-stone-900 shadow-md animate-fadeIn">
+                      <div className="flex items-center gap-2">
+                        <Search className="w-4 h-4 text-terracotta-600" />
+                        <span>
+                          Search results for: <strong className="font-bold underline">"{searchQuery}"</strong> ({filteredProducts.length} {filteredProducts.length === 1 ? 'craft' : 'crafts'} found)
+                        </span>
+                      </div>
 
-                {/* Quick Search Suggestion Pills with Colorful Badges */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-500">
-                  <span className="font-bold text-stone-800 whitespace-nowrap flex items-center gap-1.5 pl-0.5">
-                    <Search className="w-3.5 h-3.5 text-terracotta-600" />
-                    <span>Popular:</span>
-                  </span>
-                  {quickSearchPills.map((term, i) => {
-                    const pillGradients = [
-                      'hover:border-rose-400 hover:text-rose-700',
-                      'hover:border-amber-400 hover:text-amber-800',
-                      'hover:border-emerald-400 hover:text-emerald-700',
-                      'hover:border-indigo-400 hover:text-indigo-700',
-                      'hover:border-cyan-400 hover:text-cyan-700',
-                      'hover:border-terracotta-400 hover:text-terracotta-700',
-                      'hover:border-purple-400 hover:text-purple-700',
-                    ];
-                    const hoverClass = pillGradients[i % pillGradients.length];
-
-                    return (
                       <button
-                        key={term}
-                        onClick={() => {
-                          setSearchQuery(term);
-                          setSelectedCategory('All Crafts');
-                        }}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap border active:scale-95 shadow-xs ${
-                          searchQuery.toLowerCase() === term.toLowerCase()
-                            ? 'bg-gradient-to-r from-terracotta-600 to-amber-600 text-white border-transparent font-bold shadow-sm'
-                            : `bg-white text-stone-700 border-cream-300 ${hoverClass}`
-                        }`}
+                        onClick={() => setSearchQuery('')}
+                        className="px-2.5 py-1 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-lg text-xs flex items-center gap-1 transition-colors"
                       >
-                        {term}
+                        <X className="w-3.5 h-3.5" />
+                        <span>Clear Search</span>
                       </button>
-                    );
-                  })}
+                    </div>
+                  )}
                 </div>
 
-                {/* Active Search Notification Banner */}
-                {searchQuery.trim() && (
-                  <div className="p-3.5 bg-terracotta-50 border border-terracotta-200 rounded-2xl flex items-center justify-between text-xs sm:text-sm text-terracotta-900 animate-fadeIn">
-                    <div className="flex items-center gap-2">
-                      <Search className="w-4 h-4 text-terracotta-600" />
-                      <span>
-                        Search results for: <strong className="font-bold underline">"{searchQuery}"</strong> ({filteredProducts.length} {filteredProducts.length === 1 ? 'craft' : 'crafts'} found)
-                      </span>
+                {/* Product Grid with Staggered Entrance & Smooth Skeletons */}
+                {loading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                      <ProductCardSkeleton key={i} />
+                    ))}
+                  </div>
+                ) : filteredProducts.length === 0 ? (
+                  <div className="bg-white/95 backdrop-blur-sm rounded-3xl border border-cream-300 p-10 sm:p-14 text-center space-y-5 shadow-earth max-w-2xl mx-auto animate-scaleUp">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto text-3xl shadow-inner border border-amber-200">
+                      🔍
                     </div>
-
+                    <div className="space-y-1.5">
+                      <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                        No crafts found matching "{searchQuery}"
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 max-w-md mx-auto">
+                        Try searching for "Kasuti", "Beedu", "Lamp", "Saree", "Diya", or click one of the popular Karnataka craft tags above.
+                      </p>
+                    </div>
                     <button
-                      onClick={() => setSearchQuery('')}
-                      className="px-2.5 py-1 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-lg text-xs flex items-center gap-1 transition-colors"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCategory('All Crafts');
+                      }}
+                      className="px-6 py-3 bg-gradient-to-r from-stone-900 to-stone-800 hover:bg-black text-amber-300 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 btn-press"
                     >
-                      <X className="w-3.5 h-3.5" />
-                      <span>Clear Search</span>
+                      Reset Filter & Explore All Crafts
                     </button>
                   </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+                    {filteredProducts.map((product, idx) => (
+                      <ProductCard key={product.id} product={product} index={idx} />
+                    ))}
+                  </div>
                 )}
+
+                </section>
               </div>
-
-              {/* Product Grid with Staggered Entrance & Smooth Skeletons */}
-              {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <ProductCardSkeleton key={i} />
-                  ))}
-                </div>
-              ) : filteredProducts.length === 0 ? (
-                <div className="bg-white/90 backdrop-blur-sm rounded-3xl border border-cream-300 p-10 sm:p-14 text-center space-y-5 shadow-earth max-w-2xl mx-auto animate-scaleUp">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto text-3xl shadow-inner border border-amber-200">
-                    🔍
-                  </div>
-                  <div className="space-y-1.5">
-                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
-                      No crafts found matching "{searchQuery}"
-                    </h3>
-                    <p className="text-xs sm:text-sm text-stone-600 max-w-md mx-auto">
-                      Try searching for "Kasuti", "Beedu", "Lamp", "Saree", "Diya", or click one of the popular Karnataka craft tags above.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedCategory('All Crafts');
-                    }}
-                    className="px-6 py-3 bg-gradient-to-r from-terracotta-600 to-amber-600 hover:from-terracotta-700 hover:to-amber-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-terracotta-600/30 transition-all active:scale-95 btn-press"
-                  >
-                    Reset Filter & Explore All Crafts
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
-                  {filteredProducts.map((product, idx) => (
-                    <ProductCard key={product.id} product={product} index={idx} />
-                  ))}
-                </div>
-              )}
-
-            </section>
           </div>
         )}
         </div>
