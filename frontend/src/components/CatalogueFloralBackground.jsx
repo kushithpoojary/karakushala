@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 
 export default function CatalogueFloralBackground() {
   const canvasRef = useRef(null);
-  const containerRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,10 +12,14 @@ export default function CatalogueFloralBackground() {
     let width = 0;
     let height = 0;
 
-    // Track mouse over catalogue section for floral ripple
+    // Interactive mouse tracker for floral breeze & cursor blossom bursts
     let mouseX = -1000;
     let mouseY = -1000;
     let isHovering = false;
+
+    // Interactive blossom sparks spawned at cursor position
+    const cursorBlossoms = [];
+    const maxCursorBlossoms = 22;
 
     const updateSize = () => {
       const parent = canvas.parentElement;
@@ -41,9 +44,28 @@ export default function CatalogueFloralBackground() {
 
     const handleMouseMove = (e) => {
       const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+
+      mouseX = currentX;
+      mouseY = currentY;
       isHovering = mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height;
+
+      // Spawn glowing mini-blossom sparks on mouse move
+      if (isHovering && Math.random() < 0.55 && cursorBlossoms.length < maxCursorBlossoms) {
+        cursorBlossoms.push({
+          x: currentX,
+          y: currentY,
+          vx: (Math.random() - 0.5) * 2.2,
+          vy: -0.5 - Math.random() * 1.5,
+          size: 6 + Math.random() * 8,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.1,
+          colorIdx: Math.floor(Math.random() * 3), // 0: marigold, 1: jasmine, 2: saffron
+          life: 1.0,
+          decay: 0.03 + Math.random() * 0.025
+        });
+      }
     };
 
     const handleMouseLeave = () => {
@@ -57,69 +79,63 @@ export default function CatalogueFloralBackground() {
 
     // =========================================================================
     // 1. Sacred Karnataka Lotus Mandalas (Kamala Blooms)
-    // Distributed across the catalogue background
     // =========================================================================
     const mandalas = [
-      { relX: 0.08, relY: 0.12, radius: 95, speed: 0.0025, petals: 12, phase: 0 },
-      { relX: 0.88, relY: 0.18, radius: 110, speed: -0.002, petals: 16, phase: 1.2 },
-      { relX: 0.50, relY: 0.32, radius: 85, speed: 0.003, petals: 8, phase: 2.5 },
-      { relX: 0.15, relY: 0.58, radius: 120, speed: -0.0022, petals: 12, phase: 3.8 },
-      { relX: 0.82, relY: 0.65, radius: 100, speed: 0.0028, petals: 16, phase: 4.5 },
-      { relX: 0.38, relY: 0.82, radius: 90, speed: -0.0032, petals: 8, phase: 5.2 },
-      { relX: 0.92, relY: 0.92, radius: 115, speed: 0.002, petals: 12, phase: 0.8 },
-      { relX: 0.05, relY: 0.95, radius: 80, speed: -0.0026, petals: 8, phase: 1.9 },
+      { relX: 0.08, relY: 0.10, radius: 105, speed: 0.003, petals: 12, phase: 0 },
+      { relX: 0.88, relY: 0.16, radius: 120, speed: -0.0025, petals: 16, phase: 1.2 },
+      { relX: 0.48, relY: 0.28, radius: 95, speed: 0.0035, petals: 8, phase: 2.5 },
+      { relX: 0.14, relY: 0.48, radius: 125, speed: -0.0028, petals: 12, phase: 3.8 },
+      { relX: 0.85, relY: 0.55, radius: 110, speed: 0.0032, petals: 16, phase: 4.5 },
+      { relX: 0.35, relY: 0.70, radius: 100, speed: -0.003, petals: 8, phase: 5.2 },
+      { relX: 0.90, relY: 0.85, radius: 120, speed: 0.0028, petals: 12, phase: 0.8 },
+      { relX: 0.06, relY: 0.92, radius: 90, speed: -0.0032, petals: 8, phase: 1.9 },
     ];
 
     // =========================================================================
-    // 2. Falling Marigold & Jasmine Flower Petals (ಚೆಂಡುಹೂವು & ಮಲ್ಲಿಗೆ ಪಕಳೆಗಳು)
+    // 2. Falling Whole Flowers & Petals (Marigold Blooms & Jasmine Buds)
     // =========================================================================
-    const petalCount = 42;
-    const petals = [];
-    const petalColors = [
-      { fill: 'rgba(254, 240, 138, 0.65)', border: 'rgba(250, 204, 21, 0.75)' }, // Bright Marigold Yellow
-      { fill: 'rgba(251, 146, 60, 0.60)', border: 'rgba(234, 88, 12, 0.70)' },   // Saffron Orange
-      { fill: 'rgba(255, 255, 255, 0.75)', border: 'rgba(254, 243, 199, 0.85)' }, // Sacred Jasmine White (Mallige)
-      { fill: 'rgba(253, 164, 175, 0.55)', border: 'rgba(244, 63, 94, 0.65)' }   // Lotus Blossom Pink
-    ];
+    const fallingItemCount = 48;
+    const fallingItems = [];
 
-    for (let i = 0; i < petalCount; i++) {
-      petals.push({
+    for (let i = 0; i < fallingItemCount; i++) {
+      const isWholeFlower = i % 4 === 0; // 25% whole marigolds, 75% petals
+      fallingItems.push({
+        isWholeFlower,
         x: Math.random() * (width || 1200),
-        y: Math.random() * (height || 1800),
-        size: 11 + Math.random() * 15,
-        speedY: 0.75 + Math.random() * 1.35,
-        speedX: (Math.random() - 0.5) * 0.4,
-        swaySpeed: 1.0 + Math.random() * 1.4,
-        swayAmount: 18 + Math.random() * 26,
+        y: Math.random() * (height || 2000),
+        size: isWholeFlower ? 16 + Math.random() * 12 : 11 + Math.random() * 15,
+        speedY: isWholeFlower ? 0.9 + Math.random() * 1.1 : 0.8 + Math.random() * 1.5,
+        speedX: (Math.random() - 0.5) * 0.45,
+        swaySpeed: 1.1 + Math.random() * 1.5,
+        swayAmount: isWholeFlower ? 12 + Math.random() * 16 : 18 + Math.random() * 28,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.04,
-        flipSpeed: 1.2 + Math.random() * 1.8,
-        colorIdx: Math.floor(Math.random() * petalColors.length),
-        opacity: 0.45 + Math.random() * 0.4,
+        rotSpeed: (Math.random() - 0.5) * 0.05,
+        flipSpeed: isWholeFlower ? 0.8 + Math.random() * 1.0 : 1.3 + Math.random() * 1.8,
+        colorIdx: Math.floor(Math.random() * 4),
+        opacity: 0.55 + Math.random() * 0.4,
         phase: Math.random() * Math.PI * 2
       });
     }
 
     // =========================================================================
-    // 3. Floating Golden Pollen Sparkles
+    // 3. Glowing Firefly Motes & Golden Pollen Sparkles
     // =========================================================================
-    const pollenCount = 30;
-    const pollen = [];
-    for (let i = 0; i < pollenCount; i++) {
-      pollen.push({
+    const fireflyCount = 35;
+    const fireflies = [];
+    for (let i = 0; i < fireflyCount; i++) {
+      fireflies.push({
         x: Math.random() * (width || 1200),
-        y: Math.random() * (height || 1800),
-        radius: 1.2 + Math.random() * 2.2,
-        speedY: 0.4 + Math.random() * 0.6,
-        speedX: (Math.random() - 0.5) * 0.35,
-        opacity: 0.3 + Math.random() * 0.5,
-        pulseSpeed: 1.5 + Math.random() * 2.0,
+        y: Math.random() * (height || 2000),
+        radius: 1.4 + Math.random() * 2.4,
+        speedY: 0.45 + Math.random() * 0.75,
+        speedX: (Math.random() - 0.5) * 0.5,
+        pulseSpeed: 1.8 + Math.random() * 2.5,
         phase: Math.random() * Math.PI * 2
       });
     }
 
-    // Helper: Draw organic lotus petal
-    const drawPetal = (length, pWidth) => {
+    // Helper: Draw organic curved lotus petal
+    const drawLotusPetal = (length, pWidth) => {
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.quadraticCurveTo(-pWidth, length * 0.5, 0, length);
@@ -127,12 +143,43 @@ export default function CatalogueFloralBackground() {
       ctx.closePath();
     };
 
+    // Helper: Draw full Marigold Flower (ಚೆಂಡುಹೂವು)
+    const drawFullMarigold = (size, alpha) => {
+      const petalLayers = 3;
+      const petalsPerLayer = 10;
+      
+      for (let l = petalLayers; l >= 1; l--) {
+        const layerRadius = (size * l) / petalLayers;
+        const layerAlpha = alpha * (0.5 + l * 0.15);
+        ctx.fillStyle = l === 3 
+          ? `rgba(245, 158, 11, ${layerAlpha})` 
+          : l === 2 
+            ? `rgba(251, 191, 36, ${layerAlpha})` 
+            : `rgba(254, 240, 138, ${layerAlpha})`;
+
+        for (let p = 0; p < petalsPerLayer; p++) {
+          const angle = (p * Math.PI * 2) / petalsPerLayer + (l * 0.2);
+          const px = Math.cos(angle) * layerRadius;
+          const py = Math.sin(angle) * layerRadius;
+          ctx.beginPath();
+          ctx.arc(px, py, layerRadius * 0.42, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Center orange pistil button
+      ctx.fillStyle = `rgba(180, 83, 9, ${alpha * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, size * 0.28, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
     let startTime = performance.now();
 
     const render = (currentTime) => {
       const elapsed = (currentTime - startTime) * 0.001;
 
-      // Clear previous frame
+      // Clear frame
       ctx.clearRect(0, 0, width, height);
 
       // =====================================================================
@@ -142,7 +189,7 @@ export default function CatalogueFloralBackground() {
         const cx = m.relX * width;
         const cy = m.relY * height;
         const currentRot = elapsed * m.speed + m.phase;
-        const breath = 1 + Math.sin(elapsed * 1.2 + m.phase) * 0.06;
+        const breath = 1 + Math.sin(elapsed * 1.4 + m.phase) * 0.07;
         const r = m.radius * breath;
 
         ctx.save();
@@ -150,12 +197,12 @@ export default function CatalogueFloralBackground() {
         ctx.rotate(currentRot);
 
         // Outer halo glow
-        ctx.shadowBlur = 14;
-        ctx.shadowColor = 'rgba(254, 240, 138, 0.35)';
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = 'rgba(254, 240, 138, 0.4)';
 
         // Outer concentric sacred circle
-        ctx.strokeStyle = 'rgba(254, 243, 199, 0.22)';
-        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = 'rgba(254, 243, 199, 0.25)';
+        ctx.lineWidth = 1.4;
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.stroke();
@@ -166,24 +213,24 @@ export default function CatalogueFloralBackground() {
         ctx.stroke();
 
         // Outer ring of curved lotus petals
-        ctx.fillStyle = 'rgba(254, 240, 138, 0.07)';
-        ctx.strokeStyle = 'rgba(254, 243, 199, 0.28)';
-        ctx.lineWidth = 1.1;
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.08)';
+        ctx.strokeStyle = 'rgba(254, 243, 199, 0.32)';
+        ctx.lineWidth = 1.15;
 
         for (let i = 0; i < m.petals; i++) {
           const angle = (i * Math.PI * 2) / m.petals;
           ctx.save();
           ctx.rotate(angle);
-          drawPetal(r, r * 0.22);
+          drawLotusPetal(r, r * 0.22);
           ctx.fill();
           ctx.stroke();
           ctx.restore();
         }
 
         // Inner offset ring of smaller lotus petals
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.09)';
-        ctx.strokeStyle = 'rgba(253, 230, 138, 0.32)';
-        ctx.lineWidth = 0.9;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.10)';
+        ctx.strokeStyle = 'rgba(253, 230, 138, 0.35)';
+        ctx.lineWidth = 0.95;
         const innerPetals = Math.floor(m.petals / 2);
         const innerOffset = Math.PI / innerPetals;
 
@@ -191,14 +238,14 @@ export default function CatalogueFloralBackground() {
           const angle = (i * Math.PI * 2) / innerPetals + innerOffset;
           ctx.save();
           ctx.rotate(angle);
-          drawPetal(r * 0.58, r * 0.16);
+          drawLotusPetal(r * 0.58, r * 0.16);
           ctx.fill();
           ctx.stroke();
           ctx.restore();
         }
 
         // Center Pistil jewel
-        ctx.fillStyle = 'rgba(254, 240, 138, 0.75)';
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.8)';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.12, 0, Math.PI * 2);
         ctx.fill();
@@ -209,13 +256,13 @@ export default function CatalogueFloralBackground() {
         ctx.fill();
 
         // 8 stamen dots around pistil
-        ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.9)';
         for (let s = 0; s < 8; s++) {
           const sAngle = (s * Math.PI * 2) / 8;
           const sx = Math.cos(sAngle) * (r * 0.2);
           const sy = Math.sin(sAngle) * (r * 0.2);
           ctx.beginPath();
-          ctx.arc(sx, sy, 1.8, 0, Math.PI * 2);
+          ctx.arc(sx, sy, 2.0, 0, Math.PI * 2);
           ctx.fill();
         }
 
@@ -223,131 +270,187 @@ export default function CatalogueFloralBackground() {
       });
 
       // =====================================================================
-      // PASS 2: Top Decorative Floral Torana (Garland Scallop along border)
+      // PASS 2: Top Decorative Floral Torana (Swaying Garland along border)
       // =====================================================================
-      const garlandSpacing = 55;
+      const garlandSpacing = 52;
       const garlandCount = Math.ceil(width / garlandSpacing) + 1;
       ctx.save();
       for (let g = 0; g < garlandCount; g++) {
         const gx = g * garlandSpacing;
         const gy = 12;
-        const gBreath = Math.sin(elapsed * 2 + g * 0.4) * 2;
+        const gBreath = Math.sin(elapsed * 2.2 + g * 0.45) * 3;
 
         // Scalloped connecting golden cord
         if (g > 0) {
-          ctx.strokeStyle = 'rgba(254, 243, 199, 0.4)';
-          ctx.lineWidth = 1.2;
+          ctx.strokeStyle = 'rgba(254, 243, 199, 0.45)';
+          ctx.lineWidth = 1.3;
           ctx.beginPath();
           ctx.moveTo(gx - garlandSpacing, gy);
-          ctx.quadraticCurveTo(gx - garlandSpacing / 2, gy + 14 + gBreath, gx, gy);
+          ctx.quadraticCurveTo(gx - garlandSpacing / 2, gy + 15 + gBreath, gx, gy);
           ctx.stroke();
         }
 
         // Marigold / Jasmine floral rosette knot
         const isMarigold = g % 2 === 0;
-        ctx.fillStyle = isMarigold ? 'rgba(251, 191, 36, 0.85)' : 'rgba(255, 255, 255, 0.9)';
+        ctx.fillStyle = isMarigold ? 'rgba(251, 191, 36, 0.9)' : 'rgba(255, 255, 255, 0.95)';
         ctx.beginPath();
-        ctx.arc(gx, gy + 4 + gBreath, 5, 0, Math.PI * 2);
+        ctx.arc(gx, gy + 4 + gBreath, 5.5, 0, Math.PI * 2);
         ctx.fill();
 
         // Center dot
         ctx.fillStyle = isMarigold ? '#B45309' : '#F59E0B';
         ctx.beginPath();
-        ctx.arc(gx, gy + 4 + gBreath, 2, 0, Math.PI * 2);
+        ctx.arc(gx, gy + 4 + gBreath, 2.2, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
 
       // =====================================================================
-      // PASS 3: Falling & Tumbling Flower Petals (ಚೆಂಡುಹೂವು & ಮಲ್ಲಿಗೆ ಪಕಳೆಗಳು)
+      // PASS 3: Falling Whole Marigolds & Tumbling Petals
       // =====================================================================
-      for (let i = 0; i < petalCount; i++) {
-        const p = petals[i];
+      for (let i = 0; i < fallingItemCount; i++) {
+        const itm = fallingItems[i];
 
-        // Move petal down and sway
-        p.y += p.speedY;
-        p.x += p.speedX;
+        itm.y += itm.speedY;
+        itm.x += itm.speedX;
 
-        // Wrap around at bottom
-        if (p.y > height + 25) {
-          p.y = -25;
-          p.x = Math.random() * width;
+        // Wrap around
+        if (itm.y > height + 35) {
+          itm.y = -35;
+          itm.x = Math.random() * width;
         }
-        if (p.x < -30) p.x = width + 30;
-        if (p.x > width + 30) p.x = -30;
+        if (itm.x < -40) itm.x = width + 40;
+        if (itm.x > width + 40) itm.x = -40;
 
-        // Harmonic sway calculation
-        const sway = Math.sin(elapsed * p.swaySpeed + p.phase) * p.swayAmount;
-        const renderX = p.x + sway;
-        const renderY = p.y;
+        const sway = Math.sin(elapsed * itm.swaySpeed + itm.phase) * itm.swayAmount;
+        const renderX = itm.x + sway;
+        const renderY = itm.y;
 
-        // Cursor ripple: petals gently swirl away if cursor is near
-        let cursorPushX = 0;
-        let cursorPushY = 0;
+        // Interactive cursor breeze push
+        let pushX = 0;
+        let pushY = 0;
         if (isHovering) {
           const dx = renderX - mouseX;
           const dy = renderY - mouseY;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 140 && dist > 0) {
-            const force = (1 - dist / 140) * 18;
-            cursorPushX = (dx / dist) * force;
-            cursorPushY = (dy / dist) * force;
+          if (dist < 150 && dist > 0) {
+            const force = (1 - dist / 150) * 22;
+            pushX = (dx / dist) * force;
+            pushY = (dy / dist) * force;
           }
         }
 
         ctx.save();
-        ctx.translate(renderX + cursorPushX, renderY + cursorPushY);
-        ctx.rotate(p.rotation + elapsed * p.rotSpeed);
+        ctx.translate(renderX + pushX, renderY + pushY);
+        ctx.rotate(itm.rotation + elapsed * itm.rotSpeed);
 
-        // 3D tumbling flip effect
-        const flipScale = Math.cos(elapsed * p.flipSpeed + p.phase);
-        ctx.scale(flipScale, 1);
+        if (itm.isWholeFlower) {
+          // Render full tumbling Marigold Blossom
+          ctx.scale(Math.cos(elapsed * itm.flipSpeed + itm.phase) * 0.4 + 0.6, 1);
+          drawFullMarigold(itm.size, itm.opacity);
+        } else {
+          // Render tumbling single petal
+          const flipScale = Math.cos(elapsed * itm.flipSpeed + itm.phase);
+          ctx.scale(flipScale, 1);
 
-        const color = petalColors[p.colorIdx];
-        ctx.fillStyle = color.fill;
-        ctx.strokeStyle = color.border;
-        ctx.lineWidth = 0.8;
+          let fill, stroke;
+          if (itm.colorIdx === 0) {
+            fill = `rgba(254, 240, 138, ${itm.opacity})`;
+            stroke = `rgba(250, 204, 21, ${itm.opacity * 1.1})`;
+          } else if (itm.colorIdx === 1) {
+            fill = `rgba(251, 146, 60, ${itm.opacity})`;
+            stroke = `rgba(234, 88, 12, ${itm.opacity * 1.1})`;
+          } else if (itm.colorIdx === 2) {
+            fill = `rgba(255, 255, 255, ${itm.opacity * 1.15})`;
+            stroke = `rgba(254, 243, 199, ${itm.opacity * 1.2})`;
+          } else {
+            fill = `rgba(253, 164, 175, ${itm.opacity})`;
+            stroke = `rgba(244, 63, 94, ${itm.opacity * 1.1})`;
+          }
 
-        // Draw organic teardrop flower petal
-        ctx.beginPath();
-        ctx.moveTo(0, -p.size * 0.65);
-        ctx.quadraticCurveTo(-p.size * 0.45, 0, 0, p.size * 0.65);
-        ctx.quadraticCurveTo(p.size * 0.45, 0, 0, -p.size * 0.65);
-        ctx.fill();
-        ctx.stroke();
+          ctx.fillStyle = fill;
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = 0.8;
 
-        // Delicate petal vein line
-        ctx.strokeStyle = color.border;
-        ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(0, -p.size * 0.45);
-        ctx.lineTo(0, p.size * 0.45);
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, -itm.size * 0.65);
+          ctx.quadraticCurveTo(-itm.size * 0.45, 0, 0, itm.size * 0.65);
+          ctx.quadraticCurveTo(itm.size * 0.45, 0, 0, -itm.size * 0.65);
+          ctx.fill();
+          ctx.stroke();
+
+          // Vein line
+          ctx.beginPath();
+          ctx.moveTo(0, -itm.size * 0.4);
+          ctx.lineTo(0, itm.size * 0.4);
+          ctx.stroke();
+        }
 
         ctx.restore();
       }
 
       // =====================================================================
-      // PASS 4: Floating Golden Pollen Sparkles
+      // PASS 4: Glowing Fireflies (ಮಿಣುಕು ಹುಳುಗಳು)
       // =====================================================================
-      for (let i = 0; i < pollenCount; i++) {
-        const pl = pollen[i];
-        pl.y -= pl.speedY;
-        pl.x += pl.speedX + Math.sin(elapsed * 1.2 + pl.phase) * 0.25;
+      for (let i = 0; i < fireflyCount; i++) {
+        const ff = fireflies[i];
+        ff.y -= ff.speedY;
+        ff.x += ff.speedX + Math.sin(elapsed * 1.3 + ff.phase) * 0.35;
 
-        if (pl.y < -10) {
-          pl.y = height + 10;
-          pl.x = Math.random() * width;
+        if (ff.y < -15) {
+          ff.y = height + 15;
+          ff.x = Math.random() * width;
         }
 
-        const currentOpacity = pl.opacity + Math.sin(elapsed * pl.pulseSpeed + pl.phase) * 0.25;
+        const pulse = Math.sin(elapsed * ff.pulseSpeed + ff.phase);
+        const glowOpacity = Math.max(0.15, pulse * 0.4 + 0.5);
+
         ctx.save();
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
         ctx.shadowColor = '#FDE047';
-        ctx.fillStyle = `rgba(254, 240, 138, ${Math.max(0.1, currentOpacity)})`;
+        ctx.fillStyle = `rgba(254, 240, 138, ${glowOpacity})`;
         ctx.beginPath();
-        ctx.arc(pl.x, pl.y, pl.radius, 0, Math.PI * 2);
+        ctx.arc(ff.x, ff.y, ff.radius, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+      }
+
+      // =====================================================================
+      // PASS 5: Interactive Cursor Blossom Sparks
+      // =====================================================================
+      for (let b = cursorBlossoms.length - 1; b >= 0; b--) {
+        const cb = cursorBlossoms[b];
+        cb.x += cb.vx;
+        cb.y += cb.vy;
+        cb.rotation += cb.rotSpeed;
+        cb.life -= cb.decay;
+
+        if (cb.life <= 0) {
+          cursorBlossoms.splice(b, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(cb.x, cb.y);
+        ctx.rotate(cb.rotation);
+
+        const cbAlpha = cb.life * 0.9;
+        const cbFill = cb.colorIdx === 0
+          ? `rgba(254, 240, 138, ${cbAlpha})`
+          : cb.colorIdx === 1
+            ? `rgba(255, 255, 255, ${cbAlpha})`
+            : `rgba(251, 146, 60, ${cbAlpha})`;
+
+        ctx.fillStyle = cbFill;
+        // 5-petal star blossom
+        for (let p = 0; p < 5; p++) {
+          const pAngle = (p * Math.PI * 2) / 5;
+          const px = Math.cos(pAngle) * (cb.size * 0.5);
+          const py = Math.sin(pAngle) * (cb.size * 0.5);
+          ctx.beginPath();
+          ctx.arc(px, py, cb.size * 0.32, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.restore();
       }
 

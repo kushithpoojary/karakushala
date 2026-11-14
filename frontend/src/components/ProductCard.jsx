@@ -29,7 +29,7 @@ export default function ProductCard({ product, index = 0 }) {
   return (
     <div 
       style={{ animationDelay: `${(index % 8) * 60}ms` }}
-      className="group bg-white/85 backdrop-blur-md rounded-2xl border border-white/80 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300 animate-fadeInUp"
+      className="group bg-white/95 hover:bg-white backdrop-blur-xl rounded-2xl border border-white/80 hover:border-amber-400 shadow-earth hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col overflow-hidden animate-fadeInUp transform will-change-transform"
     >
       
       {/* Product Image & Badges */}
@@ -163,10 +163,10 @@ export default function ProductCard({ product, index = 0 }) {
             className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 touch-target shadow-md focus-ring btn-press ${
               isOutOfStock
                 ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white shadow-terracotta-600/30 active:scale-95 group/btn'
+                : 'bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 hover:from-black hover:to-stone-900 text-amber-300 shadow-lg active:scale-95 group/btn border border-amber-400/40'
             }`}
           >
-            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300 group-hover/btn:scale-125 transition-transform" />
+            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300 group-hover/btn:scale-125 transition-transform animate-pulse" />
             <span>Order Now (ಆರ್ಡರ್ ಮಾಡಿ)</span>
           </button>
 
