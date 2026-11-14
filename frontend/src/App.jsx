@@ -18,6 +18,8 @@ import CustomerCareModal from './components/CustomerCareModal';
 import CustomerOrdersPage from './components/CustomerOrdersPage';
 import TrackOrderPage from './components/TrackOrderPage';
 import ToastNotification from './components/ToastNotification';
+import ThreeBackgroundCanvas from './components/ThreeBackgroundCanvas';
+import WebsiteIntroSplash from './components/WebsiteIntroSplash';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
@@ -107,6 +109,12 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-cream-100 text-stone-900 selection:bg-terracotta-200 relative overflow-x-hidden">
       
+      {/* Opening Website Reveal Intro Splash Animation */}
+      <WebsiteIntroSplash />
+
+      {/* Interactive Three.js 3D WebGL Background Canvas (Light Colors, Silk Wave & Craft Nodes) */}
+      <ThreeBackgroundCanvas />
+
       {/* Ambient Atmospheric Colored Glass Glow Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         <div className="absolute -top-16 -left-16 w-[36rem] h-[36rem] rounded-full bg-gradient-to-br from-amber-300/25 via-rose-300/15 to-transparent blur-3xl animate-blob1" />
