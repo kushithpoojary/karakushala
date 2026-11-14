@@ -225,3 +225,158 @@
   animation: borderShimmer 2s ease-in-out infinite;
 }
 
+/* ==========================================================================
+   Lively Multi-Color Animated Hero Suite (Aurora Glows, Chromatic Text, Silk Mesh)
+   ========================================================================== */
+
+/* Shifting Silk Mesh Gradient */
+@keyframes silkMesh {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-silkMesh {
+  background: linear-gradient(
+    -45deg,
+    rgba(253, 246, 242, 0.95),
+    rgba(254, 249, 231, 0.95),
+    rgba(240, 247, 247, 0.95),
+    rgba(245, 243, 255, 0.95),
+    rgba(254, 242, 242, 0.95)
+  );
+  background-size: 400% 400%;
+  animation: silkMesh 14s ease infinite;
+}
+
+/* Chromatic Animated Text Shimmer */
+@keyframes chromaText {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-chromaText {
+  background: linear-gradient(
+    90deg,
+    #C85A32 0%,
+    #D97706 20%,
+    #059669 40%,
+    #2563EB 60%,
+    #7C3AED 80%,
+    #C85A32 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: chromaText 5s linear infinite;
+}
+
+/* Floating Vibrant Aurora Blobs */
+@keyframes blobDrift1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.15);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes blobDrift2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-35px, 30px) scale(1.1);
+  }
+  66% {
+    transform: translate(25px, -25px) scale(0.95);
+  }
+}
+
+@keyframes blobDrift3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(25px, 35px) scale(0.92);
+  }
+  66% {
+    transform: translate(-30px, -20px) scale(1.18);
+  }
+}
+
+.animate-blob1 {
+  animation: blobDrift1 12s ease-in-out infinite;
+}
+
+.animate-blob2 {
+  animation: blobDrift2 15s ease-in-out infinite;
+}
+
+.animate-blob3 {
+  animation: blobDrift3 18s ease-in-out infinite;
+}
+
+/* Animated Chromatic Card Border */
+@keyframes rainbowBorder {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.animate-rainbowBorder {
+  animation: rainbowBorder 8s linear infinite;
+}
+
+/* Needle Bobbing Animation */
+@keyframes needleBob {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(6deg);
+  }
+}
+
+.animate-needleBob {
+  animation: needleBob 2.5s ease-in-out infinite;
+}
+
+/* Ticker Marquee Slow Drift */
+@keyframes tickerSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-tickerSlide {
+  animation: tickerSlide 26s linear infinite;
+}
+
+.animate-tickerSlide:hover {
+  animation-play-state: paused;
+}
+
+

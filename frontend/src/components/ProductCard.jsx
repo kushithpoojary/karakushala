@@ -19,8 +19,15 @@ export default function ProductCard({ product }) {
   // Approximate fair share to artisan if not explicitly provided
   const artisanShare = product.priceBreakdown?.artisanFairWage || Math.round(product.price * 0.82);
 
+  const categoryBadgeColors = {
+    'Kasuti Embroidery': 'bg-gradient-to-r from-rose-700 to-terracotta-700 text-white border border-rose-400/50 shadow-rose-900/30',
+    'Beedu Craft': 'bg-gradient-to-r from-emerald-800 to-teal-800 text-white border border-emerald-400/50 shadow-emerald-900/30',
+    'Coastal Wood & Shell': 'bg-gradient-to-r from-cyan-800 to-blue-800 text-white border border-cyan-400/50 shadow-blue-900/30',
+  };
+  const categoryBadgeClass = categoryBadgeColors[product.category] || 'bg-indigo-900/90 text-white';
+
   return (
-    <div className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift flex flex-col overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300">
       
       {/* Product Image & Badges */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
@@ -28,12 +35,12 @@ export default function ProductCard({ product }) {
           src={imageSrc}
           alt={product.title}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
         />
 
-        {/* Category Pill */}
+        {/* Dynamic Category Pill with Vibrant Color Accent */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-900/90 text-cream-50 backdrop-blur-sm shadow-sm">
+          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm ${categoryBadgeClass}`}>
             {product.category}
           </span>
         </div>

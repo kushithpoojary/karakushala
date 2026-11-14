@@ -157,6 +157,13 @@ export default {
         cartWiggle: 'cartWiggle 750ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
         sparkleFloat: 'sparkleFloat 2.5s ease-in-out infinite',
         goldHalo: 'goldHaloGlow 2s infinite',
+        silkMesh: 'silkMesh 14s ease infinite',
+        chromaText: 'chromaText 5s linear infinite',
+        blob1: 'blobDrift1 12s ease-in-out infinite',
+        blob2: 'blobDrift2 15s ease-in-out infinite',
+        blob3: 'blobDrift3 18s ease-in-out infinite',
+        needleBob: 'needleBob 2.5s ease-in-out infinite',
+        tickerSlide: 'tickerSlide 26s linear infinite',
       }
     },
   },

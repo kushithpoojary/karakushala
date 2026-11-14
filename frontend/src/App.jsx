@@ -122,58 +122,77 @@ export default function App() {
             <HeroBanner onExploreClick={handleExploreClick} />
 
             {/* Buyer Catalogue Section */}
-            <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-6">
+            <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-7">
               
               {/* Catalogue Header */}
               <div className="space-y-4">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-terracotta-600 bg-terracotta-100 px-3 py-1 rounded-full border border-terracotta-200">
-                      GI Heritage Handcrafts • ಉತ್ತರ ಕರ್ನಾಟಕ & ಕರಾವಳಿ
-                    </span>
-                    <h2 className="font-serif text-2xl sm:text-4xl font-bold text-indigo-900 mt-2">
-                      Karnataka Living Crafts Catalogue
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 via-rose-100 to-indigo-100 border border-amber-300 text-stone-800 text-xs font-bold shadow-xs">
+                      <span className="text-sm">🏛️</span>
+                      <span>GI Heritage Handcrafts • ಉತ್ತರ ಕರ್ನಾಟಕ & ಕರಾವಳಿ ಕ್ಲಸ್ಟರ್</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                    </div>
+
+                    <h2 className="font-serif text-2xl sm:text-4xl font-bold text-indigo-950 mt-2 flex items-center gap-2 flex-wrap">
+                      <span>Karnataka Living Crafts Catalogue</span>
+                      <span className="text-xs sm:text-sm font-sans font-bold bg-amber-400 text-stone-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                        ಕರಕುಶಲ ಮಳಿಗೆ
+                      </span>
                     </h2>
                     <p className="text-stone-600 text-xs sm:text-sm mt-1">
-                      Each piece is tagged with verified provenance, multi-photo angles, and authentic artisan audio stories.
+                      Each piece is tagged with verified provenance, multi-photo angles, direct fair-wage breakdowns, and authentic artisan voice stories.
                     </p>
                   </div>
 
                   {/* Active Filter Pill Count */}
-                  <div className="text-xs text-stone-500 font-medium">
-                    Showing <strong className="text-indigo-900">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
+                  <div className="text-xs text-stone-600 font-semibold bg-white px-3.5 py-2 rounded-xl border border-cream-300 shadow-xs">
+                    Showing <strong className="text-terracotta-700 font-bold text-sm">{filteredProducts.length}</strong> of {allProducts.length} authentic crafts
                   </div>
                 </div>
 
-                {/* Category Pills */}
+                {/* Multi-Color Category Pills */}
                 <CategoryFilter
                   selectedCategory={selectedCategory}
                   onSelectCategory={setSelectedCategory}
                   productCounts={productCounts}
                 />
 
-                {/* Quick Search Suggestion Pills */}
+                {/* Quick Search Suggestion Pills with Colorful Badges */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-500">
-                  <span className="font-semibold text-stone-700 whitespace-nowrap flex items-center gap-1">
+                  <span className="font-bold text-stone-800 whitespace-nowrap flex items-center gap-1.5 pl-0.5">
                     <Search className="w-3.5 h-3.5 text-terracotta-600" />
-                    <span>Popular searches:</span>
+                    <span>Popular:</span>
                   </span>
-                  {quickSearchPills.map((term) => (
-                    <button
-                      key={term}
-                      onClick={() => {
-                        setSearchQuery(term);
-                        setSelectedCategory('All Crafts');
-                      }}
-                      className={`px-3 py-1 rounded-full text-xs transition-all whitespace-nowrap border ${
-                        searchQuery.toLowerCase() === term.toLowerCase()
-                          ? 'bg-terracotta-600 text-white border-terracotta-600 font-bold'
-                          : 'bg-white hover:bg-cream-200 text-stone-700 border-cream-300'
-                      }`}
-                    >
-                      {term}
-                    </button>
-                  ))}
+                  {quickSearchPills.map((term, i) => {
+                    const pillGradients = [
+                      'hover:border-rose-400 hover:text-rose-700',
+                      'hover:border-amber-400 hover:text-amber-800',
+                      'hover:border-emerald-400 hover:text-emerald-700',
+                      'hover:border-indigo-400 hover:text-indigo-700',
+                      'hover:border-cyan-400 hover:text-cyan-700',
+                      'hover:border-terracotta-400 hover:text-terracotta-700',
+                      'hover:border-purple-400 hover:text-purple-700',
+                    ];
+                    const hoverClass = pillGradients[i % pillGradients.length];
+
+                    return (
+                      <button
+                        key={term}
+                        onClick={() => {
+                          setSearchQuery(term);
+                          setSelectedCategory('All Crafts');
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap border active:scale-95 shadow-xs ${
+                          searchQuery.toLowerCase() === term.toLowerCase()
+                            ? 'bg-gradient-to-r from-terracotta-600 to-amber-600 text-white border-transparent font-bold shadow-sm'
+                            : `bg-white text-stone-700 border-cream-300 ${hoverClass}`
+                        }`}
+                      >
+                        {term}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {/* Active Search Notification Banner */}
