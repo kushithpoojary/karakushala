@@ -7,9 +7,9 @@ export default function WebsiteIntroSplash({ onComplete }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Smooth progress counter with realistic pacing
+    // Snappy, swift progress counter
     const startTime = Date.now();
-    const duration = 2200; // 2.2 seconds of royal weaving intro
+    const duration = 1000; // Fast 1 second intro
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -23,10 +23,10 @@ export default function WebsiteIntroSplash({ onComplete }) {
           setTimeout(() => {
             setIsVisible(false);
             if (onComplete) onComplete();
-          }, 700);
-        }, 500);
+          }, 400);
+        }, 200);
       }
-    }, 20);
+    }, 16);
 
     return () => clearInterval(interval);
   }, [onComplete]);
