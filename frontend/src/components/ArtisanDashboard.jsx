@@ -204,7 +204,7 @@ export default function ArtisanDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total Earnings */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 border-l-4 border-l-emerald-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
+        <div className="bg-white/85 backdrop-blur-md p-5 rounded-2xl border border-white/80 border-l-4 border-l-emerald-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
           <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl shrink-0 shadow-xs">
             ₹
           </div>
@@ -220,7 +220,7 @@ export default function ArtisanDashboard() {
         </div>
 
         {/* Incoming Orders to Ship */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 border-l-4 border-l-amber-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
+        <div className="bg-white/85 backdrop-blur-md p-5 rounded-2xl border border-white/80 border-l-4 border-l-amber-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
           <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 shadow-xs">
             <Package className="w-6 h-6" />
           </div>
@@ -236,7 +236,7 @@ export default function ArtisanDashboard() {
         </div>
 
         {/* Completed Orders */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 border-l-4 border-l-blue-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
+        <div className="bg-white/85 backdrop-blur-md p-5 rounded-2xl border border-white/80 border-l-4 border-l-blue-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
           <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0 shadow-xs">
             <CheckCircle2 className="w-6 h-6" />
           </div>
@@ -252,7 +252,7 @@ export default function ArtisanDashboard() {
         </div>
 
         {/* Active Products Listed */}
-        <div className="bg-white p-5 rounded-2xl border border-cream-300 border-l-4 border-l-terracotta-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
+        <div className="bg-white/85 backdrop-blur-md p-5 rounded-2xl border border-white/80 border-l-4 border-l-terracotta-500 shadow-earth card-hover-lift flex items-center gap-4 transition-all">
           <div className="w-12 h-12 rounded-xl bg-terracotta-100 text-terracotta-800 flex items-center justify-center shrink-0 shadow-xs">
             <Layers className="w-6 h-6" />
           </div>

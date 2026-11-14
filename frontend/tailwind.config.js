@@ -164,6 +164,7 @@ export default {
         blob3: 'blobDrift3 18s ease-in-out infinite',
         needleBob: 'needleBob 2.5s ease-in-out infinite',
         tickerSlide: 'tickerSlide 26s linear infinite',
+        glassPage: 'glassPageTransition 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
       }
     },
   },

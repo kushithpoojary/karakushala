@@ -29,7 +29,7 @@ export default function ProductCard({ product, index = 0 }) {
   return (
     <div 
       style={{ animationDelay: `${(index % 8) * 60}ms` }}
-      className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300 animate-fadeInUp"
+      className="group bg-white/85 backdrop-blur-md rounded-2xl border border-white/80 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300 animate-fadeInUp"
     >
       
       {/* Product Image & Badges */}

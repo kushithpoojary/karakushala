@@ -298,7 +298,7 @@ export default function CustomerOrdersPage() {
             return (
               <div 
                 key={order.id || order.orderNumber}
-                className="bg-white rounded-3xl border border-cream-300 shadow-earth p-5 sm:p-7 space-y-5 card-hover-lift hover:border-terracotta-400"
+                className="bg-white/85 backdrop-blur-md rounded-3xl border border-white/80 shadow-earth p-5 sm:p-7 space-y-5 card-hover-lift hover:border-amber-400/80 transition-all"
               >
                 {/* Order Top Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-cream-200">

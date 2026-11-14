@@ -426,4 +426,96 @@
   animation-play-state: paused;
 }
 
+/* ==========================================================================
+   Lively Glassmorphic Transition & Surface Suite
+   ========================================================================== */
+
+/* Glassy Blur-In Dissolve Page Transition */
+@keyframes glassPageTransition {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(0.982) translateY(12px);
+  }
+  50% {
+    filter: blur(4px);
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-glassPageTransition {
+  animation: glassPageTransition 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+/* Frosted Glass Panels */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 10px 30px 0 rgba(139, 69, 19, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.glass-surface-warm {
+  background: rgba(253, 251, 247, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 36px 0 rgba(139, 69, 19, 0.06), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-surface-card {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 24px -4px rgba(139, 69, 19, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.75);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-surface-card:hover {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 36px -4px rgba(139, 69, 19, 0.12), inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(233, 196, 106, 0.8);
+}
+
+/* Glass Reflection Sweep */
+@keyframes glassShimmerGleam {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+
+.glass-reflection {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-reflection::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: glassShimmerGleam 4s infinite;
+}
+
+
 
