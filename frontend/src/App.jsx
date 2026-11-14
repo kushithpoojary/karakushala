@@ -19,6 +19,7 @@ import CustomerOrdersPage from './components/CustomerOrdersPage';
 import TrackOrderPage from './components/TrackOrderPage';
 import ToastNotification from './components/ToastNotification';
 import HeritageLatticeBackground from './components/HeritageLatticeBackground';
+import CatalogueFloralBackground from './components/CatalogueFloralBackground';
 import WebsiteIntroSplash from './components/WebsiteIntroSplash';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
@@ -140,13 +141,16 @@ export default function App() {
               <HeroBanner onExploreClick={handleExploreClick} />
 
               {/* Orange Background Zone starting from Karnataka Living Crafts Catalogue */}
-              <div className="relative bg-gradient-to-b from-[#f97316] via-[#ea580c] to-[#c2410c] text-stone-900 border-t-4 border-amber-300 shadow-2xl">
+              <div className="relative bg-gradient-to-b from-[#f97316] via-[#ea580c] to-[#c2410c] text-stone-900 border-t-4 border-amber-300 shadow-2xl overflow-hidden">
+                {/* Dedicated Living Floral & Sacred Lotus Mandala Animated Canvas */}
+                <CatalogueFloralBackground />
+
                 {/* Subtle traditional warm pattern overlay for depth */}
                 <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
 
                 {/* Ambient warm glowing accents inside orange zone */}
-                <div className="absolute top-12 left-10 w-96 h-96 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-500/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-12 left-10 w-96 h-96 bg-amber-300/25 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-500/25 rounded-full blur-3xl pointer-events-none" />
 
                 {/* Buyer Catalogue Section */}
                 <section ref={catalogueRef} className="max-w-7xl 2xl:max-w-[1536px] 3xl:max-w-[1780px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-7 relative z-10">
