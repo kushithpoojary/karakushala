@@ -116,6 +116,27 @@ export default {
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        popBounce: {
+          '0%': { opacity: '0', transform: 'scale3d(0.72, 0.72, 1) translateY(24px)' },
+          '50%': { opacity: '1', transform: 'scale3d(1.06, 1.06, 1) translateY(-6px)' },
+          '75%': { transform: 'scale3d(0.98, 0.98, 1) translateY(2px)' },
+          '100%': { opacity: '1', transform: 'scale3d(1, 1, 1) translateY(0)' },
+        },
+        cartWiggle: {
+          '0%, 100%': { transform: 'scale(1) rotate(0deg)' },
+          '20%': { transform: 'scale(1.18) rotate(-14deg)' },
+          '40%': { transform: 'scale(1.22) rotate(12deg)' },
+          '60%': { transform: 'scale(1.15) rotate(-8deg)' },
+          '80%': { transform: 'scale(1.06) rotate(4deg)' },
+        },
+        sparkleFloat: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg) scale(1)', opacity: '0.85' },
+          '50%': { transform: 'translateY(-8px) rotate(180deg) scale(1.25)', opacity: '1' },
+        },
+        goldHaloGlow: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(233, 196, 106, 0.7)' },
+          '50%': { boxShadow: '0 0 0 14px rgba(233, 196, 106, 0)' },
+        },
       },
       animation: {
         fadeIn: 'fadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
@@ -132,6 +153,10 @@ export default {
         gentlePulse: 'gentlePulse 2.5s ease-in-out infinite',
         timelinePulse: 'timelinePulse 1.8s ease-in-out infinite',
         shimmer: 'shimmer 2s infinite',
+        popBounce: 'popBounce 450ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+        cartWiggle: 'cartWiggle 750ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
+        sparkleFloat: 'sparkleFloat 2.5s ease-in-out infinite',
+        goldHalo: 'goldHaloGlow 2s infinite',
       }
     },
   },

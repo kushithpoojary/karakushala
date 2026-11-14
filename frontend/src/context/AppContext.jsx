@@ -76,6 +76,8 @@ export function AppProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [orderPopupProduct, setOrderPopupProduct] = useState(null);
+  const [isCartBouncing, setIsCartBouncing] = useState(false);
   const [latestOrderReceipt, setLatestOrderReceipt] = useState(null);
 
   // Audio assistance mode (reads aloud for artisans with low digital literacy)
@@ -97,7 +99,21 @@ export function AppProvider({ children }) {
     }, 4000);
   };
 
-  const addToCart = (product, quantity = 1) => {
+  const triggerCartAnimation = () => {
+    setIsCartBouncing(true);
+    setTimeout(() => setIsCartBouncing(false), 900);
+  };
+
+  const openOrderPopup = (product) => {
+    setOrderPopupProduct(product);
+  };
+
+  const closeOrderPopup = () => {
+    setOrderPopupProduct(null);
+  };
+
+  const addToCart = (product, quantity = 1, openCart = true) => {
+    triggerCartAnimation();
     setCart(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       if (existingIndex > -1) {
@@ -118,7 +134,9 @@ export function AppProvider({ children }) {
       }
     });
     showToast(`Added "${product.title}" to your cart!`);
-    setIsCartOpen(true);
+    if (openCart) {
+      setIsCartOpen(true);
+    }
   };
 
   const removeFromCart = (productId) => {
@@ -299,6 +317,12 @@ export function AppProvider({ children }) {
         setIsCheckoutOpen,
         selectedProduct,
         setSelectedProduct,
+        orderPopupProduct,
+        setOrderPopupProduct,
+        openOrderPopup,
+        closeOrderPopup,
+        isCartBouncing,
+        triggerCartAnimation,
         latestOrderReceipt,
         setLatestOrderReceipt,
         audioVoiceAssistance,

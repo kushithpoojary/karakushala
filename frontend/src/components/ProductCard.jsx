@@ -1,9 +1,9 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart } from 'lucide-react';
+import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart, Zap } from 'lucide-react';
 
 export default function ProductCard({ product }) {
-  const { addToCart, setSelectedProduct, formatINR } = useApp();
+  const { addToCart, setSelectedProduct, openOrderPopup, formatINR } = useApp();
 
   const artisan = product.artisan || {
     name: 'Karnataka Heritage Artisan',
@@ -71,14 +71,24 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Hover Quick Action Overlay */}
-        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 p-4">
+        <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-3">
+          <button
+            onClick={() => openOrderPopup(product)}
+            disabled={isOutOfStock}
+            className="p-2.5 px-3.5 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-full font-bold shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all flex items-center gap-1.5 text-xs active:scale-95"
+            title="Order with Pop-up Animation"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+            <span>Quick Order</span>
+          </button>
+
           <button
             onClick={() => setSelectedProduct(product)}
-            className="p-3 bg-white text-indigo-900 hover:bg-cream-100 rounded-full font-bold shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all flex items-center gap-1.5 text-xs"
+            className="p-2.5 px-3 bg-white text-indigo-900 hover:bg-cream-100 rounded-full font-bold shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all flex items-center gap-1 text-xs"
             title="Read Craft Story"
           >
-            <Eye className="w-4 h-4 text-terracotta-600" />
-            <span>Craft Story</span>
+            <Eye className="w-3.5 h-3.5 text-terracotta-600" />
+            <span>Story</span>
           </button>
         </div>
       </div>
@@ -134,28 +144,45 @@ export default function ProductCard({ product }) {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+        {/* Action Buttons: Lively Primary Quick Order + Secondary Actions */}
+        <div className="space-y-2 pt-1">
+          {/* Lively Primary Order Now Button with Pop-up Animation Trigger */}
           <button
-            onClick={() => setSelectedProduct(product)}
-            className="w-full py-2.5 px-3 rounded-xl bg-cream-200 hover:bg-cream-300 text-stone-800 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 touch-target"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-terracotta-600" />
-            <span>Craft Story</span>
-          </button>
-
-          <button
-            onClick={() => addToCart(product)}
+            onClick={() => openOrderPopup(product)}
             disabled={isOutOfStock}
-            className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 touch-target ${
+            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 touch-target shadow-md ${
               isOutOfStock
                 ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                : 'bg-terracotta-600 hover:bg-terracotta-700 text-white shadow-sm active:scale-95'
+                : 'bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white shadow-terracotta-600/30 active:scale-95 group/btn'
             }`}
           >
-            <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Add to Cart</span>
+            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300 group-hover/btn:scale-125 transition-transform" />
+            <span>Order Now (ಆರ್ಡರ್ ಮಾಡಿ)</span>
           </button>
+
+          {/* Secondary Action Grid */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setSelectedProduct(product)}
+              className="w-full py-2 px-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-stone-800 text-[11px] sm:text-xs font-bold transition-colors flex items-center justify-center gap-1 touch-target"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-terracotta-600" />
+              <span>Craft Story</span>
+            </button>
+
+            <button
+              onClick={() => addToCart(product)}
+              disabled={isOutOfStock}
+              className={`w-full py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 touch-target ${
+                isOutOfStock
+                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                  : 'bg-white hover:bg-cream-100 border border-terracotta-300 text-terracotta-800 active:scale-95'
+              }`}
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Add to Cart</span>
+            </button>
+          </div>
         </div>
 
       </div>

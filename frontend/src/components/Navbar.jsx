@@ -12,6 +12,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
     navigateToTrackOrder,
     navigateToShop,
     cartCount,
+    isCartBouncing,
     setIsCartOpen,
     activeArtisan,
     isArtisanLoggedIn,
@@ -229,16 +230,24 @@ export default function Navbar({ onSearchChange, searchQuery }) {
               </div>
             )}
 
-            {/* Cart Button (Always visible and anchored inside frame) */}
+            {/* Cart Button with Lively Wobble/Bounce Animation */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 sm:px-3.5 sm:py-2 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold flex items-center gap-1.5 shadow-md shadow-terracotta-500/20 active:scale-95 transition-all touch-target shrink-0 btn-press"
+              className={`relative p-2 sm:px-3.5 sm:py-2 rounded-full font-semibold flex items-center gap-1.5 shadow-md active:scale-95 transition-all touch-target shrink-0 btn-press ${
+                isCartBouncing
+                  ? 'bg-amber-500 text-stone-950 animate-cartWiggle ring-4 ring-amber-300 ring-offset-2 shadow-amber-500/50'
+                  : 'bg-terracotta-500 hover:bg-terracotta-600 text-white shadow-terracotta-500/20'
+              }`}
               aria-label="Open Cart"
             >
-              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ShoppingBag className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${isCartBouncing ? 'scale-110 text-stone-950' : ''}`} />
               <span className="hidden sm:inline text-xs sm:text-sm">Cart</span>
               {cartCount > 0 && (
-                <span className="bg-white text-terracotta-700 text-xs font-black rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center">
+                <span className={`text-xs font-black rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center transition-all ${
+                  isCartBouncing
+                    ? 'bg-stone-900 text-amber-300 scale-125'
+                    : 'bg-white text-terracotta-700'
+                }`}>
                   {cartCount}
                 </span>
               )}

@@ -6,6 +6,7 @@ import HeroBanner from './components/HeroBanner';
 import CategoryFilter from './components/CategoryFilter';
 import ProductCard from './components/ProductCard';
 import ProductDetailModal from './components/ProductDetailModal';
+import OrderQuickPopupModal from './components/OrderQuickPopupModal';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import ArtisanDashboard from './components/ArtisanDashboard';
@@ -241,6 +242,7 @@ export default function App() {
 
       {/* Global Modals & Drawers */}
       <ProductDetailModal />
+      <OrderQuickPopupModal />
       <CartDrawer />
       <CheckoutModal />
       <ArtisanLoginModal />

@@ -174,9 +174,9 @@ export default function CartDrawer() {
 
               <button
                 onClick={handleProceedToCheckout}
-                className="w-full py-4 px-6 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-base shadow-lg shadow-terracotta-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all touch-target"
+                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white font-bold text-base shadow-lg shadow-terracotta-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all touch-target animate-goldHalo"
               >
-                <span>Proceed to Checkout</span>
+                <span>Proceed to Checkout (ಖರೀದಿ ಮುಂದುವರಿಸಿ)</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>

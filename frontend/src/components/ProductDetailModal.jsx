@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import AudioStoryPlayer from './AudioStoryPlayer';
-import { X, Clock, MapPin, Sparkles, ShieldCheck, ShoppingBag, ArrowRight, CheckCircle2, ChevronRight, ChevronLeft, Layers, Tag, Eye } from 'lucide-react';
+import { X, Clock, MapPin, Sparkles, ShieldCheck, ShoppingBag, ArrowRight, CheckCircle2, ChevronRight, ChevronLeft, Layers, Tag, Eye, Zap } from 'lucide-react';
 
 export default function ProductDetailModal() {
-  const { selectedProduct, setSelectedProduct, addToCart, formatINR, setIsCartOpen, setIsCheckoutOpen } = useApp();
+  const { selectedProduct, setSelectedProduct, addToCart, openOrderPopup, formatINR, setIsCartOpen, setIsCheckoutOpen } = useApp();
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   useEffect(() => {
@@ -44,9 +44,9 @@ export default function ProductDetailModal() {
   const logisticsCost = selectedProduct.priceBreakdown?.packagingLogistics || (price - fairWage - materialsCost);
 
   const handleBuyNow = () => {
-    addToCart(selectedProduct, 1);
+    const item = selectedProduct;
     setSelectedProduct(null);
-    setIsCheckoutOpen(true);
+    openOrderPopup(item);
   };
 
   const imageDescriptions = [
@@ -280,9 +280,10 @@ export default function ProductDetailModal() {
                 <button
                   onClick={handleBuyNow}
                   disabled={selectedProduct.stockQuantity <= 0}
-                  className="w-full py-3.5 px-4 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-sm shadow-md shadow-terracotta-600/30 transition-all flex items-center justify-center gap-2 active:scale-95 touch-target"
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white font-bold text-sm shadow-md shadow-terracotta-600/30 transition-all flex items-center justify-center gap-2 active:scale-95 touch-target animate-goldHalo"
                 >
-                  <span>Buy Now (₹{price})</span>
+                  <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
+                  <span>Order Now • ₹{price}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

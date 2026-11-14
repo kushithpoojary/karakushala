@@ -330,16 +330,30 @@ export default function CheckoutModal() {
 
           {/* PAYMENT CONFIRMATION SCREEN (HANDLES COD vs UPI CORRECTLY) */}
           {!isVerifyingUpi && completedOrderData ? (
-            <div className="space-y-6 text-center py-2 animate-fadeIn">
+            <div className="space-y-6 text-center py-2 animate-fadeIn relative">
               
-              {/* Top Status Icon Circle */}
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-md ${
-                isCompletedCod ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-600'
+              {/* Celebratory Floating Confetti Accents */}
+              <div className="absolute -top-3 left-6 text-amber-500 text-xl animate-sparkleFloat pointer-events-none select-none">
+                ✨
+              </div>
+              <div className="absolute top-2 right-8 text-emerald-500 text-lg animate-sparkleFloat pointer-events-none select-none" style={{ animationDelay: '0.8s' }}>
+                🎉
+              </div>
+              <div className="absolute top-16 left-2 text-terracotta-500 text-sm animate-sparkleFloat pointer-events-none select-none" style={{ animationDelay: '1.4s' }}>
+                ✦
+              </div>
+              <div className="absolute top-24 right-4 text-amber-600 text-base animate-sparkleFloat pointer-events-none select-none" style={{ animationDelay: '0.4s' }}>
+                🌾
+              </div>
+
+              {/* Top Status Icon Circle with Lively Spring Bounce */}
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-lg animate-popBounce ${
+                isCompletedCod ? 'bg-amber-100 text-amber-700 ring-4 ring-amber-300' : 'bg-emerald-100 text-emerald-600 ring-4 ring-emerald-300'
               }`}>
                 {isCompletedCod ? (
-                  <Clock className="w-10 h-10" />
+                  <Clock className="w-11 h-11" />
                 ) : (
-                  <CheckCircle className="w-10 h-10" />
+                  <CheckCircle className="w-11 h-11" />
                 )}
               </div>
 
