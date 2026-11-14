@@ -18,7 +18,7 @@ import CustomerCareModal from './components/CustomerCareModal';
 import CustomerOrdersPage from './components/CustomerOrdersPage';
 import TrackOrderPage from './components/TrackOrderPage';
 import ToastNotification from './components/ToastNotification';
-import ThreeBackgroundCanvas from './components/ThreeBackgroundCanvas';
+import HeritageLatticeBackground from './components/HeritageLatticeBackground';
 import WebsiteIntroSplash from './components/WebsiteIntroSplash';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
@@ -107,13 +107,13 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream-100 text-stone-900 selection:bg-terracotta-200 relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-transparent text-stone-900 selection:bg-terracotta-200 relative overflow-x-hidden">
       
       {/* Opening Website Reveal Intro Splash Animation */}
       <WebsiteIntroSplash />
 
-      {/* Interactive Three.js 3D WebGL Background Canvas (Light Colors, Silk Wave & Craft Nodes) */}
-      <ThreeBackgroundCanvas />
+      {/* Sacred Geometric Kasuti Handloom Lattice Background (Matches User Uploaded Reference) */}
+      <HeritageLatticeBackground />
 
       {/* Ambient Atmospheric Colored Glass Glow Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">

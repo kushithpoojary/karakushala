@@ -89,7 +89,7 @@ export default function HeroBanner({ onExploreClick }) {
   ];
 
   return (
-    <section className="relative overflow-hidden border-b border-cream-300 bg-cream-50 animate-silkMesh">
+    <section className="relative overflow-hidden border-b border-cream-300/80 bg-cream-50/70 backdrop-blur-md">
       
       {/* Dynamic Multi-Color Animated Aurora Blobs in Background */}
       <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-tr from-amber-300/35 to-rose-400/30 blur-3xl pointer-events-none animate-blob1" />

@@ -56,7 +56,7 @@
       "title": "Kasuti Temple Gopuram Handwoven Ilkal Saree",
       "category": "Kasuti Embroidery",
       "price": 4850,
-      "stockQuantity": 3,
+      "stockQuantity": 4,
       "images": [
         "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80",
         "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=900&q=80",
@@ -182,7 +182,7 @@
       "title": "Carved Coconut Shell & Brass Accent Oil Diya",
       "category": "Coastal Wood & Shell",
       "price": 950,
-      "stockQuantity": 14,
+      "stockQuantity": 15,
       "images": [
         "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=80",
         "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80",
@@ -2321,7 +2321,7 @@
       "totalAmount": 1450,
       "paymentMethod": "Mock UPI (Google Pay)",
       "paymentStatus": "Paid - Mock",
-      "orderStatus": "Placed",
+      "orderStatus": "Cancelled",
       "courier": "Pending Dispatch Allocation",
       "trackingNumber": "Pending",
       "estimatedDeliveryDate": "Nov 24, 2026",
@@ -2331,9 +2331,17 @@
           "timestamp": "2026-11-14T00:15:00.000Z",
           "note": "Order placed by Ananya Rao via Google Pay UPI. Awaiting artisan workshop confirmation.",
           "updatedBy": "Buyer"
+        },
+        {
+          "status": "Cancelled",
+          "timestamp": "2026-11-13T23:56:17.011Z",
+          "note": "Cancelled by Customer: Placed order by mistake / Accidental order | Settlement: Original payment source",
+          "updatedBy": "Customer"
         }
       ],
-      "createdAt": "2026-11-14T00:15:00.000Z"
+      "createdAt": "2026-11-14T00:15:00.000Z",
+      "cancellationReason": "Placed order by mistake / Accidental order | Settlement: Original payment source",
+      "updatedAt": "2026-11-13T23:56:17.011Z"
     },
     {
       "id": "order_demo_6",
@@ -2459,7 +2467,7 @@
       "totalAmount": 4850,
       "paymentMethod": "Cash on Delivery (COD)",
       "paymentStatus": "Pending (Cash on Delivery)",
-      "orderStatus": "Placed",
+      "orderStatus": "Cancelled",
       "courier": "",
       "trackingNumber": "",
       "estimatedDeliveryDate": "21 Nov 2026",
@@ -2469,10 +2477,17 @@
           "timestamp": "2026-11-13T20:44:25.980Z",
           "note": "Order confirmed with Cash on Delivery. ₹4850 payable at doorstep upon delivery.",
           "updatedBy": "Buyer"
+        },
+        {
+          "status": "Cancelled",
+          "timestamp": "2026-11-14T00:47:54.973Z",
+          "note": "Cancelled by Customer: Placed order by mistake / Accidental order",
+          "updatedBy": "Customer"
         }
       ],
       "createdAt": "2026-11-13T20:44:25.980Z",
-      "updatedAt": "2026-11-13T20:44:25.980Z"
+      "updatedAt": "2026-11-14T00:47:54.973Z",
+      "cancellationReason": "Placed order by mistake / Accidental order"
     }
   ]
 }
