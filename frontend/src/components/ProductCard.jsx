@@ -1,9 +1,30 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+<<<<<<< HEAD
 import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart, Zap } from 'lucide-react';
 
 export default function ProductCard({ product, index = 0 }) {
   const { addToCart, setSelectedProduct, openOrderPopup, formatINR } = useApp();
+=======
+import { getLocalizedProductTitle } from '../utils/translationUtils';
+import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart } from 'lucide-react';
+
+export default function ProductCard({ product }) {
+  const { addToCart, setSelectedProduct, formatINR, currentLanguage, t } = useApp();
+
+  const getCategoryLabel = (category) => {
+    switch (category) {
+      case 'Kasuti Embroidery':
+        return t('kasutiEmbroidery');
+      case 'Beedu Craft':
+        return t('beeduCraft');
+      case 'Coastal Wood & Shell':
+        return t('coastalWoodShell');
+      default:
+        return category;
+    }
+  };
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const artisan = product.artisan || {
     name: 'Karnataka Heritage Artisan',
@@ -150,7 +171,7 @@ export default function ProductCard({ product, index = 0 }) {
             onClick={() => setSelectedProduct(product)}
             className="font-serif text-base font-bold text-stone-900 line-clamp-2 hover:text-terracotta-600 cursor-pointer transition-colors leading-snug"
           >
-            {product.title}
+            {getLocalizedProductTitle(product, currentLanguage)}
           </h3>
           <p className="text-xs text-stone-600 line-clamp-1 mt-1">
             {product.craftStory?.culturalSignificance || 'Traditional Karnataka heritage craft'}

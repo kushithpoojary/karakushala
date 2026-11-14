@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { 
   Package, 
   Truck, 
@@ -29,7 +30,13 @@ export default function CustomerOrdersPage() {
     navigateToTrackOrder, 
     navigateToShop, 
     activeUser, 
+<<<<<<< HEAD
     openCustomerCare 
+=======
+    openCustomerCare,
+    currentLanguage,
+    t 
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   } = useApp();
 
   const [orders, setOrders] = useState([]);
@@ -360,7 +367,7 @@ export default function CustomerOrdersPage() {
                           />
                           <div>
                             <h4 className="text-xs sm:text-sm font-bold text-stone-900 line-clamp-1">
-                              {item.title}
+                              {getLocalizedProductTitle(item, currentLanguage)}
                             </h4>
                             <p className="text-[11px] text-stone-500 flex items-center gap-1.5 mt-0.5">
                               {item.artisanName && (

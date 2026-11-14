@@ -1,9 +1,66 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_ARTISANS } from '../data/mockData';
+<<<<<<< HEAD
+=======
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE_CODE, getLanguageByCode } from '../config/languages';
+import { getTranslation } from '../i18n/translations';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
+import { speakText, stopSpeech } from '../utils/speechService';
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
+<<<<<<< HEAD
+=======
+  // Multilingual Support State
+  const [currentLanguage, setCurrentLanguage] = useState(() => {
+    try {
+      const saved = localStorage.getItem('karakushala_selected_language');
+      if (saved) return saved;
+    } catch (e) {}
+    return DEFAULT_LANGUAGE_CODE;
+  });
+
+  const currentLangConfig = getLanguageByCode(currentLanguage);
+
+  // Apply language, font, and page title to root document when language changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('karakushala_selected_language', currentLanguage);
+      document.documentElement.lang = currentLangConfig.id;
+      const localizedDocTitle = getTranslation('docTitle', currentLanguage);
+      if (localizedDocTitle) {
+        document.title = localizedDocTitle;
+      }
+    } catch (e) {}
+  }, [currentLanguage, currentLangConfig]);
+
+  // Translation helper function
+  const t = (key, params = {}) => {
+    return getTranslation(key, currentLanguage, params);
+  };
+
+  // Centralized spoken audio helper
+  const speakLocalized = (phraseKeyOrText, params = {}, isDirectText = false) => {
+    const textToSpeak = isDirectText 
+      ? phraseKeyOrText 
+      : getTranslation(phraseKeyOrText, currentLanguage, params);
+    return speakText(textToSpeak, currentLanguage);
+  };
+
+  // Change language handler with instant application & optional voice feedback
+  const setLanguage = (langCode, announce = true) => {
+    const matched = getLanguageByCode(langCode);
+    setCurrentLanguage(matched.code);
+    showToast(getTranslation('languageSwitched', matched.code), 'info');
+
+    if (announce || audioVoiceAssistance) {
+      const prompt = getTranslation('languageSwitchedVoice', matched.code);
+      speakText(prompt, matched.code);
+    }
+  };
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   // 'buyer' (Storefront & Catalogue) or 'artisan' (Sell Your Craft / Dashboard)
   const [viewMode, setViewMode] = useState('buyer');
 
@@ -133,15 +190,21 @@ export function AppProvider({ children }) {
         return [...prev, { product, quantity }];
       }
     });
+<<<<<<< HEAD
     showToast(`Added "${product.title}" to your cart!`);
     if (openCart) {
       setIsCartOpen(true);
     }
+=======
+    const localizedTitle = getLocalizedProductTitle(product, currentLanguage);
+    showToast(t('addedToCartToast', { title: localizedTitle }) || `Added "${localizedTitle}" to your cart!`);
+    setIsCartOpen(true);
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   };
 
   const removeFromCart = (productId) => {
     setCart(prev => prev.filter(item => item.product.id !== productId));
-    showToast('Item removed from cart', 'info');
+    showToast(t('itemRemovedFromCart') || 'Item removed from cart', 'info');
   };
 
   const updateCartQuantity = (productId, delta) => {

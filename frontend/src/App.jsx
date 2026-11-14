@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from './context/AppContext';
 import { api } from './services/api';
+import { getLocalizedProductTitle } from './utils/translationUtils';
 import Navbar from './components/Navbar';
 import HeroBanner from './components/HeroBanner';
 import CategoryFilter from './components/CategoryFilter';
@@ -25,6 +26,7 @@ import { MOCK_PRODUCTS } from './data/mockData';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
+<<<<<<< HEAD
   const { viewMode, customerView, toast, openCustomerCare } = useApp();
   
   // Initialize with MOCK_PRODUCTS directly so all 59 crafts and images are 100% visible immediately
@@ -39,6 +41,11 @@ export default function App() {
     return MOCK_PRODUCTS;
   });
   const [loading, setLoading] = useState(false);
+=======
+  const { viewMode, customerView, toast, openCustomerCare, currentLanguage, t } = useApp();
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   const [selectedCategory, setSelectedCategory] = useState('All Crafts');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -76,9 +83,10 @@ export default function App() {
 
     // If search query is active, search across ALL categories
     if (q) {
-      const titleMatch = p.title?.toLowerCase().includes(q);
-      const catMatch = p.category?.toLowerCase().includes(q);
-      const artisanMatch = p.artisan?.name?.toLowerCase().includes(q) || p.artisan?.kannadaName?.includes(q);
+      const localizedTitle = getLocalizedProductTitle(p, currentLanguage);
+      const titleMatch = p.title?.toLowerCase().includes(q) || localizedTitle?.toLowerCase().includes(q);
+      const catMatch = p.category?.toLowerCase().includes(q) || t(p.category)?.toLowerCase().includes(q);
+      const artisanMatch = p.artisan?.name?.toLowerCase().includes(q) || p.artisan?.kannadaName?.toLowerCase().includes(q);
       const villageMatch = p.artisan?.village?.toLowerCase().includes(q) || p.craftStory?.provenanceLocation?.toLowerCase().includes(q);
       const materialsMatch = p.craftStory?.materialsUsed?.toLowerCase().includes(q);
       const storyMatch = p.craftStory?.culturalSignificance?.toLowerCase().includes(q);
@@ -109,13 +117,13 @@ export default function App() {
   };
 
   const quickSearchPills = [
-    'Kasuti Saree',
-    'Beedu Lamp',
-    'Coconut Diya',
-    'Peacock Tapestry',
-    'Storage Chest',
-    'Wind Chime',
-    'Fisherboat'
+    { id: 'Kasuti Saree', label: t('pillKasutiSaree') },
+    { id: 'Beedu Lamp', label: t('pillBeeduLamp') },
+    { id: 'Coconut Diya', label: t('pillCoconutDiya') },
+    { id: 'Peacock Tapestry', label: t('pillPeacockTapestry') },
+    { id: 'Storage Chest', label: t('pillStorageChest') },
+    { id: 'Wind Chime', label: t('pillWindChime') },
+    { id: 'Fisherboat', label: t('pillFisherboat') }
   ];
 
   return (
@@ -222,6 +230,7 @@ export default function App() {
                       <span>Popular:</span>
                     </span>
 
+<<<<<<< HEAD
                     {/* All Crafts Quick Pill */}
                     <button
                       onClick={() => {
@@ -235,6 +244,41 @@ export default function App() {
                       }`}
                     >
                       ✨ All Crafts
+=======
+                  {/* Active Filter Pill Count */}
+                  <div className="text-xs text-stone-500 font-medium">
+                    {t('showingCrafts', { count: filteredProducts.length, total: allProducts.length })}
+                  </div>
+                </div>
+
+                {/* Category Pills */}
+                <CategoryFilter
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={setSelectedCategory}
+                  productCounts={productCounts}
+                />
+
+                {/* Quick Search Suggestion Pills */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-500">
+                  <span className="font-semibold text-stone-700 whitespace-nowrap flex items-center gap-1">
+                    <Search className="w-3.5 h-3.5 text-terracotta-600" />
+                    <span>{t('popularSearches')}</span>
+                  </span>
+                  {quickSearchPills.map((pill) => (
+                    <button
+                      key={pill.id}
+                      onClick={() => {
+                        setSearchQuery(pill.label);
+                        setSelectedCategory('All Crafts');
+                      }}
+                      className={`px-3 py-1 rounded-full text-xs transition-all whitespace-nowrap border ${
+                        searchQuery.toLowerCase() === pill.label.toLowerCase() || searchQuery.toLowerCase() === pill.id.toLowerCase()
+                          ? 'bg-terracotta-600 text-white border-terracotta-600 font-bold'
+                          : 'bg-white hover:bg-cream-200 text-stone-700 border-cream-300'
+                      }`}
+                    >
+                      {pill.label}
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
                     </button>
 
                     {quickSearchPills.map((term, i) => {

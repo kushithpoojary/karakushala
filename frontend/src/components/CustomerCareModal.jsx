@@ -155,10 +155,47 @@ export default function CustomerCareModal() {
         setRecordingDuration((prev) => prev + 1);
       }, 1000);
 
+<<<<<<< HEAD
       // Also start speech-to-text
       try {
         recognitionRef.current?.start();
       } catch (e) {}
+=======
+      // Also start fresh speech-to-text in selected regional language
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          if (recognitionRef.current) {
+            try { recognitionRef.current.abort(); } catch (e) {}
+          }
+          const rec = new SpeechRecognition();
+          rec.continuous = true;
+          rec.interimResults = true;
+          rec.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
+
+          rec.onresult = (event) => {
+            let fullText = '';
+            for (let i = 0; i < event.results.length; i++) {
+              fullText += event.results[i][0].transcript + ' ';
+            }
+            const clean = fullText.trim();
+            if (clean) {
+              setVoiceTranscript(clean);
+              setComplaintText(clean);
+            }
+          };
+
+          rec.onerror = (e) => {
+            console.warn('Customer care STT warning:', e.error);
+          };
+
+          recognitionRef.current = rec;
+          rec.start();
+        } catch (e) {
+          console.warn('Customer care STT start exception:', e);
+        }
+      }
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
       showToast('🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್ ಆರಂಭವಾಗಿದೆ (Voice recording started)...', 'info');
       if (audioVoiceAssistance) {

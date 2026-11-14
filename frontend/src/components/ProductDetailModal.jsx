@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import AudioStoryPlayer from './AudioStoryPlayer';
 import { X, Clock, MapPin, Sparkles, ShieldCheck, ShoppingBag, ArrowRight, CheckCircle2, ChevronRight, ChevronLeft, Layers, Tag, Eye, Zap } from 'lucide-react';
 
 export default function ProductDetailModal() {
+<<<<<<< HEAD
   const { selectedProduct, setSelectedProduct, addToCart, openOrderPopup, formatINR, setIsCartOpen, setIsCheckoutOpen } = useApp();
+=======
+  const { selectedProduct, setSelectedProduct, addToCart, formatINR, setIsCartOpen, setIsCheckoutOpen, currentLanguage } = useApp();
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   useEffect(() => {
@@ -167,7 +172,12 @@ export default function ProductDetailModal() {
               {/* Audio Story Player UI to justify premium pricing */}
               <AudioStoryPlayer
                 artisanName={artisan.name}
+<<<<<<< HEAD
                 craftTitle={selectedProduct.title}
+=======
+                craftTitle={getLocalizedProductTitle(selectedProduct, currentLanguage)}
+                category={selectedProduct.category}
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
                 storyText={craftStory.audioNarration || selectedProduct.storyAudioQuote || craftStory.culturalSignificance}
               />
             </div>
@@ -178,7 +188,7 @@ export default function ProductDetailModal() {
               {/* Product Title */}
               <div>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-indigo-900 leading-tight">
-                  {selectedProduct.title}
+                  {getLocalizedProductTitle(selectedProduct, currentLanguage)}
                 </h2>
                 <div className="flex items-center gap-2 mt-2 text-stone-600 text-xs">
                   <MapPin className="w-3.5 h-3.5 text-terracotta-600 shrink-0" />

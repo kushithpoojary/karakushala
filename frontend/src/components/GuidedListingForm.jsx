@@ -5,7 +5,11 @@ import { STORY_TEMPLATES } from '../data/mockData';
 import { Camera, Image as ImageIcon, Sparkles, ArrowRight, ArrowLeft, Check, Clock, Layers, MapPin, IndianRupee, Mic, MicOff, Volume2, HelpCircle } from 'lucide-react';
 
 export default function GuidedListingForm({ onProductCreated }) {
+<<<<<<< HEAD
   const { activeArtisan, showToast, formatINR } = useApp();
+=======
+  const { activeArtisan, showToast, formatINR, t, currentLangConfig, currentLanguage } = useApp();
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +34,17 @@ export default function GuidedListingForm({ onProductCreated }) {
   const [listeningField, setListeningField] = useState(null);
   const recognitionRef = useRef(null);
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) {}
+      }
+    };
+  }, []);
+
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   // Number parser for spoken prices and numbers (extracts digits or parses words like "twenty four hundred")
   const parseNumberFromSpeech = (text) => {
     const match = text.match(/\d+/g);
@@ -107,12 +122,22 @@ export default function GuidedListingForm({ onProductCreated }) {
 
     showToast(`🎙️ Voice Recorded for ${field}: "${recordedValue}"`, 'success');
 
-    // Audio feedback announcement
+    // Audio feedback announcement in selected regional language
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(`Recorded ${recordedValue}`);
-      u.rate = 1.0;
-      window.speechSynthesis.speak(u);
+      try {
+        window.speechSynthesis.cancel();
+        const feedbackPhrases = {
+          kn: `ದಾಖಲಿಸಲಾಗಿದೆ: ${recordedValue}`,
+          hi: `दर्ज किया गया: ${recordedValue}`,
+          ml: `രേഖപ്പെടുത്തി: ${recordedValue}`,
+          en: `Recorded: ${recordedValue}`
+        };
+        const textToSpeak = feedbackPhrases[currentLanguage] || feedbackPhrases.en;
+        const u = new SpeechSynthesisUtterance(textToSpeak);
+        u.lang = currentLangConfig?.ttsVoice || 'en-IN';
+        u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
     }
   };
 
@@ -129,28 +154,53 @@ export default function GuidedListingForm({ onProductCreated }) {
       return;
     }
 
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch (e) {}
+    }
+
     setListeningField(fieldName);
     showToast(`🎙️ Listening for ${fieldName} (${fieldLabelKannada})... ಮಾತನಾಡಿ`, 'info');
 
     try {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-IN';
+      recognition.interimResults = true;
+      recognition.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
 
       recognition.onresult = (event) => {
-        const rawTranscript = event.results[0][0].transcript;
-        if (!rawTranscript) return;
-        handleVoiceInputResult(fieldName, rawTranscript.trim());
+        let interimText = '';
+        let finalText = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalText += event.results[i][0].transcript;
+          } else {
+            interimText += event.results[i][0].transcript;
+          }
+        }
+
+        const candidateText = (finalText || interimText || '').trim();
+        if (candidateText) {
+          if (fieldName === 'title') setTitle(candidateText);
+          else if (fieldName === 'materialsUsed') setMaterialsUsed(candidateText);
+          else if (fieldName === 'culturalSignificance') setCulturalSignificance(candidateText);
+          else if (fieldName === 'provenanceLocation') setProvenanceLocation(candidateText);
+          else if (fieldName === 'price') setPrice(parseNumberFromSpeech(candidateText));
+          else if (fieldName === 'stockQuantity') setStockQuantity(parseNumberFromSpeech(candidateText));
+          else if (fieldName === 'hoursSpent') setHoursSpent(parseNumberFromSpeech(candidateText));
+        }
+
+        if (finalText) {
+          handleVoiceInputResult(fieldName, finalText.trim());
+        }
       };
 
       recognition.onerror = (event) => {
         console.warn('Speech recognition error in listing form:', event.error);
         setListeningField(null);
         if (event.error === 'not-allowed') {
-          showToast('Microphone access denied. Please allow microphone in browser.', 'warning');
+          showToast(t('artisanMicDenied') || 'Microphone access denied. Please allow microphone in browser.', 'warning');
         } else if (event.error === 'no-speech') {
-          showToast('No speech detected. Please speak into the mic.', 'info');
+          showToast(t('artisanVoiceNotRecognized') || 'No speech detected. Please speak into the mic.', 'info');
         }
       };
 

@@ -80,8 +80,13 @@ export default function ArtisanLoginModal() {
 
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
+<<<<<<< HEAD
     recognition.interimResults = false;
     recognition.lang = fieldName === 'kannadaName' ? 'kn-IN' : 'en-IN';
+=======
+    recognition.interimResults = true;
+    recognition.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
     recognition.onstart = () => {
       setListeningField(fieldName);
@@ -89,18 +94,28 @@ export default function ArtisanLoginModal() {
     };
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript) {
-        const clean = transcript.replace(/[.,!?]/g, '').trim();
+      let interim = '';
+      let final = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          final += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+
+      const streamText = (final || interim || '').replace(/[.,!?]/g, '').trim();
+      if (streamText) {
         setRegForm(prev => {
-          const next = { ...prev, [fieldName]: clean };
+          const next = { ...prev, [fieldName]: streamText };
           if (fieldName === 'name') {
-            const parts = clean.split(' ');
+            const parts = streamText.split(' ');
             next.firstName = parts[0] || '';
             next.lastName = parts.slice(1).join(' ') || '';
           }
           return next;
         });
+<<<<<<< HEAD
         showToast(`🎙️ Recorded: "${clean}"`, 'success');
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -108,8 +123,16 @@ export default function ArtisanLoginModal() {
           u.rate = 1;
           window.speechSynthesis.speak(u);
         }
+=======
       }
-      setListeningField(null);
+
+      if (final) {
+        const clean = final.replace(/[.,!?]/g, '').trim();
+        showToast(t('artisanHeardFieldVoice', { value: clean }), 'success');
+        speakLocalized('artisanHeardFieldVoice', { value: clean });
+        setListeningField(null);
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
+      }
     };
 
     recognition.onerror = (event) => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 export default function CartDrawer() {
@@ -11,7 +12,9 @@ export default function CartDrawer() {
     updateCartQuantity,
     cartSubtotal,
     formatINR,
-    setIsCheckoutOpen
+    setIsCheckoutOpen,
+    t,
+    currentLanguage
   } = useApp();
 
   if (!isCartOpen) return null;
@@ -42,9 +45,15 @@ export default function CartDrawer() {
           <div className="p-6 border-b border-cream-300/80 bg-white/90 backdrop-blur-md flex items-center justify-between sticky top-0 z-10">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-terracotta-600" />
+<<<<<<< HEAD
               <h2 className="font-serif text-xl font-bold text-indigo-950">Your Craft Bag</h2>
               <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full shadow-xs">
                 {cart.length} {cart.length === 1 ? 'item' : 'items'}
+=======
+              <h2 className="font-serif text-xl font-bold text-indigo-900">{t('cartBagTitle')}</h2>
+              <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full">
+                {cart.length === 1 ? t('itemCount') : t('itemsCount', { count: cart.length })}
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
               </span>
             </div>
 
@@ -61,11 +70,11 @@ export default function CartDrawer() {
           <div className="px-6 py-3 bg-cream-200/60 border-b border-cream-300 text-xs">
             {amountNeeded > 0 ? (
               <p className="text-stone-700 mb-1.5">
-                Add <strong>{formatINR(amountNeeded)}</strong> more for <span className="text-terracotta-700 font-bold">Free Insured Courier</span>!
+                {t('freeShippingProgress', { amount: formatINR(amountNeeded) })}
               </p>
             ) : (
               <p className="text-emerald-800 font-bold mb-1.5 flex items-center gap-1">
-                <span>🎉</span> You unlocked Free Insured Karnataka Handloom Courier!
+                {t('freeShippingUnlocked')}
               </p>
             )}
             <div className="w-full bg-cream-300 h-1.5 rounded-full overflow-hidden">
@@ -83,15 +92,15 @@ export default function CartDrawer() {
                 <div className="w-16 h-16 rounded-full bg-cream-200 text-terracotta-500 flex items-center justify-center mx-auto text-2xl">
                   🪡
                 </div>
-                <h3 className="font-serif text-lg font-bold text-stone-800">Your craft bag is empty</h3>
+                <h3 className="font-serif text-lg font-bold text-stone-800">{t('cartEmptyTitle')}</h3>
                 <p className="text-xs text-stone-500 max-w-xs mx-auto">
-                  Explore our authentic Kasuti embroidery and coastal Beedu handicrafts to support Karnataka weavers.
+                  {t('cartEmptySub')}
                 </p>
                 <button
                   onClick={() => setIsCartOpen(false)}
                   className="px-5 py-2.5 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-xs shadow-md"
                 >
-                  Browse Heritage Catalogue
+                  {t('browseCatalogue')}
                 </button>
               </div>
             ) : (
@@ -102,17 +111,17 @@ export default function CartDrawer() {
                 >
                   <img
                     src={product.images?.[0] || 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=200&q=80'}
-                    alt={product.title}
+                    alt={getLocalizedProductTitle(product, currentLanguage)}
                     className="w-20 h-20 rounded-xl object-cover border border-cream-300 shrink-0"
                   />
 
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <h4 className="text-xs sm:text-sm font-bold text-stone-900 line-clamp-1">
-                        {product.title}
+                        {getLocalizedProductTitle(product, currentLanguage)}
                       </h4>
                       <p className="text-[11px] text-stone-500 mt-0.5">
-                        {product.artisan?.name || 'Karnataka Artisan'} • {product.category}
+                        {product.artisan?.name || 'Karnataka Artisan'} • {t(product.category)}
                       </p>
                     </div>
 
@@ -160,13 +169,13 @@ export default function CartDrawer() {
               <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-200 flex items-center gap-2.5 text-xs text-emerald-900">
                 <HeartHandshake className="w-4 h-4 text-emerald-700 shrink-0" />
                 <p>
-                  <strong>{formatINR(directArtisanTotal)}</strong> will be credited directly to the artisans' bank accounts!
+                  {t('directArtisanCredit', { amount: formatINR(directArtisanTotal) })}
                 </p>
               </div>
 
               {/* Subtotal */}
               <div className="flex justify-between items-baseline">
-                <span className="text-sm font-medium text-stone-600">Total Payable:</span>
+                <span className="text-sm font-medium text-stone-600">{t('totalPayable')}:</span>
                 <span className="font-serif text-2xl font-black text-indigo-900">
                   {formatINR(cartSubtotal)}
                 </span>
@@ -176,7 +185,11 @@ export default function CartDrawer() {
                 onClick={handleProceedToCheckout}
                 className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white font-bold text-base shadow-lg shadow-terracotta-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all touch-target animate-goldHalo"
               >
+<<<<<<< HEAD
                 <span>Proceed to Checkout (ಖರೀದಿ ಮುಂದುವರಿಸಿ)</span>
+=======
+                <span>{t('proceedToCheckout')}</span>
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>

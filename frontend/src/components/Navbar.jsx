@@ -69,7 +69,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
             <div>
               <div className="flex items-center gap-1 sm:gap-1.5">
                 <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-indigo-900 group-hover:text-terracotta-600 transition-colors">
-                  KaraKushala
+                  {t('brandName')}
                 </span>
                 <span className="text-[10px] sm:text-xs bg-mustard-100 text-amber-900 font-bold px-1.5 sm:px-2 py-0.5 rounded-full border border-mustard-300 shrink-0">
                   ಕರಕುಶಲ

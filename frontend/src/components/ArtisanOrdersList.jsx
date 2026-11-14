@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { 
   Truck, 
   CheckCircle2, 
@@ -25,7 +26,11 @@ import {
 } from 'lucide-react';
 
 export default function ArtisanOrdersList({ orders = [], onOrderStatusUpdated }) {
+<<<<<<< HEAD
   const { formatINR, showToast } = useApp();
+=======
+  const { formatINR, showToast, currentLanguage, t } = useApp();
+>>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const [activeFilter, setActiveFilter] = useState('All');
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
@@ -367,7 +372,7 @@ export default function ArtisanOrdersList({ orders = [], onOrderStatusUpdated })
                         {item.quantity}x
                       </span>
                       <div>
-                        <span className="font-semibold text-stone-900 block">{item.title}</span>
+                        <span className="font-semibold text-stone-900 block">{getLocalizedProductTitle(item, currentLanguage)}</span>
                         {item.craftCluster && (
                           <span className="text-[10px] text-stone-500 block">{item.craftCluster}</span>
                         )}

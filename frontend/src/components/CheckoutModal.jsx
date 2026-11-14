@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { 
   X, 
   CheckCircle, 
@@ -521,10 +522,10 @@ export default function CheckoutModal() {
               <div className="bg-cream-100 p-3.5 rounded-2xl border border-cream-300 flex items-center justify-between text-xs">
                 <div>
                   <p className="font-bold text-stone-800">
-                    Ordering {cart.length} craft {cart.length === 1 ? 'item' : 'items'}
+                    {cart.length === 1 ? t('itemCount') : t('itemsCount', { count: cart.length })}
                   </p>
                   <p className="text-stone-500 truncate max-w-xs">
-                    {cart.map(c => c.product.title).join(', ')}
+                    {cart.map(c => getLocalizedProductTitle(c.product, currentLanguage)).join(', ')}
                   </p>
                 </div>
                 <span className="font-serif text-base font-bold text-indigo-900">
