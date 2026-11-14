@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart, Zap } from 'lucide-react';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, index = 0 }) {
   const { addToCart, setSelectedProduct, openOrderPopup, formatINR } = useApp();
 
   const artisan = product.artisan || {
@@ -27,7 +27,10 @@ export default function ProductCard({ product }) {
   const categoryBadgeClass = categoryBadgeColors[product.category] || 'bg-indigo-900/90 text-white';
 
   return (
-    <div className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300">
+    <div 
+      style={{ animationDelay: `${(index % 8) * 60}ms` }}
+      className="group bg-white rounded-2xl border border-cream-300 shadow-earth card-hover-lift hover:border-amber-400/80 hover:shadow-earth-lg flex flex-col overflow-hidden transition-all duration-300 animate-fadeInUp"
+    >
       
       {/* Product Image & Badges */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
@@ -157,7 +160,7 @@ export default function ProductCard({ product }) {
           <button
             onClick={() => openOrderPopup(product)}
             disabled={isOutOfStock}
-            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 touch-target shadow-md ${
+            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 touch-target shadow-md focus-ring btn-press ${
               isOutOfStock
                 ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white shadow-terracotta-600/30 active:scale-95 group/btn'
@@ -171,7 +174,7 @@ export default function ProductCard({ product }) {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setSelectedProduct(product)}
-              className="w-full py-2 px-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-stone-800 text-[11px] sm:text-xs font-bold transition-colors flex items-center justify-center gap-1 touch-target"
+              className="w-full py-2 px-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-stone-800 text-[11px] sm:text-xs font-bold transition-colors flex items-center justify-center gap-1 touch-target focus-ring btn-press"
             >
               <Sparkles className="w-3.5 h-3.5 text-terracotta-600" />
               <span>Craft Story</span>
@@ -180,7 +183,7 @@ export default function ProductCard({ product }) {
             <button
               onClick={() => addToCart(product)}
               disabled={isOutOfStock}
-              className={`w-full py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 touch-target ${
+              className={`w-full py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 touch-target focus-ring btn-press ${
                 isOutOfStock
                   ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                   : 'bg-white hover:bg-cream-100 border border-terracotta-300 text-terracotta-800 active:scale-95'

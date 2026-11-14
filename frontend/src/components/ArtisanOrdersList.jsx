@@ -277,9 +277,9 @@ export default function ArtisanOrdersList({ orders = [], onOrderStatusUpdated })
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border btn-press touch-target ${
                 activeFilter === tab.id
-                  ? 'bg-indigo-900 text-white border-indigo-900 shadow-sm'
+                  ? 'bg-indigo-900 text-white border-indigo-900 shadow-sm scale-105'
                   : 'bg-white text-stone-600 hover:bg-cream-100 border-cream-300'
               }`}
             >

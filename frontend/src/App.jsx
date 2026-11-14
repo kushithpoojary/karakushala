@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import HeroBanner from './components/HeroBanner';
 import CategoryFilter from './components/CategoryFilter';
 import ProductCard from './components/ProductCard';
+import ProductCardSkeleton from './components/ProductCardSkeleton';
 import ProductDetailModal from './components/ProductDetailModal';
 import OrderQuickPopupModal from './components/OrderQuickPopupModal';
 import CartDrawer from './components/CartDrawer';
@@ -16,6 +17,7 @@ import WelcomeRoleModal from './components/WelcomeRoleModal';
 import CustomerCareModal from './components/CustomerCareModal';
 import CustomerOrdersPage from './components/CustomerOrdersPage';
 import TrackOrderPage from './components/TrackOrderPage';
+import ToastNotification from './components/ToastNotification';
 import { Sparkles, Compass, AlertCircle, Heart, ShieldCheck, CheckCircle2, Search, X, Volume2, Mic, Headphones } from 'lucide-react';
 
 export default function App() {
@@ -216,40 +218,40 @@ export default function App() {
                 )}
               </div>
 
-              {/* Product Grid */}
+              {/* Product Grid with Staggered Entrance & Smooth Skeletons */}
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-cream-300 p-4 space-y-3">
-                      <div className="w-full h-44 bg-cream-200 rounded-xl" />
-                      <div className="w-3/4 h-4 bg-cream-200 rounded" />
-                      <div className="w-1/2 h-3 bg-cream-200 rounded" />
-                    </div>
+                    <ProductCardSkeleton key={i} />
                   ))}
                 </div>
               ) : filteredProducts.length === 0 ? (
-                <div className="bg-white rounded-3xl border border-cream-300 p-12 text-center space-y-4">
-                  <span className="text-4xl">🔍</span>
-                  <h3 className="font-serif text-xl font-bold text-stone-900">
-                    No crafts found matching "{searchQuery}"
-                  </h3>
-                  <p className="text-xs sm:text-sm text-stone-500 max-w-md mx-auto">
-                    Try searching for "Kasuti", "Beedu", "Lamp", "Saree", "Diya", or click one of the popular craft suggestions above.
-                  </p>
+                <div className="bg-white/90 backdrop-blur-sm rounded-3xl border border-cream-300 p-10 sm:p-14 text-center space-y-5 shadow-earth max-w-2xl mx-auto animate-scaleUp">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto text-3xl shadow-inner border border-amber-200">
+                    🔍
+                  </div>
+                  <div className="space-y-1.5">
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                      No crafts found matching "{searchQuery}"
+                    </h3>
+                    <p className="text-xs sm:text-sm text-stone-600 max-w-md mx-auto">
+                      Try searching for "Kasuti", "Beedu", "Lamp", "Saree", "Diya", or click one of the popular Karnataka craft tags above.
+                    </p>
+                  </div>
                   <button
                     onClick={() => {
                       setSearchQuery('');
                       setSelectedCategory('All Crafts');
                     }}
-                    className="px-5 py-2.5 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-xl text-xs font-bold shadow-md transition-all"
+                    className="px-6 py-3 bg-gradient-to-r from-terracotta-600 to-amber-600 hover:from-terracotta-700 hover:to-amber-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-terracotta-600/30 transition-all active:scale-95 btn-press"
                   >
-                    Reset Search & View All Crafts
+                    Reset Filter & Explore All Crafts
                   </button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
-                  {filteredProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                  {filteredProducts.map((product, idx) => (
+                    <ProductCard key={product.id} product={product} index={idx} />
                   ))}
                 </div>
               )}
@@ -272,32 +274,15 @@ export default function App() {
       {/* Floating Customer Care Help Pill (Bottom-left, accessible to buyers & sellers) */}
       <button
         onClick={openCustomerCare}
-        className="fixed bottom-5 left-5 z-30 bg-indigo-900 hover:bg-terracotta-600 text-white px-3.5 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold transition-all hover:scale-105 active:scale-95 border-2 border-amber-300/40"
+        className="fixed bottom-5 left-5 z-30 bg-indigo-900 hover:bg-terracotta-600 text-white px-3.5 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold transition-all hover:scale-105 active:scale-95 border-2 border-amber-300/40 btn-press"
         title="Customer Care & Artisan Support (ಸಹಾಯವಾಣಿ)"
       >
         <Headphones className="w-4 h-4 text-amber-300" />
         <span className="hidden sm:inline">Customer Care (ಸಹಾಯ)</span>
       </button>
 
-      {/* Toast Notification Container */}
-      {toast && (
-        <div className="fixed bottom-5 right-5 z-50 animate-slideUp">
-          <div
-            className={`px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs sm:text-sm font-bold border ${
-              toast.type === 'error'
-                ? 'bg-red-900 text-white border-red-700'
-                : toast.type === 'warning'
-                ? 'bg-amber-500 text-stone-950 border-amber-600'
-                : toast.type === 'info'
-                ? 'bg-indigo-900 text-white border-indigo-700'
-                : 'bg-emerald-800 text-white border-emerald-600'
-            }`}
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>{toast.message}</span>
-          </div>
-        </div>
-      )}
+      {/* Sleek Glassmorphic Toast Notification Container */}
+      <ToastNotification toast={toast} />
 
       {/* Heritage Footer */}
       <footer className="bg-indigo-950 text-cream-100 border-t border-indigo-900 mt-16 pt-12 pb-8">

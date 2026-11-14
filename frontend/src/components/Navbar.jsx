@@ -47,7 +47,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-cream-100/95 backdrop-blur-md border-b border-cream-300 shadow-sm transition-all w-full">
+    <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-cream-300/80 shadow-xs transition-all w-full">
       {/* Top Heritage Notice Bar */}
       <div className="bg-gradient-to-r from-terracotta-700 via-terracotta-600 to-terracotta-700 text-cream-50 text-xs py-1.5 px-3 sm:px-4 text-center font-medium flex items-center justify-center gap-2 overflow-hidden">
         <Sparkles className="w-3.5 h-3.5 text-mustard-400 animate-pulse shrink-0" />

@@ -29,28 +29,28 @@ export default function CartDrawer() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden animate-fadeIn">
-      {/* Backdrop */}
+      {/* Glassmorphic Backdrop */}
       <div
         onClick={() => setIsCartOpen(false)}
-        className="absolute inset-0 bg-stone-950/60 backdrop-blur-xs transition-opacity"
+        className="absolute inset-0 bg-stone-950/70 backdrop-blur-sm transition-opacity duration-300"
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-cream-50 shadow-2xl flex flex-col border-l border-cream-300 animate-slideInRight">
+        <div className="w-screen max-w-md bg-cream-50/95 backdrop-blur-xl shadow-2xl flex flex-col border-l border-cream-300 animate-slideInRight">
           
           {/* Header */}
-          <div className="p-6 border-b border-cream-300 bg-white flex items-center justify-between">
+          <div className="p-6 border-b border-cream-300/80 bg-white/90 backdrop-blur-md flex items-center justify-between sticky top-0 z-10">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-terracotta-600" />
-              <h2 className="font-serif text-xl font-bold text-indigo-900">Your Craft Bag</h2>
-              <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full">
+              <h2 className="font-serif text-xl font-bold text-indigo-950">Your Craft Bag</h2>
+              <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full shadow-xs">
                 {cart.length} {cart.length === 1 ? 'item' : 'items'}
               </span>
             </div>
 
             <button
               onClick={() => setIsCartOpen(false)}
-              className="p-2 rounded-full hover:bg-cream-200 text-stone-500 hover:text-stone-900 transition-colors touch-target"
+              className="p-2 rounded-full hover:bg-cream-200 text-stone-500 hover:text-stone-900 transition-colors touch-target btn-press"
               aria-label="Close cart"
             >
               <X className="w-5 h-5" />

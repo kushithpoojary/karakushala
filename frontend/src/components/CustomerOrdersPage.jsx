@@ -216,9 +216,9 @@ export default function CustomerOrdersPage() {
             <button
               key={tab}
               onClick={() => setSelectedFilter(tab)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border btn-press touch-target ${
                 selectedFilter === tab
-                  ? 'bg-indigo-900 text-white border-indigo-900 shadow-sm'
+                  ? 'bg-indigo-900 text-white border-indigo-900 shadow-sm scale-105'
                   : 'bg-white text-stone-600 hover:bg-cream-100 border-cream-300'
               }`}
             >
@@ -238,16 +238,29 @@ export default function CustomerOrdersPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter list by item or ID..."
-            className="w-full bg-white pl-9 pr-3 py-2 text-xs rounded-full border border-cream-300 focus:outline-none focus:ring-2 focus:ring-terracotta-500"
+            className="w-full bg-white pl-9 pr-3 py-2 text-xs rounded-full border border-cream-300 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus-ring"
           />
         </div>
       </div>
 
-      {/* Orders List */}
+      {/* Orders List with Shimmer Skeletons */}
       {loading ? (
-        <div className="bg-white rounded-3xl border border-cream-300 p-16 text-center space-y-3">
-          <RefreshCw className="w-8 h-8 text-terracotta-600 animate-spin mx-auto" />
-          <p className="text-xs font-bold text-stone-600">ಆರ್ಡರ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ... Loading your craft orders...</p>
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-white rounded-3xl border border-cream-300 p-6 space-y-4 shadow-earth">
+              <div className="flex justify-between items-center pb-3 border-b border-cream-200">
+                <div className="w-32 h-5 rounded bg-cream-200 shimmer-skeleton" />
+                <div className="w-24 h-6 rounded-full bg-cream-200 shimmer-skeleton" />
+              </div>
+              <div className="flex gap-4">
+                <div className="w-16 h-16 rounded-xl bg-cream-200 shimmer-skeleton shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <div className="w-3/4 h-4 rounded bg-cream-200 shimmer-skeleton" />
+                  <div className="w-1/2 h-3 rounded bg-cream-200 shimmer-skeleton" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredOrders.length === 0 ? (
         <div className="bg-white rounded-3xl border border-cream-300 p-12 sm:p-16 text-center space-y-4">
