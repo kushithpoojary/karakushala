@@ -239,7 +239,7 @@ export default function App() {
                       ✨ {t('allCrafts') || 'All Crafts'}
                     </button>
 
-                    {quickSearchPills.map((term, i) => {
+                    {quickSearchPills.map(({ id, label }, i) => {
                       const pillGradients = [
                         'hover:border-rose-400 hover:text-rose-700',
                         'hover:border-amber-400 hover:text-amber-800',
@@ -250,16 +250,16 @@ export default function App() {
                         'hover:border-purple-400 hover:text-purple-700',
                       ];
                       const hoverClass = pillGradients[i % pillGradients.length];
-                      const isSelected = searchQuery.toLowerCase() === term.toLowerCase();
+                      const isSelected = searchQuery.toLowerCase() === id.toLowerCase();
 
                       return (
                         <button
-                          key={term}
+                          key={id}
                           onClick={() => {
                             if (isSelected) {
                               setSearchQuery('');
                             } else {
-                              setSearchQuery(term);
+                              setSearchQuery(id);
                               setSelectedCategory('All Crafts');
                             }
                           }}
@@ -268,9 +268,9 @@ export default function App() {
                               ? 'bg-gradient-to-r from-stone-900 to-stone-800 text-amber-300 border-transparent font-bold shadow-md'
                               : `bg-white/95 text-stone-800 border-cream-300 ${hoverClass}`
                           }`}
-                          title={isSelected ? 'Click to deselect and view all crafts' : `Filter by ${term}`}
+                          title={isSelected ? 'Click to deselect and view all crafts' : `Filter by ${label}`}
                         >
-                          {term}
+                          {label}
                         </button>
                       );
                     })}

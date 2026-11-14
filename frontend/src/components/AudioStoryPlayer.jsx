@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Play, Pause, RotateCcw, Sparkles } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { speakText, stopSpeech } from '../utils/speechService';
 
 export default function AudioStoryPlayer({ storyText, artisanName, craftTitle }) {
+  const { currentLanguage, currentLangConfig, t } = useApp();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
-  const speechRef = useRef(null);
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    if ('speechSynthesis' in window) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       setHasSpeechSupport(true);
     }
     return () => {
@@ -17,37 +19,35 @@ export default function AudioStoryPlayer({ storyText, artisanName, craftTitle })
     };
   }, []);
 
-  const narrationText = storyText || `Namaskara! This authentic piece is handcrafted by ${artisanName}. Every stitch and lattice motif represents generations of sacred craft tradition in Karnataka.`;
+  const defaultStoryByLang = {
+    en: `Namaskara! This authentic piece is handcrafted by ${artisanName || 'our master artisan'}. Every stitch and lattice motif represents generations of sacred craft tradition in Karnataka.`,
+    kn: `ನಮಸ್ಕಾರ! ಈ ನೈಜ ಕಲಾಕೃತಿಯನ್ನು ನಮ್ಮ ಕಲಾಕಾರರಾದ ${artisanName || 'ಕರ್ನಾಟಕದ ಮಾಸ್ಟರ್ ನೇಯ್ಗೆದಾರರು'} ಕೈಯಾರೆ ರಚಿಸಿದ್ದಾರೆ. ಪ್ರತಿಯೊಂದು ಹೊಲಿಗೆ ಮತ್ತು ವಿನ್ಯಾಸವು ಕರ್ನಾಟಕದ ಪವಿತ್ರ ಕರಕುಶಲ ಪರಂಪರೆಯನ್ನು ಪ್ರತಿನಿಧಿಸುತ್ತದೆ.`,
+    hi: `नमस्ते! इस प्रामाणिक कलाकृति को हमारे शिल्पकार ${artisanName || 'मास्टर कारीगर'} ने तैयार किया है। प्रत्येक सिलाई और रूपांकन कर्नाटक की पवित्र शिल्प परंपरा को दर्शाता है।`,
+    ml: `നമസ്കാരം! ഈ ആധികാരിക കരകൗശല ഉൽപ്പന്നം ${artisanName || 'കരകൗശല വിദഗ്ദ്ധൻ'} സ്വന്തം കൈകളാൽ നിർമ്മിച്ചതാണ്. ഓരോ തുന്നലും രൂപകൽപ്പനയും കർണാടകയുടെ പവിത്രമായ പാരമ്പര്യത്തെ പ്രതിനിധീകരിക്കുന്നു.`
+  };
+
+  const activeLangKey = currentLanguage?.startsWith('kn') ? 'kn' :
+                        currentLanguage?.startsWith('hi') ? 'hi' :
+                        currentLanguage?.startsWith('ml') ? 'ml' : 'en';
+
+  const narrationText = (activeLangKey === 'en' && storyText) 
+    ? storyText 
+    : (defaultStoryByLang[activeLangKey] || defaultStoryByLang.en);
 
   const startPlayback = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    stopSpeech();
 
-      const utterance = new SpeechSynthesisUtterance(narrationText);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-
-      // Pick an Indian English or available voice if found
-      const voices = window.speechSynthesis.getVoices();
-      const indianVoice = voices.find(v => v.lang.includes('IN') || v.name.includes('India'));
-      if (indianVoice) utterance.voice = indianVoice;
-
-      utterance.onend = () => {
-        stopPlayback();
-      };
-
-      utterance.onerror = () => {
-        stopPlayback();
-      };
-
-      speechRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    }
+    speakText(narrationText, currentLanguage, {
+      rate: 0.95,
+      pitch: 1.0,
+      onEnd: () => stopPlayback(),
+      onError: () => stopPlayback()
+    });
 
     setIsPlaying(true);
     setProgress(0);
 
-    const totalSeconds = Math.max(12, Math.round(narrationText.length / 15));
+    const totalSeconds = Math.max(10, Math.round(narrationText.length / 14));
     let elapsed = 0;
 
     intervalRef.current = setInterval(() => {
@@ -61,9 +61,7 @@ export default function AudioStoryPlayer({ storyText, artisanName, craftTitle })
   };
 
   const stopPlayback = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopSpeech();
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -88,13 +86,13 @@ export default function AudioStoryPlayer({ storyText, artisanName, craftTitle })
           </div>
           <div>
             <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-              <span>Artisan Voice & Provenance Narration</span>
-              <span className="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.2 rounded font-semibold">
-                ಕೇಳಿ (Listen)
+              <span>{t('artisanVoiceNarration') || 'Artisan Voice & Provenance Narration'}</span>
+              <span className="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-semibold">
+                {t('listen') || 'Listen'}
               </span>
             </h4>
             <p className="text-[11px] text-stone-500">
-              Narrated story of {artisanName}'s weaving heritage
+              {artisanName ? `${artisanName}'s weaving heritage story` : 'Authentic craft heritage story'}
             </p>
           </div>
         </div>
@@ -111,12 +109,12 @@ export default function AudioStoryPlayer({ storyText, artisanName, craftTitle })
           {isPlaying ? (
             <>
               <Pause className="w-3.5 h-3.5" />
-              <span>Pause</span>
+              <span>{t('pause') || 'Pause'}</span>
             </>
           ) : (
             <>
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Hear Story</span>
+              <span>{t('hearStory') || 'Hear Story'}</span>
             </>
           )}
         </button>

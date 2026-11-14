@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Globe, Check, ChevronDown } from 'lucide-react';
+import { Globe, Check, ChevronDown, Languages } from 'lucide-react';
 
 export default function LanguageDropdown({ className = "" }) {
   const { currentLanguage, currentLangConfig, setLanguage, SUPPORTED_LANGUAGES } = useApp();
@@ -31,25 +31,25 @@ export default function LanguageDropdown({ className = "" }) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-cream-200 hover:bg-cream-300 border border-cream-300 text-stone-800 text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-95 btn-press"
-        title="Change Language / ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ / भाषा चुनें / ഭാഷ തിരഞ്ഞെടുക്കുക"
+        className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-300/90 text-stone-900 text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-95 btn-press"
+        title="Select Language / ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ / भाषा चुनें / ഭാഷ തിരഞ്ഞെടുക്കുക"
         aria-expanded={isOpen}
       >
-        <Globe className="w-4 h-4 text-terracotta-600 shrink-0" />
-        <span className="hidden sm:inline font-semibold">
-          {currentLangConfig?.nativeName || 'English'}
+        <Languages className="w-4 h-4 text-terracotta-600 shrink-0" />
+        <span className="font-semibold select-none flex items-center gap-1">
+          <span className="text-sm">{currentLangConfig?.flag}</span>
+          <span className="hidden xs:inline">{currentLangConfig?.nativeName || 'English'}</span>
+          <span className="xs:hidden">{currentLangConfig?.id?.toUpperCase() || 'EN'}</span>
         </span>
-        <span className="sm:hidden font-semibold">
-          {currentLangConfig?.id?.toUpperCase() || 'EN'}
-        </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-stone-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 sm:w-64 rounded-2xl bg-white shadow-2xl border border-cream-300 py-1.5 z-50 animate-scaleUp">
-          <div className="px-3.5 py-2 border-b border-cream-200 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-            Select Language • ಭಾಷೆ • भाषा • ഭാഷ
+        <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white shadow-2xl border border-cream-300 py-2 z-50 animate-scaleUp">
+          <div className="px-4 py-2 border-b border-cream-200 flex items-center justify-between text-[11px] font-bold text-stone-500 uppercase tracking-wider">
+            <span>Select Language</span>
+            <span className="text-terracotta-600 font-semibold">ಭಾಷೆ • भाषा • ഭാഷ</span>
           </div>
 
           <div className="py-1">
@@ -60,18 +60,18 @@ export default function LanguageDropdown({ className = "" }) {
                   key={lang.code}
                   type="button"
                   onClick={() => handleSelect(lang.code)}
-                  className={`w-full px-3.5 py-2.5 text-left text-xs sm:text-sm flex items-center justify-between transition-colors ${
+                  className={`w-full px-4 py-2.5 text-left text-xs sm:text-sm flex items-center justify-between transition-colors ${
                     isSelected
-                      ? 'bg-terracotta-50 text-terracotta-900 font-bold'
+                      ? 'bg-amber-100/80 text-amber-950 font-bold border-l-4 border-terracotta-600'
                       : 'text-stone-700 hover:bg-cream-100 hover:text-stone-900 font-medium'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-base select-none">{lang.flag}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg select-none">{lang.flag}</span>
                     <div>
-                      <div className="leading-tight">{lang.nativeName}</div>
-                      <div className="text-[10px] text-stone-400 font-normal">
-                        STT: {lang.sttLocale} • TTS: {lang.ttsLang}
+                      <div className="leading-tight font-bold">{lang.nativeName}</div>
+                      <div className="text-[10px] text-stone-500 font-normal mt-0.5">
+                        Audio & Text • {lang.sttLocale}
                       </div>
                     </div>
                   </div>

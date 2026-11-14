@@ -28,7 +28,11 @@ export default function ArtisanLoginModal() {
     closeArtisanLogin, 
     loginArtisan, 
     showToast,
-    audioVoiceAssistance 
+    audioVoiceAssistance,
+    currentLanguage,
+    currentLangConfig,
+    speakLocalized,
+    t
   } = useApp();
 
   // Active sub-tab: 'otp' | 'demo' | 'register'
@@ -300,7 +304,7 @@ export default function ArtisanLoginModal() {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.lang = 'en-IN';
+      recognition.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
 
       recognition.onresult = (event) => {
         const raw = event.results[0][0].transcript;
@@ -340,7 +344,7 @@ export default function ArtisanLoginModal() {
             ? 'bg-red-600 text-white animate-bounce ring-2 ring-red-400'
             : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
         }`}
-        title={`Click to speak ${label} (ಧ್ವನಿ ಮೂಲಕ ಭರ್ತಿ)`}
+        title={`Click to speak ${label}`}
       >
         {isThisActive ? (
           <>
@@ -350,7 +354,7 @@ export default function ArtisanLoginModal() {
         ) : (
           <>
             <Mic className="w-3 h-3 text-amber-700" />
-            <span>Voice (ಧ್ವನಿ)</span>
+            <span>Voice</span>
           </>
         )}
       </button>
@@ -379,7 +383,7 @@ export default function ArtisanLoginModal() {
       showToast(`ಒಟಿಪಿ ಕಳುಹಿಸಲಾಗಿದೆ! Demo OTP: ${res.demoOtp || '1234'}`, 'info');
 
       if (audioVoiceAssistance) {
-        playKannadaAudio(`ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗೆ ಒಟಿಪಿ ಕಳುಹಿಸಲಾಗಿದೆ. ಡೆಮೊ ಕೋಡ್ ಒಂದು ಎರಡು ಮೂರು ನಾಲ್ಕು.`);
+        speakLocalized('artisanOtpSentVoice');
       }
     } catch (err) {
       if (err.requiresRegistration || err.message?.toLowerCase().includes('not registered') || err.message?.toLowerCase().includes('register')) {
@@ -521,7 +525,7 @@ export default function ArtisanLoginModal() {
           {/* Voice Assistance Button */}
           <button
             type="button"
-            onClick={() => playKannadaAudio("ಕಲಾಕಾರರ ಪೋರ್ಟಲ್‌ಗೆ ಸ್ವಾಗತ. ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಥವಾ ಒಂದು ಕ್ಲಿಕ್ ಡೆಮೊ ಮೂಲಕ ಲಾಗಿನ್ ಆಗಿ ನಿಮ್ಮ ಕಲಾಕೃತಿಗಳನ್ನು ನಿರ್ವಹಿಸಿ.")}
+            onClick={() => speakLocalized('artisanGuidanceVoice')}
             className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
           >
             <Volume2 className="w-3.5 h-3.5 text-stone-900" />

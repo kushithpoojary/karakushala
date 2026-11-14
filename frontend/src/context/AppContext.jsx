@@ -380,7 +380,13 @@ const localizedTitle = getLocalizedProductTitle(product, currentLanguage);
         setAudioVoiceAssistance,
         toast,
         showToast,
-        formatINR
+        formatINR,
+        currentLanguage,
+        currentLangConfig,
+        setLanguage,
+        t,
+        speakLocalized,
+        SUPPORTED_LANGUAGES
       }}
     >
       {children}

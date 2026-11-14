@@ -31,7 +31,11 @@ export default function CustomerCareModal() {
     activeArtisan, 
     viewMode,
     showToast,
-    audioVoiceAssistance 
+    audioVoiceAssistance,
+    currentLanguage,
+    currentLangConfig,
+    speakLocalized,
+    t
   } = useApp();
 
   // Role: 'buyer' or 'artisan'
@@ -87,7 +91,7 @@ export default function CustomerCareModal() {
       const rec = new SpeechRecognition();
       rec.continuous = true;
       rec.interimResults = true;
-      rec.lang = 'en-IN'; // Indian English / Regional handling
+      rec.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
 
       rec.onresult = (event) => {
         let currentTranscript = '';
@@ -190,9 +194,9 @@ export default function CustomerCareModal() {
         }
       }
 
-      showToast('🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್ ಆರಂಭವಾಗಿದೆ (Voice recording started)...', 'info');
+      showToast('🎙️ Voice recording started...', 'info');
       if (audioVoiceAssistance) {
-        speakKannada("ನಿಮ್ಮ ದೂರನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಮಾತನಾಡಿ. ರೆಕಾರ್ಡಿಂಗ್ ಆರಂಭವಾಗಿದೆ.");
+        speakLocalized('careRecordPromptVoice');
       }
     } catch (err) {
       console.warn('Microphone error:', err);
@@ -209,7 +213,7 @@ export default function CustomerCareModal() {
       try {
         recognitionRef.current?.stop();
       } catch (e) {}
-      showToast('✓ ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಆಗಿದೆ! Voice message saved.', 'success');
+      showToast('✓ Voice message recorded & saved.', 'success');
     }
   };
 
@@ -256,7 +260,7 @@ export default function CustomerCareModal() {
       showToast(`ದೂರು ದಾಖಲಾಗಿದೆ! Complaint Ticket ${ticketId} created.`, 'success');
 
       if (audioVoiceAssistance) {
-        speakKannada(`ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮ ದೂರು ಸಂಖ್ಯೆ ${ticketId} ದಾಖಲಾಗಿದೆ. ನಮ್ಮ ಗ್ರಾಹಕ ಸೇವಾ ತಂಡ ಶೀಘ್ರದಲ್ಲೇ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲಿದೆ.`);
+        speakLocalized('careTicketCreatedVoice', { ticketId });
       }
     }, 900);
   };
@@ -449,7 +453,7 @@ export default function CustomerCareModal() {
                       className="px-4 py-2 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all active:scale-95"
                     >
                       <Mic className="w-4 h-4 text-amber-200" />
-                      <span>Start Voice Recording (ಮಾತನಾಡಿ)</span>
+                      <span>Start Voice Recording</span>
                     </button>
                   ) : (
                     <div className="flex items-center gap-3">

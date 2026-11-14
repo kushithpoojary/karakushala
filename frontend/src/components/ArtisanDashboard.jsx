@@ -19,7 +19,9 @@ export default function ArtisanDashboard() {
     formatINR,
     showToast,
     openCustomerCare,
-    audioVoiceAssistance
+    audioVoiceAssistance,
+    speakLocalized,
+    t
   } = useApp();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'new-craft', 'products'
@@ -190,12 +192,12 @@ export default function ArtisanDashboard() {
           </button>
 
           <button
-            onClick={() => speakGuidance(`ನಮಸ್ಕಾರ ${activeArtisan.name}. ನಿಮ್ಮ ಒಟ್ಟು ಆದಾಯ ${dashboardData?.metrics?.totalEarningsINR || 0} ರೂಪಾಯಿಗಳು. ನಿಮ್ಮ ಹೊಸ ಆರ್ಡರ್‌ಗಳನ್ನು ಇಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.`)}
+            onClick={speakGuidance}
             className="p-3 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all justify-center"
-            title="Read Dashboard Aloud in Kannada"
+            title="Audio Summary"
           >
             <Volume2 className="w-4 h-4 text-stone-900" />
-            <span>ಧ್ವನಿ (Listen)</span>
+            <span>{t('listen')}</span>
           </button>
         </div>
 

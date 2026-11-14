@@ -39,7 +39,9 @@ export default function CheckoutModal() {
     setLatestOrderReceipt,
     activeUser,
     navigateToTrackOrder,
-    audioVoiceAssistance
+    audioVoiceAssistance,
+    speakLocalized,
+    t
   } = useApp();
 
   const [buyerName, setBuyerName] = useState('Ananya Rao');
@@ -167,10 +169,10 @@ export default function CheckoutModal() {
       const isCod = resolvedMethod.toLowerCase().includes('cod') || resolvedMethod.toLowerCase().includes('cash on delivery');
       if (isCod) {
         showToast('📦 Order placed with Cash on Delivery! Pay when package arrives.', 'info');
-        playConfirmationChime('ಆರ್ಡರ್ ಸ್ವೀಕರಿಸಲಾಗಿದೆ. ಡೆಲಿವರಿ ಸಮಯದಲ್ಲಿ ಹಣ ಪಾವತಿಸಿ.');
+        playConfirmationChime('orderPlacedCodVoice');
       } else {
         showToast('🎉 UPI Payment verified! Direct artisan escrow confirmed.', 'success');
-        playConfirmationChime('ಧನ್ಯವಾದಗಳು! ಯುಪಿಐ ಪಾವತಿ ಯಶಸ್ವಿಯಾಗಿದೆ.');
+        playConfirmationChime('orderPlacedUpiVoice');
       }
     } catch (err) {
       showToast(err.message || 'Failed to place order', 'error');

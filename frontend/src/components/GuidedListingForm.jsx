@@ -152,7 +152,7 @@ export default function GuidedListingForm({ onProductCreated }) {
     }
 
     setListeningField(fieldName);
-    showToast(`🎙️ Listening for ${fieldName} (${fieldLabelKannada})... ಮಾತನಾಡಿ`, 'info');
+    showToast(`🎙️ Listening for ${fieldName}... Speak now`, 'info');
 
     try {
       const recognition = new SpeechRecognition();
@@ -305,17 +305,17 @@ export default function GuidedListingForm({ onProductCreated }) {
             ? 'bg-red-600 text-white animate-bounce ring-2 ring-red-400'
             : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
         }`}
-        title={`Click to speak ${fieldKey} in Kannada/English (ಧ್ವನಿ ಮೂಲಕ ಭರ್ತಿ)`}
+        title={`Click to speak ${fieldKey}`}
       >
         {isThisActive ? (
           <>
             <MicOff className="w-3.5 h-3.5 animate-pulse" />
-            <span className="text-[11px]">Listening (ಮಾತನಾಡಿ)...</span>
+            <span className="text-[11px]">Listening...</span>
           </>
         ) : (
           <>
             <Mic className="w-3.5 h-3.5 text-amber-700" />
-            <span className="text-[11px]">Voice (ಧ್ವನಿ)</span>
+            <span className="text-[11px]">Voice</span>
           </>
         )}
       </button>
@@ -351,7 +351,7 @@ export default function GuidedListingForm({ onProductCreated }) {
           <div className="flex items-center gap-2">
             <Mic className="w-4 h-4 text-amber-700 shrink-0" />
             <span>
-              <strong>ಧ್ವನಿ ಇನ್ಪುಟ್ ಸಕ್ರಿಯವಾಗಿದೆ (Voice Input Active):</strong> Tap the <strong>"Voice (ಧ್ವನಿ)"</strong> button on any field to speak instead of typing!
+              <strong>Voice Input Active:</strong> Tap the <strong>"Voice (ಧ್ವನಿ)"</strong> button on any field to speak instead of typing!
             </span>
           </div>
           <span className="text-[11px] font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded-full shrink-0">

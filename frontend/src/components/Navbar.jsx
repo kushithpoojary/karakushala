@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import VoiceSearchBar from './VoiceSearchBar';
+import LanguageDropdown from './LanguageDropdown';
 import { ShoppingBag, Sparkles, UserCheck, Store, Volume2, VolumeX, ShieldCheck, LogIn, LogOut, User, Compass, Headphones, Package } from 'lucide-react';
 
 export default function Navbar({ onSearchChange, searchQuery }) {
@@ -26,7 +27,9 @@ export default function Navbar({ onSearchChange, searchQuery }) {
     openCustomerCare,
     audioVoiceAssistance,
     setAudioVoiceAssistance,
-    showToast
+    showToast,
+    speakLocalized,
+    t
   } = useApp();
 
   const toggleVoice = () => {
@@ -94,10 +97,13 @@ export default function Navbar({ onSearchChange, searchQuery }) {
           {/* Controls: Mode Switcher, Login, Care & Cart (Always comfortably fits in viewport) */}
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
 
+            {/* Multilingual Selector Dropdown */}
+            <LanguageDropdown />
+
             {/* Accessibility Voice Guidance Button */}
             <button
               onClick={toggleVoice}
-              title={audioVoiceAssistance ? "Voice Guidance Active (ಧ್ವನಿ ಸಕ್ರಿಯ)" : "Enable Audio Guidance (ಧ್ವನಿ ಸಹಾಯ)"}
+              title={audioVoiceAssistance ? t('voiceGuidanceEnabledTitle') : t('enableVoiceGuidanceTitle')}
               className={`p-1.5 sm:p-2.5 rounded-full transition-all flex items-center gap-1.5 text-xs font-semibold shrink-0 btn-press ${
                 audioVoiceAssistance
                   ? 'bg-mustard-400 text-stone-900 ring-2 ring-mustard-500 animate-pulse'
@@ -106,7 +112,7 @@ export default function Navbar({ onSearchChange, searchQuery }) {
               aria-label="Toggle voice guidance"
             >
               {audioVoiceAssistance ? <Volume2 className="w-4 h-4 text-stone-900" /> : <VolumeX className="w-4 h-4" />}
-              <span className="hidden 2xl:inline">ಧ್ವನಿ (Audio)</span>
+              <span className="hidden 2xl:inline">{t('voiceGuidance')}</span>
             </button>
 
             {/* Customer Care Button (Accessible to both buyers and sellers) */}

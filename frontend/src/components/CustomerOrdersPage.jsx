@@ -83,56 +83,56 @@ openCustomerCare,
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
             <Clock className="w-3.5 h-3.5 text-blue-600" />
-            <span>Placed (ಸ್ವೀಕರಿಸಲಾಗಿದೆ)</span>
+            <span>{t('statusPlaced')}</span>
           </span>
         );
       case 'Confirmed':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
             <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-            <span>Confirmed (ಖಚಿತಪಡಿಸಲಾಗಿದೆ)</span>
+            <span>{t('statusConfirmed')}</span>
           </span>
         );
       case 'Being crafted':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-terracotta-50 text-terracotta-800 border border-terracotta-200">
             <Sparkles className="w-3.5 h-3.5 text-terracotta-600 animate-pulse" />
-            <span>Being crafted (ರಚಿಸಲಾಗುತ್ತಿದೆ)</span>
+            <span>{t('statusBeingCrafted')}</span>
           </span>
         );
       case 'Packed':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-300">
             <Package className="w-3.5 h-3.5 text-yellow-700" />
-            <span>Packed (ಪ್ಯಾಕ್ ಮಾಡಲಾಗಿದೆ)</span>
+            <span>{t('statusPacked')}</span>
           </span>
         );
       case 'Shipped':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-800 border border-indigo-200">
             <Truck className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Shipped (ರವಾನಿಸಲಾಗಿದೆ)</span>
+            <span>{t('statusShipped')}</span>
           </span>
         );
       case 'Out for delivery':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 animate-pulse">
             <MapPin className="w-3.5 h-3.5 text-purple-600" />
-            <span>Out for Delivery (ವಿತರಣೆಗೆ ಹೊರಟಿದೆ)</span>
+            <span>{t('statusOutForDelivery')}</span>
           </span>
         );
       case 'Delivered':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Delivered (ತಲುಪಿಸಲಾಗಿದೆ)</span>
+            <span>{t('statusDelivered')}</span>
           </span>
         );
       case 'Cancelled':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-800 border border-red-200">
             <XCircle className="w-3.5 h-3.5 text-red-600" />
-            <span>Cancelled (ರದ್ದುಮಾಡಲಾಗಿದೆ)</span>
+            <span>{t('statusCancelled')}</span>
           </span>
         );
       default:
@@ -178,14 +178,14 @@ openCustomerCare,
           <div className="flex items-center gap-2">
             <span className="text-2xl">📦</span>
             <span className="text-xs font-bold uppercase tracking-wider text-terracotta-700 bg-terracotta-100 px-3 py-1 rounded-full border border-terracotta-200">
-              Customer Portal • ಗ್ರಾಹಕರ ಆರ್ಡರ್‌ಗಳು
+              {t('customerPortal')}
             </span>
           </div>
           <h1 className="font-serif text-2xl sm:text-4xl font-bold text-indigo-950">
-            My Handcrafted Orders
+            {t('myOrdersTitle')}
           </h1>
           <p className="text-xs sm:text-sm text-stone-600 max-w-xl leading-relaxed">
-            Track your authentic Karnataka Kasuti, coastal Beedu cane weaves, and wood carvings straight from the master artisan's cluster to your doorstep.
+            {t('myOrdersSub')}
           </p>
         </div>
 
@@ -197,7 +197,7 @@ openCustomerCare,
               type="text"
               value={trackInput}
               onChange={(e) => setTrackInput(e.target.value)}
-              placeholder="Track by Order # or AWB..."
+              placeholder={t('trackSearchPlaceholder')}
               className="w-full bg-cream-50 pl-9 pr-3 py-2 text-xs rounded-xl border border-cream-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-500 font-mono"
             />
           </div>
@@ -205,7 +205,7 @@ openCustomerCare,
             type="submit"
             className="w-full sm:w-auto px-4 py-2 bg-indigo-900 hover:bg-terracotta-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 active:scale-95 touch-target shadow-sm"
           >
-            <span>Track Order</span>
+            <span>{t('trackOrder')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
@@ -225,10 +225,10 @@ openCustomerCare,
                   : 'bg-white text-stone-600 hover:bg-cream-100 border-cream-300'
               }`}
             >
-              {tab === 'All' && 'All Orders (ಎಲ್ಲವೂ)'}
-              {tab === 'In Progress' && 'Active / In Crafting (ಸಿದ್ಧತೆ/ರವಾನೆ)'}
-              {tab === 'Delivered' && 'Delivered (ತಲುಪಿದೆ)'}
-              {tab === 'Cancelled' && 'Cancelled (ರದ್ದು)'}
+              {tab === 'All' && t('filterAll')}
+              {tab === 'In Progress' && t('filterInProgress')}
+              {tab === 'Delivered' && t('filterDelivered')}
+              {tab === 'Cancelled' && t('filterCancelled')}
             </button>
           ))}
         </div>
@@ -283,7 +283,7 @@ openCustomerCare,
             className="px-6 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-xl text-xs font-bold shadow-md transition-all inline-flex items-center gap-2"
           >
             <ShoppingBag className="w-4 h-4" />
-            <span>Explore Heritage Crafts • ಕಲಾಕೃತಿಗಳನ್ನು ನೋಡಿ</span>
+            <span>{t('exploreHeritageCrafts') || 'Explore Heritage Crafts'}</span>
           </button>
         </div>
       ) : (
@@ -392,7 +392,7 @@ openCustomerCare,
                   {/* Estimated Delivery */}
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                      Estimated Delivery (ತಲುಪುವ ದಿನಾಂಕ)
+                      {t('estimatedDelivery')}
                     </span>
                     <span className="font-bold text-indigo-950 mt-0.5 block">
                       {order.estimatedDeliveryDate || 'Within 7 business days'}
@@ -402,7 +402,7 @@ openCustomerCare,
                   {/* Courier Partner */}
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                      Courier Partner (ಕೊರಿಯರ್)
+                      {t('courierPartner')}
                     </span>
                     <span className="font-semibold text-stone-800 mt-0.5 block">
                       {order.courier || (isShipped ? 'India Post Speed Post' : 'Assigned upon packing')}
@@ -412,7 +412,7 @@ openCustomerCare,
                   {/* Tracking Number */}
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                      Tracking Number (AWB)
+                      {t('trackingNumber')}
                     </span>
                     {order.trackingNumber && order.trackingNumber !== 'Pending' && order.trackingNumber !== 'N/A' ? (
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -445,9 +445,9 @@ openCustomerCare,
                     <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-red-950">Order Cancelled (ರದ್ದುಮಾಡಲಾಗಿದೆ)</span>
+                        <span className="font-bold text-sm text-red-950">{t('orderCancelledTitle')}</span>
                         <span className="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200">
-                          Refund Processed
+                          {t('refundProcessed')}
                         </span>
                       </div>
                       <p className="text-red-800">
@@ -478,7 +478,7 @@ openCustomerCare,
                         title="Open Cancellation Options"
                       >
                         <XCircle className="w-4 h-4 text-red-600" />
-                        <span>Cancel Order (ಆರ್ಡರ್ ರದ್ದು)</span>
+                        <span>{t('cancelOrderBtn')}</span>
                       </button>
                     )}
 
@@ -487,14 +487,14 @@ openCustomerCare,
                       className="px-3.5 py-2.5 rounded-xl border border-cream-300 hover:bg-cream-100 text-stone-700 text-xs font-semibold flex items-center gap-1.5 transition-colors touch-target"
                     >
                       <HelpCircle className="w-3.5 h-3.5 text-stone-500" />
-                      <span>Order Help (ಸಹಾಯ)</span>
+                      <span>{t('orderHelp')}</span>
                     </button>
 
                     <button
                       onClick={() => navigateToTrackOrder(order.orderNumber || order.id)}
                       className="px-5 py-2.5 bg-indigo-900 hover:bg-terracotta-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all hover:gap-2.5 active:scale-95 touch-target"
                     >
-                      <span>Track Order (ಲೈವ್ ಟ್ರ್ಯಾಕ್)</span>
+                      <span>{t('trackOrder')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
