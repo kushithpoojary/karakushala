@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Palette, Moon, Sun, Sparkles } from 'lucide-react';
+import { Palette, Sparkles } from 'lucide-react';
 
 export default function HeritageLatticeBackground() {
   const canvasRef = useRef(null);
 
-  // Background theme: 'sandalwood' (Image 1: Warm Sandalwood/Peach/Terracotta)
-  // or 'twilight' (Image 2: Dusk Indigo to Twilight Copper Bronze)
+  // Background theme: 'violet' (Light Violet / Lavender) as default requested by user,
+  // with fallback options for 'sandalwood' and 'twilight'
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem('karakushala_bg_theme') || 'sandalwood';
+      return localStorage.getItem('karakushala_bg_theme') || 'violet';
     } catch {
-      return 'sandalwood';
+      return 'violet';
     }
   });
 
@@ -32,11 +32,23 @@ export default function HeritageLatticeBackground() {
     let width = 0;
     let height = 0;
 
-    // Mouse tracking with smooth relaxed inertia
+    // Mouse tracking with snappy responsive inertia
     let mouseX = 0;
     let mouseY = 0;
     let targetMouseX = 0;
     let targetMouseY = 0;
+
+    // Small Circle Charka (ಚರಕ / Spinning Wheel) cursor tracker
+    let rawMouseX = window.innerWidth / 2;
+    let rawMouseY = window.innerHeight / 2;
+    let charkaX = window.innerWidth / 2;
+    let charkaY = window.innerHeight / 2;
+    let charkaAngle = 0;
+    let isMouseOnScreen = true;
+
+    // Charka trail history for fluid motion trail
+    const charkaTrail = [];
+    const maxTrailLength = 8;
 
     const handleResize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -46,7 +58,7 @@ export default function HeritageLatticeBackground() {
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform before scaling
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
     };
 
@@ -54,22 +66,31 @@ export default function HeritageLatticeBackground() {
     window.addEventListener('resize', handleResize, { passive: true });
 
     const handleMouseMove = (e) => {
-      targetMouseX = (e.clientX / (width || 1) - 0.5) * 42;
-      targetMouseY = (e.clientY / (height || 1) - 0.5) * 42;
+      rawMouseX = e.clientX;
+      rawMouseY = e.clientY;
+      isMouseOnScreen = true;
+      targetMouseX = (e.clientX / (width || 1) - 0.5) * 60;
+      targetMouseY = (e.clientY / (height || 1) - 0.5) * 60;
     };
+
+    const handleMouseLeave = () => {
+      isMouseOnScreen = false;
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeave);
 
     // Floating subtle thread particles (ambient craft silk dust)
-    const particleCount = 28;
+    const particleCount = 35;
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * (width || window.innerWidth),
         y: Math.random() * (height || window.innerHeight),
-        radius: 1 + Math.random() * 2,
-        speedY: 0.18 + Math.random() * 0.28,
-        speedX: (Math.random() - 0.5) * 0.18,
-        opacity: 0.18 + Math.random() * 0.35,
+        radius: 1.2 + Math.random() * 2.2,
+        speedY: 0.65 + Math.random() * 0.85, // Reset to faster, lively speed
+        speedX: (Math.random() - 0.5) * 0.45,
+        opacity: 0.25 + Math.random() * 0.45,
         phase: Math.random() * Math.PI * 2
       });
     }
@@ -79,39 +100,58 @@ export default function HeritageLatticeBackground() {
     const render = (currentTime) => {
       const elapsed = (currentTime - startTime) * 0.001; // elapsed seconds
 
-      // Medium-relaxed mouse damping (0.045 = smooth, fluid tracking)
-      mouseX += (targetMouseX - mouseX) * 0.045;
-      mouseY += (targetMouseY - mouseY) * 0.045;
+      // Snappy, lively mouse damping (0.12 for immediate responsive tracking)
+      mouseX += (targetMouseX - mouseX) * 0.12;
+      mouseY += (targetMouseY - mouseY) * 0.12;
+
+      // Small Circle Charka follows cursor with smooth elasticity
+      charkaX += (rawMouseX - charkaX) * 0.15;
+      charkaY += (rawMouseY - charkaY) * 0.15;
+      // Fast, active Charka spinning rotation
+      charkaAngle += 0.065;
+
+      // Update Charka motion trail
+      charkaTrail.unshift({ x: charkaX, y: charkaY });
+      if (charkaTrail.length > maxTrailLength) {
+        charkaTrail.pop();
+      }
 
       // 1. Draw Background Gradient according to active reference theme
       if (theme === 'twilight') {
         // Image 2: Dusk Indigo to Warm Twilight Bronze / Burnt Sienna
         const bgGrad = ctx.createLinearGradient(0, 0, width, height * 0.85);
-        bgGrad.addColorStop(0, '#212338');    // Deep dusk indigo (left)
-        bgGrad.addColorStop(0.42, '#342938'); // Twilight amethyst
-        bgGrad.addColorStop(0.75, '#523c39'); // Warm copper brown
-        bgGrad.addColorStop(1, '#66453c');    // Burnt sienna bronze (right)
+        bgGrad.addColorStop(0, '#212338');
+        bgGrad.addColorStop(0.42, '#342938');
+        bgGrad.addColorStop(0.75, '#523c39');
+        bgGrad.addColorStop(1, '#66453c');
         ctx.fillStyle = bgGrad;
-      } else {
+      } else if (theme === 'sandalwood') {
         // Image 1: Warm Sandalwood / Blush Peach / Terracotta
         const bgGrad = ctx.createLinearGradient(0, 0, width * 0.35, height);
-        bgGrad.addColorStop(0, '#F9EDE3');    // Soft cream blush
-        bgGrad.addColorStop(0.35, '#F6DEC9'); // Sandalwood peach
-        bgGrad.addColorStop(0.7, '#F1CEB3');  // Warm terracotta undertone
-        bgGrad.addColorStop(1, '#E9C0A2');    // Golden clay base
+        bgGrad.addColorStop(0, '#F9EDE3');
+        bgGrad.addColorStop(0.35, '#F6DEC9');
+        bgGrad.addColorStop(0.7, '#F1CEB3');
+        bgGrad.addColorStop(1, '#E9C0A2');
+        ctx.fillStyle = bgGrad;
+      } else {
+        // DEFAULT: Beautiful Light Violet Gradient (as requested by user)
+        const bgGrad = ctx.createLinearGradient(0, 0, width * 0.45, height);
+        bgGrad.addColorStop(0, '#FCF9FF');    // Pure soft lavender pearl
+        bgGrad.addColorStop(0.30, '#F3EAFF'); // Light violet mist
+        bgGrad.addColorStop(0.68, '#E6D7FB'); // Delicate lilac violet
+        bgGrad.addColorStop(1, '#D8C3F6');    // Luminous light violet
         ctx.fillStyle = bgGrad;
       }
       ctx.fillRect(0, 0, width, height);
 
-      // Medium-relaxed speed parameters:
-      // Breathing wave: ~18 second period
-      const breathingWave = Math.sin(elapsed * 0.35) * 0.035 + 1;
-      const gentleDriftX = Math.sin(elapsed * 0.25) * 7 + mouseX;
-      const gentleDriftY = Math.cos(elapsed * 0.20) * 7 + mouseY;
-      const lineGlowPulse = Math.sin(elapsed * 0.45) * 0.08 + 0.30;
+      // RESET TO FASTER, LIVELY ANIMATION SPEED:
+      // Breathing wave: lively ~5.2 second period (elapsed * 1.2 instead of 0.35)
+      const breathingWave = Math.sin(elapsed * 1.2) * 0.045 + 1;
+      const gentleDriftX = Math.sin(elapsed * 0.95) * 11 + mouseX;
+      const gentleDriftY = Math.cos(elapsed * 0.85) * 11 + mouseY;
+      const lineGlowPulse = Math.sin(elapsed * 1.6) * 0.12 + 0.38;
 
       // 2. Exact Sacred Geometric Kasuti Mandala Lattice Grid
-      // Cell size: responsive ~130px to 165px
       const baseSpacing = Math.max(130, Math.min(160, width / 8));
       const spacing = baseSpacing * breathingWave;
       const radius = spacing * 0.44; // Outer circle radius
@@ -122,24 +162,36 @@ export default function HeritageLatticeBackground() {
       const endRow = Math.ceil((height - gentleDriftY) / spacing) + 1;
 
       // Color palette for linework
-      let strokeColor, secondaryStroke, dotColor, particleColor;
+      let strokeColor, secondaryStroke, dotColor, particleColor, charkaColor, charkaGlow;
       if (theme === 'twilight') {
         strokeColor = `rgba(238, 198, 158, ${lineGlowPulse * 1.15})`;
         secondaryStroke = `rgba(215, 172, 132, ${lineGlowPulse * 0.85})`;
         dotColor = `rgba(255, 218, 175, ${lineGlowPulse * 1.6})`;
         particleColor = 'rgba(238, 198, 158, ';
-      } else {
+        charkaColor = 'rgba(255, 218, 175, 0.9)';
+        charkaGlow = 'rgba(238, 198, 158, 0.6)';
+      } else if (theme === 'sandalwood') {
         strokeColor = `rgba(196, 128, 80, ${lineGlowPulse})`;
         secondaryStroke = `rgba(212, 149, 107, ${lineGlowPulse * 0.8})`;
         dotColor = `rgba(188, 118, 72, ${lineGlowPulse * 1.5})`;
         particleColor = 'rgba(212, 149, 107, ';
+        charkaColor = 'rgba(196, 128, 80, 0.9)';
+        charkaGlow = 'rgba(212, 149, 107, 0.6)';
+      } else {
+        // LIGHT VIOLET THEME: Royal violet & luminous lavender
+        strokeColor = `rgba(139, 92, 246, ${lineGlowPulse * 1.15})`;
+        secondaryStroke = `rgba(167, 139, 250, ${lineGlowPulse * 0.85})`;
+        dotColor = `rgba(124, 58, 237, ${lineGlowPulse * 1.6})`;
+        particleColor = 'rgba(167, 139, 250, ';
+        charkaColor = 'rgba(124, 58, 237, 0.92)';
+        charkaGlow = 'rgba(167, 139, 250, 0.65)';
       }
 
       ctx.save();
       ctx.translate(gentleDriftX, gentleDriftY);
 
       // --- Pass 1: Connecting Inter-cell Diagonal Lines (Sacred Grid Weave) ---
-      ctx.lineWidth = 1.1;
+      ctx.lineWidth = 1.15;
       ctx.strokeStyle = secondaryStroke;
       ctx.beginPath();
 
@@ -169,9 +221,9 @@ export default function HeritageLatticeBackground() {
           const cx = c * spacing;
           const cy = r * spacing;
 
-          // Gentle cell micro-oscillation (medium-relaxed speed)
-          const cellPhase = (c * 17 + r * 23) * 0.1;
-          const cellRot = Math.sin(elapsed * 0.30 + cellPhase) * 0.035;
+          // Lively cell micro-oscillation (elapsed * 1.25 for active movement)
+          const cellPhase = (c * 17 + r * 23) * 0.12;
+          const cellRot = Math.sin(elapsed * 1.25 + cellPhase) * 0.055;
           const r1 = radius;
           const r2 = radius * 0.62; // Inner concentric diamond
           const rInnerCircle = radius * 0.28; // Center small circle
@@ -182,13 +234,13 @@ export default function HeritageLatticeBackground() {
 
           // 1. Outer Circumscribed Circle
           ctx.strokeStyle = strokeColor;
-          ctx.lineWidth = 1.25;
+          ctx.lineWidth = 1.35;
           ctx.beginPath();
           ctx.arc(0, 0, r1, 0, Math.PI * 2);
           ctx.stroke();
 
           // 2. Outer Diamond (Rotated Square - vertices touching the circle)
-          ctx.lineWidth = 1.35;
+          ctx.lineWidth = 1.45;
           ctx.beginPath();
           ctx.moveTo(0, -r1);
           ctx.lineTo(r1, 0);
@@ -199,7 +251,7 @@ export default function HeritageLatticeBackground() {
 
           // 3. Inner Concentric Diamond
           ctx.strokeStyle = secondaryStroke;
-          ctx.lineWidth = 1.1;
+          ctx.lineWidth = 1.15;
           ctx.beginPath();
           ctx.moveTo(0, -r2);
           ctx.lineTo(r2, 0);
@@ -213,9 +265,9 @@ export default function HeritageLatticeBackground() {
           ctx.arc(0, 0, rInnerCircle, 0, Math.PI * 2);
           ctx.stroke();
 
-          // 5. Node / Knot Dots at Diamond Vertices (Exact detail from User Uploaded Reference)
+          // 5. Node / Knot Dots at Diamond Vertices
           ctx.fillStyle = dotColor;
-          const dotRadius = 2.4;
+          const dotRadius = 2.5;
 
           // Outer diamond 4 corner dots
           const outerDots = [
@@ -243,22 +295,108 @@ export default function HeritageLatticeBackground() {
 
       ctx.restore();
 
-      // 3. Floating Light Craft Particles (Silk Dust Drift)
+      // 3. Floating Light Craft Particles (Silk Dust Drift - Lively Speed)
       for (let i = 0; i < particleCount; i++) {
         const p = particles[i];
         p.y -= p.speedY;
-        p.x += p.speedX + Math.sin(elapsed * 0.35 + p.phase) * 0.22;
+        p.x += p.speedX + Math.sin(elapsed * 1.1 + p.phase) * 0.35;
 
         if (p.y < -10) {
           p.y = height + 10;
           p.x = Math.random() * width;
         }
 
-        const currentOpacity = p.opacity + Math.sin(elapsed * 0.85 + p.phase) * 0.1;
+        const currentOpacity = p.opacity + Math.sin(elapsed * 1.8 + p.phase) * 0.15;
         ctx.fillStyle = `${particleColor}${Math.max(0, currentOpacity)})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // 4. INTERACTIVE SMALL CIRCLE CHARKA (ಚರಕ) THAT MOVES WITH THE CURSOR
+      if (isMouseOnScreen) {
+        // Draw trailing silk stardust behind the Charka
+        for (let i = 1; i < charkaTrail.length; i++) {
+          const tp = charkaTrail[i];
+          const trOpacity = (1 - i / charkaTrail.length) * 0.35;
+          ctx.fillStyle = `${particleColor}${trOpacity})`;
+          ctx.beginPath();
+          ctx.arc(tp.x, tp.y, (charkaTrail.length - i) * 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.save();
+        ctx.translate(charkaX, charkaY);
+
+        // Soft glowing aura for the Charka
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = charkaGlow;
+
+        // Outer Charka rim circle
+        const charkaOuterRadius = 24;
+        ctx.strokeStyle = charkaColor;
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.arc(0, 0, charkaOuterRadius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Concentric inner rim circle
+        const charkaInnerRadius = 17;
+        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = secondaryStroke;
+        ctx.beginPath();
+        ctx.arc(0, 0, charkaInnerRadius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Center hub circle
+        const charkaHubRadius = 6.5;
+        ctx.fillStyle = charkaColor;
+        ctx.beginPath();
+        ctx.arc(0, 0, charkaHubRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Center jewel axle dot (pure white)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(0, 0, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 12 Traditional Charka Spokes radiating from center hub to outer rim (continuously spinning)
+        ctx.lineWidth = 1.25;
+        ctx.strokeStyle = charkaColor;
+        const spokeCount = 12;
+
+        for (let s = 0; s < spokeCount; s++) {
+          const spAngle = charkaAngle + (s * Math.PI * 2) / spokeCount;
+          const cosA = Math.cos(spAngle);
+          const sinA = Math.sin(spAngle);
+
+          // Spoke line from hub to outer rim
+          ctx.beginPath();
+          ctx.moveTo(cosA * charkaHubRadius, sinA * charkaHubRadius);
+          ctx.lineTo(cosA * charkaOuterRadius, sinA * charkaOuterRadius);
+          ctx.stroke();
+
+          // Outer rim bead knot at every spoke tip
+          ctx.fillStyle = dotColor;
+          ctx.beginPath();
+          ctx.arc(cosA * charkaOuterRadius, sinA * charkaOuterRadius, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 4 Cardinal ornamental diamonds extending subtly from the Charka rim
+        const cardinalDistance = charkaOuterRadius + 4;
+        for (let cd = 0; cd < 4; cd++) {
+          const cdAngle = charkaAngle + (cd * Math.PI) / 2;
+          const cx = Math.cos(cdAngle) * cardinalDistance;
+          const cy = Math.sin(cdAngle) * cardinalDistance;
+          ctx.fillStyle = dotColor;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -270,6 +408,7 @@ export default function HeritageLatticeBackground() {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [theme]);
 
@@ -278,21 +417,21 @@ export default function HeritageLatticeBackground() {
       <canvas
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none z-0 select-none transition-opacity duration-1000"
-        style={{ opacity: theme === 'twilight' ? 0.96 : 0.92 }}
+        style={{ opacity: 0.96 }}
         aria-hidden="true"
       />
 
-      {/* Floating Theme Controller Pill (Allows toggling between both uploaded image styles) */}
+      {/* Floating Theme Controller Pill (Light Violet, Sandalwood Silk, Twilight Dusk) */}
       <aside 
         aria-label="Heritage lattice animation theme controls"
         className="fixed bottom-5 right-5 z-40"
       >
         <div className="relative group">
           {showThemeControls ? (
-            <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 shadow-2xl rounded-2xl p-3 flex flex-col gap-2 min-w-[210px] animate-popBounce">
-              <div className="flex items-center justify-between pb-1 border-b border-stone-200/60">
-                <span className="text-[11px] font-bold text-stone-700 flex items-center gap-1.5">
-                  <Palette className="w-3.5 h-3.5 text-terracotta-600" />
+            <div className="bg-white/95 backdrop-blur-xl border border-purple-200/80 shadow-2xl rounded-2xl p-3 flex flex-col gap-2 min-w-[220px] animate-popBounce">
+              <div className="flex items-center justify-between pb-1 border-b border-purple-100">
+                <span className="text-[11px] font-bold text-stone-800 flex items-center gap-1.5">
+                  <Palette className="w-3.5 h-3.5 text-violet-600" />
                   Lattice Animation Theme
                 </span>
                 <button
@@ -305,7 +444,27 @@ export default function HeritageLatticeBackground() {
                 </button>
               </div>
 
-              {/* Theme 1: Sandalwood Silk (Image 1) */}
+              {/* Theme 1: Light Violet (Default requested by user) */}
+              <button
+                type="button"
+                onClick={() => {
+                  toggleTheme('violet');
+                  setShowThemeControls(false);
+                }}
+                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  theme === 'violet'
+                    ? 'bg-violet-100 text-violet-950 border border-violet-400 shadow-xs'
+                    : 'hover:bg-purple-50 text-stone-700'
+                }`}
+              >
+                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#FCF9FF] via-[#E6D7FB] to-[#D8C3F6] border border-violet-400 shadow-xs flex-shrink-0" />
+                <div className="text-left">
+                  <p className="leading-tight font-bold text-violet-900">Light Violet (Default)</p>
+                  <p className="text-[10px] text-stone-500 font-normal">Soft Lilac & Royal Charka</p>
+                </div>
+              </button>
+
+              {/* Theme 2: Sandalwood Silk (Image 1) */}
               <button
                 type="button"
                 onClick={() => {
@@ -325,7 +484,7 @@ export default function HeritageLatticeBackground() {
                 </div>
               </button>
 
-              {/* Theme 2: Twilight Dusk (Image 2) */}
+              {/* Theme 3: Twilight Dusk (Image 2) */}
               <button
                 type="button"
                 onClick={() => {
@@ -345,28 +504,29 @@ export default function HeritageLatticeBackground() {
                 </div>
               </button>
 
-              <div className="pt-1 border-t border-stone-200/50 flex items-center justify-between text-[10px] text-stone-500">
-                <span className="flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-amber-600" />
-                  Speed: Medium-Relaxed
+              <div className="pt-1 border-t border-purple-100 flex items-center justify-between text-[10px] text-stone-500">
+                <span className="flex items-center gap-1 text-violet-700 font-medium">
+                  <Sparkles className="w-2.5 h-2.5 text-violet-600" />
+                  Speed: Active & Responsive
                 </span>
+                <span className="text-[10px] text-purple-600">🪡 Charka cursor on</span>
               </div>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setShowThemeControls(true)}
-              className="bg-white/85 hover:bg-white backdrop-blur-xl border border-stone-300/80 hover:border-amber-400 text-stone-800 shadow-lg hover:shadow-xl rounded-full px-3.5 py-2 text-xs font-semibold transition-all flex items-center gap-2 active:scale-95 group"
-              title="Change Background Animation Theme (Image 1 vs Image 2)"
+              className="bg-white/90 hover:bg-white backdrop-blur-xl border border-violet-300/80 hover:border-violet-500 text-stone-800 shadow-lg hover:shadow-xl rounded-full px-3.5 py-2 text-xs font-semibold transition-all flex items-center gap-2 active:scale-95 group"
+              title="Change Background Animation Theme"
               aria-label="Change Background Animation Theme"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-600"></span>
               </span>
-              <Palette className="w-3.5 h-3.5 text-terracotta-600 group-hover:rotate-45 transition-transform" />
+              <Palette className="w-3.5 h-3.5 text-violet-600 group-hover:rotate-45 transition-transform" />
               <span className="hidden sm:inline">
-                {theme === 'twilight' ? 'Twilight Dusk' : 'Sandalwood Silk'}
+                {theme === 'violet' ? 'Light Violet' : theme === 'twilight' ? 'Twilight Dusk' : 'Sandalwood Silk'}
               </span>
             </button>
           )}

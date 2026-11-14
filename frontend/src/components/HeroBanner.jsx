@@ -89,12 +89,12 @@ export default function HeroBanner({ onExploreClick }) {
   ];
 
   return (
-    <section className="relative overflow-hidden border-b border-cream-300/80 bg-cream-50/70 backdrop-blur-md">
+    <section className="relative overflow-hidden border-b border-purple-200/60 bg-white/40 backdrop-blur-md">
       
       {/* Dynamic Multi-Color Animated Aurora Blobs in Background */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-tr from-amber-300/35 to-rose-400/30 blur-3xl pointer-events-none animate-blob1" />
-      <div className="absolute top-1/2 -right-28 w-[28rem] h-[28rem] rounded-full bg-gradient-to-bl from-teal-400/25 via-emerald-300/20 to-amber-200/30 blur-3xl pointer-events-none animate-blob2" />
-      <div className="absolute -bottom-24 left-1/3 w-80 h-80 rounded-full bg-gradient-to-r from-indigo-400/20 via-purple-300/20 to-terracotta-400/25 blur-3xl pointer-events-none animate-blob3" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-tr from-violet-300/30 to-purple-300/25 blur-3xl pointer-events-none animate-blob1" />
+      <div className="absolute top-1/2 -right-28 w-[28rem] h-[28rem] rounded-full bg-gradient-to-bl from-indigo-300/20 via-violet-200/20 to-purple-200/25 blur-3xl pointer-events-none animate-blob2" />
+      <div className="absolute -bottom-24 left-1/3 w-80 h-80 rounded-full bg-gradient-to-r from-fuchsia-300/20 via-purple-300/20 to-violet-300/25 blur-3xl pointer-events-none animate-blob3" />
 
       {/* Floating Animated Sparkles & Needle Spool Accents */}
       <div className="absolute top-8 left-12 text-amber-500 text-2xl animate-sparkleFloat pointer-events-none select-none hidden sm:block">

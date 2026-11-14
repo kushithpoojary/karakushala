@@ -117,9 +117,9 @@ export default function App() {
 
       {/* Ambient Atmospheric Colored Glass Glow Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-        <div className="absolute -top-16 -left-16 w-[36rem] h-[36rem] rounded-full bg-gradient-to-br from-amber-300/25 via-rose-300/15 to-transparent blur-3xl animate-blob1" />
-        <div className="absolute top-1/3 -right-20 w-[40rem] h-[40rem] rounded-full bg-gradient-to-bl from-teal-300/20 via-emerald-200/15 to-amber-100/20 blur-3xl animate-blob2" />
-        <div className="absolute -bottom-20 left-1/4 w-[34rem] h-[34rem] rounded-full bg-gradient-to-tr from-indigo-300/15 via-purple-200/15 to-terracotta-200/20 blur-3xl animate-blob3" />
+        <div className="absolute -top-16 -left-16 w-[36rem] h-[36rem] rounded-full bg-gradient-to-br from-violet-300/30 via-purple-200/20 to-transparent blur-3xl animate-blob1" />
+        <div className="absolute top-1/3 -right-20 w-[40rem] h-[40rem] rounded-full bg-gradient-to-bl from-indigo-300/25 via-violet-200/20 to-purple-100/25 blur-3xl animate-blob2" />
+        <div className="absolute -bottom-20 left-1/4 w-[34rem] h-[34rem] rounded-full bg-gradient-to-tr from-fuchsia-300/20 via-violet-200/20 to-indigo-200/25 blur-3xl animate-blob3" />
       </div>
 
       {/* Navbar with Mode Switcher, Voice Search & Cart */}
