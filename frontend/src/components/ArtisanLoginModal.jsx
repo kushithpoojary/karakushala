@@ -80,13 +80,8 @@ export default function ArtisanLoginModal() {
 
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
-<<<<<<< HEAD
-    recognition.interimResults = false;
-    recognition.lang = fieldName === 'kannadaName' ? 'kn-IN' : 'en-IN';
-=======
     recognition.interimResults = true;
     recognition.lang = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
     recognition.onstart = () => {
       setListeningField(fieldName);
@@ -115,15 +110,6 @@ export default function ArtisanLoginModal() {
           }
           return next;
         });
-<<<<<<< HEAD
-        showToast(`🎙️ Recorded: "${clean}"`, 'success');
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(`Heard ${clean}`);
-          u.rate = 1;
-          window.speechSynthesis.speak(u);
-        }
-=======
       }
 
       if (final) {
@@ -131,7 +117,6 @@ export default function ArtisanLoginModal() {
         showToast(t('artisanHeardFieldVoice', { value: clean }), 'success');
         speakLocalized('artisanHeardFieldVoice', { value: clean });
         setListeningField(null);
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
       }
     };
 

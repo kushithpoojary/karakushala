@@ -45,15 +45,9 @@ export default function CartDrawer() {
           <div className="p-6 border-b border-cream-300/80 bg-white/90 backdrop-blur-md flex items-center justify-between sticky top-0 z-10">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-terracotta-600" />
-<<<<<<< HEAD
-              <h2 className="font-serif text-xl font-bold text-indigo-950">Your Craft Bag</h2>
-              <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full shadow-xs">
-                {cart.length} {cart.length === 1 ? 'item' : 'items'}
-=======
-              <h2 className="font-serif text-xl font-bold text-indigo-900">{t('cartBagTitle')}</h2>
+<h2 className="font-serif text-xl font-bold text-indigo-900">{t('cartBagTitle')}</h2>
               <span className="text-xs font-bold bg-cream-200 text-stone-700 px-2.5 py-0.5 rounded-full">
                 {cart.length === 1 ? t('itemCount') : t('itemsCount', { count: cart.length })}
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
               </span>
             </div>
 
@@ -185,11 +179,7 @@ export default function CartDrawer() {
                 onClick={handleProceedToCheckout}
                 className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-terracotta-600 via-terracotta-500 to-terracotta-600 hover:from-terracotta-700 hover:to-terracotta-700 text-white font-bold text-base shadow-lg shadow-terracotta-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all touch-target animate-goldHalo"
               >
-<<<<<<< HEAD
-                <span>Proceed to Checkout (ಖರೀದಿ ಮುಂದುವರಿಸಿ)</span>
-=======
-                <span>{t('proceedToCheckout')}</span>
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
+<span>{t('proceedToCheckout')}</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>

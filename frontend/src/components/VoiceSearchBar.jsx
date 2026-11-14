@@ -1,25 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Mic, MicOff, X, Sparkles, Volume2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { speakText } from '../utils/speechService';
 
 export default function VoiceSearchBar({ searchQuery, onSearchChange, className = "" }) {
-  const { showToast } = useApp();
+  const { showToast, currentLanguage, currentLangConfig, t } = useApp();
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const recognitionRef = useRef(null);
-<<<<<<< HEAD
-  const onSearchChangeRef = useRef(onSearchChange);
-  const showToastRef = useRef(showToast);
-
-  useEffect(() => {
-    onSearchChangeRef.current = onSearchChange;
-  }, [onSearchChange]);
-
-  useEffect(() => {
-    showToastRef.current = showToast;
-  }, [showToast]);
-=======
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -64,13 +52,8 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
       const locale = currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN');
       recognition.lang = locale;
       recognition.continuous = false;
-<<<<<<< HEAD
-      recognition.interimResults = false;
-      recognition.lang = 'en-IN'; // Default to Indian English, handles Indian accents smoothly
-=======
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -78,21 +61,6 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
       };
 
       recognition.onresult = (event) => {
-<<<<<<< HEAD
-        const transcript = event.results[0][0].transcript;
-        if (transcript) {
-          const clean = transcript.replace(/[.,!?]/g, '').trim();
-          onSearchChangeRef.current?.(clean);
-          showToastRef.current?.(`🎙️ Heard: "${clean}"`, 'success');
-
-          // Audio confirmation
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(`Searching for ${clean}`);
-            utterance.rate = 1.0;
-            window.speechSynthesis.speak(utterance);
-          }
-=======
         let interimTranscript = '';
         let finalTranscript = '';
 
@@ -121,7 +89,6 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
           const spokenConfirmation = t('searchingFor', { query: clean });
           speakText(spokenConfirmation, currentLanguage);
           setIsListening(false);
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
         }
       };
 
@@ -129,13 +96,6 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
         console.warn('Speech recognition error:', event.error);
         setIsListening(false);
         if (event.error === 'not-allowed') {
-<<<<<<< HEAD
-          showToast('Microphone access was denied. Please allow microphone in browser.', 'warning');
-        } else if (event.error === 'no-speech') {
-          showToast('No speech detected. Please speak clearly into the microphone.', 'info');
-        } else {
-          showToast('Could not recognize voice. Please try typing.', 'info');
-=======
           showToast(t('voiceErrorNotAllowed'), 'warning');
         } else if (event.error === 'no-speech') {
           showToast(t('voiceErrorNoSpeech'), 'info');
@@ -143,7 +103,6 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
           showToast(`Regional STT (${locale}) not directly supported on this browser device.`, 'warning');
         } else {
           showToast(t('voiceErrorGeneral'), 'info');
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
         }
       };
 
@@ -152,44 +111,13 @@ export default function VoiceSearchBar({ searchQuery, onSearchChange, className 
       };
 
       recognitionRef.current = recognition;
-<<<<<<< HEAD
-    }
-  }, []);
-
-  const toggleVoiceSearch = () => {
-    if (!speechSupported) {
-      showToast('Speech Recognition not supported in this browser. Please try Chrome, Edge, or Safari.', 'warning');
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      try {
-        recognitionRef.current?.start();
-        showToast('🎙️ Listening... Speak now (ಮಾತನಾಡಿ)', 'info');
-      } catch (err) {
-        console.warn('Recognition start error:', err);
-      }
-=======
       recognition.start();
     } catch (err) {
       console.warn('Recognition start error:', err);
       setIsListening(false);
       showToast(t('voiceErrorGeneral'), 'warning');
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
     }
   };
-
-  const quickPills = [
-    'Kasuti Saree',
-    'Beedu Lamp',
-    'Coconut Diya',
-    'Peacock Tapestry',
-    'Wind Chime',
-    'Navalgund'
-  ];
 
   return (
     <div className={`w-full ${className}`}>

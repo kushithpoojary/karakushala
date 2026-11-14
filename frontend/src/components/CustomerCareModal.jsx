@@ -155,13 +155,7 @@ export default function CustomerCareModal() {
         setRecordingDuration((prev) => prev + 1);
       }, 1000);
 
-<<<<<<< HEAD
-      // Also start speech-to-text
-      try {
-        recognitionRef.current?.start();
-      } catch (e) {}
-=======
-      // Also start fresh speech-to-text in selected regional language
+// Also start fresh speech-to-text in selected regional language
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         try {
@@ -195,7 +189,6 @@ export default function CustomerCareModal() {
           console.warn('Customer care STT start exception:', e);
         }
       }
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
       showToast('🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್ ಆರಂಭವಾಗಿದೆ (Voice recording started)...', 'info');
       if (audioVoiceAssistance) {

@@ -32,13 +32,9 @@ export default function TrackOrderPage() {
     navigateToShop, 
     formatINR, 
     showToast, 
-<<<<<<< HEAD
-    openCustomerCare 
-=======
-    openCustomerCare,
+openCustomerCare,
     currentLanguage,
-    t 
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
+    t
   } = useApp();
 
   const [order, setOrder] = useState(null);
@@ -596,13 +592,8 @@ export default function TrackOrderPage() {
                         className="w-10 h-10 rounded-xl object-cover border border-cream-200 shrink-0"
                       />
                       <div>
-<<<<<<< HEAD
-                        <h5 className="text-xs font-bold text-stone-900 line-clamp-1">{item.title}</h5>
-                        <p className="text-[10px] text-stone-500">Qty: {item.quantity} • {item.craftCluster || 'Karnataka'}</p>
-=======
-                        <h5 className="text-xs font-bold text-stone-900 line-clamp-1">{getLocalizedProductTitle(item, currentLanguage)}</h5>
+<h5 className="text-xs font-bold text-stone-900 line-clamp-1">{getLocalizedProductTitle(item, currentLanguage)}</h5>
                         <p className="text-[10px] text-stone-500">{t('quantity')} {item.quantity} • {item.craftCluster || 'Karnataka'}</p>
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
                       </div>
                     </div>
                     <span className="font-serif font-bold text-xs text-stone-900 shrink-0">

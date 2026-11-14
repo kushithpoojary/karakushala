@@ -30,13 +30,9 @@ export default function CustomerOrdersPage() {
     navigateToTrackOrder, 
     navigateToShop, 
     activeUser, 
-<<<<<<< HEAD
-    openCustomerCare 
-=======
-    openCustomerCare,
+openCustomerCare,
     currentLanguage,
-    t 
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
+    t
   } = useApp();
 
   const [orders, setOrders] = useState([]);
@@ -519,15 +515,35 @@ export default function CustomerOrdersPage() {
           const targetId = cancelledIdentifier || cancelledOrder?.id || cancellingOrder?.id;
           const targetNum = cancelledOrder?.orderNumber || cancellingOrder?.orderNumber;
 
-          // Directly REMOVE the ordered item from the ordered list as requested
-          setOrders(prev => prev.filter(o => o.id !== targetId && o.orderNumber !== targetNum && o.id !== targetNum));
+          // Update order status in state to Cancelled
+          setOrders(prev => prev.map(o => {
+            if (o.id === targetId || o.orderNumber === targetNum) {
+              return {
+                ...o,
+                ...(cancelledOrder || {}),
+                orderStatus: 'Cancelled',
+                cancellationReason: cancelledOrder?.cancellationReason || cancellingOrder?.cancellationReason || 'Cancelled upon customer request'
+              };
+            }
+            return o;
+          }));
 
-          // Also remove from local storage orders cache
+          // Also update in local storage orders cache
           try {
             const raw = localStorage.getItem('karakushala_orders_cache');
             if (raw) {
               const list = JSON.parse(raw);
-              const updated = list.filter(o => o.id !== targetId && o.orderNumber !== targetNum && o.id !== targetNum);
+              const updated = list.map(o => {
+                if (o.id === targetId || o.orderNumber === targetNum) {
+                  return {
+                    ...o,
+                    ...(cancelledOrder || {}),
+                    orderStatus: 'Cancelled',
+                    cancellationReason: cancelledOrder?.cancellationReason || cancellingOrder?.cancellationReason || 'Cancelled upon customer request'
+                  };
+                }
+                return o;
+              });
               localStorage.setItem('karakushala_orders_cache', JSON.stringify(updated));
             }
           } catch (e) {}

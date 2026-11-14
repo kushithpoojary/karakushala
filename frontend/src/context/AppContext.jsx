@@ -1,18 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_ARTISANS } from '../data/mockData';
-<<<<<<< HEAD
-=======
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE_CODE, getLanguageByCode } from '../config/languages';
 import { getTranslation } from '../i18n/translations';
 import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { speakText, stopSpeech } from '../utils/speechService';
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
-
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-<<<<<<< HEAD
-=======
   // Multilingual Support State
   const [currentLanguage, setCurrentLanguage] = useState(() => {
     try {
@@ -60,7 +54,6 @@ export function AppProvider({ children }) {
       speakText(prompt, matched.code);
     }
   };
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   // 'buyer' (Storefront & Catalogue) or 'artisan' (Sell Your Craft / Dashboard)
   const [viewMode, setViewMode] = useState('buyer');
 
@@ -190,16 +183,11 @@ export function AppProvider({ children }) {
         return [...prev, { product, quantity }];
       }
     });
-<<<<<<< HEAD
-    showToast(`Added "${product.title}" to your cart!`);
-    if (openCart) {
+const localizedTitle = getLocalizedProductTitle(product, currentLanguage);
+    showToast(t('addedToCartToast', { title: localizedTitle }) || `Added "${localizedTitle}" to your cart!`);
+    if (openCart !== false) {
       setIsCartOpen(true);
     }
-=======
-    const localizedTitle = getLocalizedProductTitle(product, currentLanguage);
-    showToast(t('addedToCartToast', { title: localizedTitle }) || `Added "${localizedTitle}" to your cart!`);
-    setIsCartOpen(true);
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   };
 
   const removeFromCart = (productId) => {

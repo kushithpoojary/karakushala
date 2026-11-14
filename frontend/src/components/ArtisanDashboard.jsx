@@ -398,27 +398,13 @@ export default function ArtisanDashboard() {
                     className="w-24 h-24 rounded-xl object-cover shrink-0 border border-cream-300"
                   />
 
-<<<<<<< HEAD
-                  <div className="flex-1 flex flex-col justify-between">
-=======
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-cream-200 text-stone-700 px-2 py-0.5 rounded-full">
-                      {product.category}
-                    </span>
-                    <h3 className="font-serif text-sm font-bold text-stone-900 mt-1 line-clamp-2">
-                      {getLocalizedProductTitle(product, currentLanguage)}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-cream-200">
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
+<div className="flex-1 flex flex-col justify-between">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider bg-cream-200 text-stone-700 px-2 py-0.5 rounded-full">
                         {product.category}
                       </span>
                       <h3 className="font-serif text-sm font-bold text-stone-900 mt-1 line-clamp-2">
-                        {product.title}
+                        {getLocalizedProductTitle(product, currentLanguage)}
                       </h3>
                     </div>
 

@@ -5,11 +5,7 @@ import { STORY_TEMPLATES } from '../data/mockData';
 import { Camera, Image as ImageIcon, Sparkles, ArrowRight, ArrowLeft, Check, Clock, Layers, MapPin, IndianRupee, Mic, MicOff, Volume2, HelpCircle } from 'lucide-react';
 
 export default function GuidedListingForm({ onProductCreated }) {
-<<<<<<< HEAD
-  const { activeArtisan, showToast, formatINR } = useApp();
-=======
   const { activeArtisan, showToast, formatINR, t, currentLangConfig, currentLanguage } = useApp();
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,8 +30,6 @@ export default function GuidedListingForm({ onProductCreated }) {
   const [listeningField, setListeningField] = useState(null);
   const recognitionRef = useRef(null);
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
@@ -44,7 +38,6 @@ export default function GuidedListingForm({ onProductCreated }) {
     };
   }, []);
 
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
   // Number parser for spoken prices and numbers (extracts digits or parses words like "twenty four hundred")
   const parseNumberFromSpeech = (text) => {
     const match = text.match(/\d+/g);

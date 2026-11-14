@@ -26,11 +26,7 @@ import {
 } from 'lucide-react';
 
 export default function ArtisanOrdersList({ orders = [], onOrderStatusUpdated }) {
-<<<<<<< HEAD
-  const { formatINR, showToast } = useApp();
-=======
   const { formatINR, showToast, currentLanguage, t } = useApp();
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const [activeFilter, setActiveFilter] = useState('All');
   const [updatingOrderId, setUpdatingOrderId] = useState(null);

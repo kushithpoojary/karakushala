@@ -1,16 +1,10 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-<<<<<<< HEAD
+import { getLocalizedProductTitle } from '../utils/translationUtils';
 import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart, Zap } from 'lucide-react';
 
 export default function ProductCard({ product, index = 0 }) {
-  const { addToCart, setSelectedProduct, openOrderPopup, formatINR } = useApp();
-=======
-import { getLocalizedProductTitle } from '../utils/translationUtils';
-import { Sparkles, Clock, MapPin, ShoppingBag, Eye, Heart } from 'lucide-react';
-
-export default function ProductCard({ product }) {
-  const { addToCart, setSelectedProduct, formatINR, currentLanguage, t } = useApp();
+  const { addToCart, setSelectedProduct, openOrderPopup, formatINR, currentLanguage, t } = useApp();
 
   const getCategoryLabel = (category) => {
     switch (category) {
@@ -24,7 +18,6 @@ export default function ProductCard({ product }) {
         return category;
     }
   };
->>>>>>> f4f8282 (feat: complete end-to-end regional language titles and real-time streaming multilingual voice STT)
 
   const artisan = product.artisan || {
     name: 'Karnataka Heritage Artisan',

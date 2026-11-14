@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function OrderCancellationModal({ isOpen, order, onClose, onOrderCancelled }) {
-  const { formatINR, showToast, activeUser } = useApp();
+  const { formatINR, showToast, activeUser, currentLanguage, currentLangConfig, t } = useApp();
 
   // Different reasons list for cancellation
   const CANCELLATION_REASONS = [
@@ -91,7 +91,7 @@ export default function OrderCancellationModal({ isOpen, order, onClose, onOrder
 
   // Voice-to-text states
   const [isListening, setIsListening] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en-IN'); // 'en-IN' | 'kn-IN'
+  const [selectedLanguage, setSelectedLanguage] = useState(currentLangConfig?.sttLocale || (currentLanguage === 'kn' ? 'kn-IN' : currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'ml' ? 'ml-IN' : 'en-IN'));
   const [speechSupported, setSpeechSupported] = useState(false);
   const recognitionRef = useRef(null);
 
